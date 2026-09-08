@@ -1,98 +1,174 @@
 ---
 title: "XDR Labs"
-description: "보안 엔지니어링, 배포, 원격 접속, 탐지 검증을 위한 실전 프로젝트와 도구의 통합 포털"
+description: "보안 엔지니어링, 인프라 배포, 원격 접속, 업그레이드, 데이터 전달, 탐지 검증을 위한 프로젝트 통합 포털"
 ---
 
 # XDR Labs
 
-**보안 엔지니어링, 배포, 원격 접속, 탐지 검증을 위한 실전 프로젝트와 도구를 한곳에서 찾을 수 있는 통합 포털입니다.**
+**보안 엔지니어링, 인프라 배포, 원격 접속, 플랫폼 업그레이드, 데이터 전달, 탐지 검증을 위한 실전 프로젝트를 한곳에서 찾는 통합 포털입니다.**
 
-XDR Labs는 반복적이고 불편한 인프라/보안 운영 작업을 줄이기 위해 만든 프로젝트들을 모아두는 메인 사이트입니다. 각 프로젝트는 별도의 문서, 릴리스 주기, 소스 저장소를 독립적으로 유지합니다.
+XDR Labs는 현장에서 반복되는 설치·운영·지원·검증 작업을 줄이기 위해 만든 독립 프로젝트들을 모아둔 중앙 진입점입니다. 각 프로젝트는 자신의 소스 저장소, 릴리스 주기, 문서와 지원 범위를 독립적으로 유지합니다.
 
 <Note>
-  이 사이트는 하나의 제품 매뉴얼이 아니라 **프로젝트 디렉터리**입니다. 아래에서 원하는 프로젝트를 선택하면 해당 전용 문서나 저장소로 이동합니다.
+  모든 프로젝트를 먼저 이해할 필요는 없습니다. 지금 해결하려는 문제를 기준으로 프로젝트를 선택하세요.
 </Note>
+
+## 문제별로 선택하기
+
+<CardGroup cols={2}>
+  <Card title="NAT/방화벽 뒤 서버에 원격 접속하고 싶습니다" icon="network-wired" href="https://frp.xdr.ooo">
+    **FRP Auto Deploy** — Zero-Touch 등록, 영구 Identity, 서비스 공개, `frpctl` 운영을 제공하는 경량 원격 접속 관리 도구입니다.
+  </Card>
+
+  <Card title="Stellar DP를 Ubuntu 24.04로 업그레이드해야 합니다" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
+    **DP Ubuntu Upgrade Mirror Manager** — 로컬 Mirror Server를 준비하고 Ubuntu 16.04 → 24.04 및 DP 6.6.0 Phase 2 절차를 제어합니다.
+  </Card>
+
+  <Card title="DP / Sensor를 KVM에 자동 배포하고 싶습니다" icon="server" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    **OpenXDR KVM Installer** — Data Processor, Sensor, AIO + Sensor 환경의 KVM 배포를 자동화합니다.
+  </Card>
+
+  <Card title="반복해서 재구축 가능한 XDR / NDR Lab이 필요합니다" icon="flask" href="https://github.com/xdr-labs/xdr-lab-appliance">
+    **XDR Lab Appliance** — KVM + Open vSwitch 기반으로 Sensor, Linux/Windows target, traffic mirror, 외부 접속을 포함한 Lab을 구성합니다.
+  </Card>
+
+  <Card title="XDR 탐지 검증용 실제 트래픽을 만들고 싶습니다" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
+    **Detection Scenario Platform (DSP)** — 보안 시나리오 트래픽을 생성하고 Event Store 기반 evidence와 report를 만듭니다.
+  </Card>
+
+  <Card title="기업 데이터를 통제해서 여러 Destination으로 보내고 싶습니다" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
+    **Data Relay** — 수집, Mapping, Enrichment, 보호/정책, Governance, 다중 Destination 전달을 위한 오픈소스 Enterprise Data Control Gateway입니다.
+  </Card>
+</CardGroup>
 
 ## 프로젝트
 
+### 핵심 프로젝트
+
 <CardGroup cols={2}>
   <Card title="FRP Auto Deploy" icon="network-wired" href="https://frp.xdr.ooo">
-    NAT/방화벽 뒤 시스템을 위한 Lightweight Zero-Touch 원격 접속 도구. 안전한 등록, 영구 Identity, 서비스 공개, `frpctl` 운영을 제공합니다.
+    공식 FRP 위에 설치·등록·Identity·Service·Port·운영 기능을 추가하는 Lightweight Deployment & Operations Layer입니다. NAT/방화벽 뒤 Linux 시스템이 서버로 outbound tunnel을 만들고, SSH/HTTP/HTTPS/Custom TCP 서비스를 영구 public port로 공개할 수 있습니다.
+
+    **문서:** `frp.xdr.ooo`  
+    **소스:** `datarelay-labs/frp-auto-deploy`
   </Card>
 
-  <Card title="DP OS Upgrade" icon="arrow-up-from-bracket" href="https://github.com/xdr-labs/xdr-labs-dp-os-upgrade-docs">
-    DP 운영체제를 안전하게 업그레이드하기 위한 자동화 도구와 문서입니다. 전용 문서 사이트로 마이그레이션 중입니다.
+  <Card title="DP Ubuntu Upgrade Mirror Manager" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
+    Ubuntu 24.04 Mirror Server 한 대를 준비하고 Stellar Cyber DP를 Ubuntu 16.04에서 18.04 → 20.04 → 22.04 → 24.04 순으로 업그레이드한 뒤 DP 6.6.0 Phase 2 bringup까지 수행하도록 구성된 도구입니다. DP는 외부 artifact source 대신 로컬 HTTP Mirror만 사용하도록 설계되어 있습니다.
+
+    **문서:** `dpos.xdr.ooo`  
+    **소스:** `xdr-labs/ubuntu-mirror-automation`
   </Card>
 
-  <Card title="Detection Scenario Platform" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
-    POC/Lab 환경에서 XDR 탐지를 검증하기 위한 실제 트래픽 및 Detection Scenario 생성 프로젝트입니다.
+  <Card title="Data Relay" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
+    오픈소스 Enterprise Data Control Gateway입니다. HTTP API, Webhook, 지원되는 Database source에서 데이터를 수집하고 Mapping/Enrichment, Schema Drift, Sensitive Data Detection, Protection, Classification, Policy를 적용한 뒤 여러 Destination으로 전달합니다. Governance, RBAC, Audit, Quarantine, Replay도 제공합니다.
+
+    **소스:** `datarelay-labs/gdc-platform`
   </Card>
 
-  <Card title="DataRelay" icon="arrows-left-right">
-    Data relay 및 integration 프로젝트입니다. 전용 문서 사이트 마이그레이션이 완료되면 여기에서 연결합니다.
-  </Card>
+  <Card title="Detection Scenario Platform (DSP)" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
+    Lab/XDR 검증을 위한 실전 Security Scenario Runner입니다. Port Sweep, DNS Tunnel, HTTP/SQLi/SSH 계열 등의 실제 트래픽을 실행하고 Event Store에 구조화된 이벤트를 기록하며 report와 evidence를 생성합니다. Local 또는 remote webshell 실행 경로를 지원합니다.
 
-  <Card title="Deployment Tools" icon="server">
-    DP, Sensor, AIO 및 관련 가상화 환경의 배포 자동화 도구입니다. 전용 문서 사이트를 순차적으로 연결합니다.
+    **소스:** `xdr-labs/xdr-poc-script`
   </Card>
 </CardGroup>
 
-## 전체 구조
+### 배포 & Appliance 운영
+
+<CardGroup cols={2}>
+  <Card title="OpenXDR KVM Installer" icon="server" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    Stellar Cyber Data Processor, Sensor, 고성능 Sensor, AIO + Sensor 구성을 KVM에 배포하기 위한 자동화 프로젝트입니다. Hardware/NIC 감지, Network 설정, KVM/libvirt, Storage, SR-IOV/PCI Passthrough, VM 배포 절차를 자동화합니다.
+  </Card>
+
+  <Card title="Stellar Appliance CLI" icon="terminal" href="https://github.com/xdr-labs/Stellar-appliance-cli">
+    KVM Installer로 구축된 호스트를 운영하기 위한 통합 `aella_cli`입니다. Network, DNS/NTP, ACL, 시스템 정보, Service, VM Console/Autostart 등의 Appliance 운영 기능을 하나의 CLI로 제공합니다.
+  </Card>
+</CardGroup>
+
+### Lab & Integration Utility
+
+<CardGroup cols={2}>
+  <Card title="XDR Lab Appliance" icon="flask" href="https://github.com/xdr-labs/xdr-lab-appliance">
+    Ubuntu 24.04, KVM, Open vSwitch 기반의 self-contained XDR/NDR Lab입니다. Stellar Sensor, Linux/Windows victim, traffic mirror, deterministic reverse-NAT 외부 접속을 포함하고 Lab 전체를 다시 구축할 수 있도록 설계되어 있습니다.
+  </Card>
+
+  <Card title="Stellar Alert + Case Syslog Daemon" icon="arrow-right-arrow-left" href="https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog">
+    Stellar Cyber API에서 Alert와 Case를 주기적으로 가져와 원격 collector에 TCP NDJSON 형태로 전달하는 장기 실행 Python daemon입니다. Alert/Case stream을 서로 독립적으로 활성화할 수 있습니다.
+  </Card>
+</CardGroup>
+
+## 프로젝트 관계 한눈에 보기
 
 ```mermaid
 flowchart TD
-    P[xdr.ooo\nXDR Labs 메인 포털]
-    F[frp.xdr.ooo\nFRP Auto Deploy]
-    U[upgrade.xdr.ooo\nDP OS Upgrade]
-    D[datarelay.xdr.ooo\nDataRelay]
-    S[dsp.xdr.ooo\nDetection Scenario Platform]
-    T[deploy.xdr.ooo\nDeployment Tools]
+    P[xdr.ooo\nXDR Labs 통합 포털]
 
-    P --> F
-    P --> U
-    P --> D
-    P --> S
-    P --> T
+    subgraph INFRA[Infrastructure & Operations]
+      KVM[OpenXDR KVM Installer\nDP / Sensor / AIO 배포]
+      UPG[DP Upgrade Mirror Manager\nUbuntu + DP 업그레이드]
+      CLI[Stellar Appliance CLI\nKVM Appliance 운영]
+      FRP[FRP Auto Deploy\nNAT 뒤 원격 접속]
+    end
+
+    subgraph LAB[Lab & Detection Validation]
+      XLAB[XDR Lab Appliance\n반복 가능한 Lab 구성]
+      DSP[Detection Scenario Platform\n시나리오 트래픽 생성]
+    end
+
+    subgraph DATA[Data & Integration]
+      DR[Data Relay\n데이터 통제 및 전달]
+      SYS[Alert + Case Syslog Daemon\nStellar Record 전달]
+    end
+
+    P --> KVM
+    P --> UPG
+    P --> CLI
+    P --> FRP
+    P --> XLAB
+    P --> DSP
+    P --> DR
+    P --> SYS
+
+    KVM --> CLI
+    XLAB --> DSP
 ```
 
-위 전용 hostname은 장기적으로 사용할 구조입니다. 현재 실제 배포가 끝난 사이트만 live endpoint로 사용하고, 나머지는 마이그레이션이 완료될 때 이 포털에서 연결합니다.
+이 구조는 **하나로 묶인 거대한 Platform이 아니라 독립적으로 사용할 수 있는 Toolbox**입니다. 화살표는 함께 쓰기 좋은 일반적인 관계를 보여줄 뿐, 필수 의존성을 의미하지 않습니다.
 
-## 운영 원칙
+## 프로젝트 디렉터리
+
+| 프로젝트 | 주요 목적 | 문서 | 소스 |
+| --- | --- | --- | --- |
+| **FRP Auto Deploy** | NAT/방화벽 뒤 Zero-Touch 원격 접속 | [frp.xdr.ooo](https://frp.xdr.ooo) | [GitHub](https://github.com/datarelay-labs/frp-auto-deploy) |
+| **DP Ubuntu Upgrade Mirror Manager** | DP OS + Phase 2 통제 업그레이드 | [dpos.xdr.ooo](https://dpos.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/ubuntu-mirror-automation) |
+| **Data Relay** | Enterprise Data Control / 다중 Destination 전달 | Repository 내 문서 | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
+| **Detection Scenario Platform** | 실제 보안 시나리오 Traffic / Evidence 생성 | Repository 내 문서 | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
+| **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | Repository README | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
+| **Stellar Appliance CLI** | KVM Appliance 운영 | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
+| **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | Repository docs | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Alert + Case Syslog Daemon** | Stellar Alert/Case 외부 전달 | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
+
+## 공통 설계 철학
 
 <CardGroup cols={2}>
+  <Card title="현장 문제부터 해결" icon="wrench">
+    기능 수를 늘리기보다 실제 배포, 지원, 검증, 데이터 운영에서 반복되는 문제를 출발점으로 합니다.
+  </Card>
+
+  <Card title="반복 작업은 자동화" icon="gears">
+    설치, 준비, 검증, 상태 관리, Operator Workflow에서 사람이 반복하는 실수를 줄이는 부분을 자동화합니다.
+  </Card>
+
   <Card title="프로젝트는 독립적으로" icon="boxes-stacked">
-    각 프로젝트는 별도 GitHub 저장소, 문서, 릴리스 주기, 지원 범위를 유지합니다.
+    하나의 프로젝트를 사용하기 위해 나머지 프로젝트를 설치할 필요가 없습니다. Repository와 Release Lifecycle도 분리합니다.
   </Card>
 
-  <Card title="찾는 곳은 하나로" icon="compass">
-    사용자는 모든 주소를 외울 필요 없이 `xdr.ooo`에서 원하는 프로젝트를 찾을 수 있습니다.
-  </Card>
-
-  <Card title="문서 중심" icon="book-open">
-    설치, 사용법, 구조, 문제 해결, 지원 범위를 실제 사용자가 이해하기 쉽게 제공합니다.
-  </Card>
-
-  <Card title="실제 문제 중심" icon="wrench">
-    프로젝트를 불필요하게 큰 플랫폼으로 확장하기보다 현장에서 반복되는 문제 해결에 집중합니다.
+  <Card title="운영 경계를 문서화" icon="book-open">
+    Prerequisite, 책임 경계, 지원 경로, 실패 처리, Recovery를 숨기지 않고 사용자 문서에 명확하게 설명하는 것을 원칙으로 합니다.
   </Card>
 </CardGroup>
 
-## 현재 Live 문서
+## GitHub 조직
 
-### FRP Auto Deploy
-
-현재 가장 먼저 Mintlify로 완전히 마이그레이션된 프로젝트입니다.
-
-<CardGroup cols={2}>
-  <Card title="문서 열기" icon="book" href="https://frp.xdr.ooo">
-    제품 소개, OCI 무료티어 서버 준비, Quick Start, 서비스, `frpctl`, 배포, 운영, 보안, 문제 해결을 확인합니다.
-  </Card>
-
-  <Card title="소스 저장소" icon="github" href="https://github.com/datarelay-labs/frp-auto-deploy">
-    FRP Auto Deploy 소스와 릴리스를 확인합니다.
-  </Card>
-</CardGroup>
-
-## 앞으로의 마이그레이션
-
-기존에 여러 곳에 흩어져 있는 프로젝트 소개/문서를 점차 전용 `*.xdr.ooo` 문서 사이트로 옮기고, 이 포털을 중앙 진입점으로 유지할 예정입니다.
+- [XDR Labs](https://github.com/xdr-labs) — 배포, 업그레이드, Lab, Detection Validation, Integration Utility
+- [DataRelay Labs](https://github.com/datarelay-labs) — FRP Auto Deploy 및 Data Relay
