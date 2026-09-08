@@ -1,0 +1,62 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "XDR Labs",
+  "description": "A central portal for XDR Labs projects, tools, documentation, and open-source engineering work.",
+  "colors": {
+    "primary": "#16A34A"
+  },
+  "navbar": {
+    "links": [
+      {
+        "type": "github",
+        "href": "https://github.com/xdr-labs"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Browse Projects",
+      "href": "/#projects"
+    }
+  },
+  "search": {
+    "prompt": "Search XDR Labs..."
+  },
+  "seo": {
+    "indexing": "navigable",
+    "metatags": {
+      "canonical": "https://xdr.ooo"
+    }
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "groups": [
+          {
+            "group": "XDR Labs",
+            "pages": [
+              "index"
+            ],
+            "icon": "grid-2"
+          }
+        ]
+      },
+      {
+        "language": "ko",
+        "groups": [
+          {
+            "group": "XDR Labs",
+            "pages": [
+              "ko/index"
+            ],
+            "icon": "grid-2"
+          }
+        ]
+      }
+    ]
+  }
+}
