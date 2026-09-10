@@ -28,6 +28,10 @@
       "canonical": "https://xdr.ooo"
     }
   },
+  "appearance": {
+    "default": "system",
+    "strict": false
+  },
   "metadata": {
     "timestamp": true
   },
