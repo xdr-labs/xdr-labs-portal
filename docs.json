@@ -16,7 +16,7 @@
     "primary": {
       "type": "button",
       "label": "Browse Projects",
-      "href": "/#projects"
+      "href": "/projects"
     }
   },
   "search": {
@@ -43,7 +43,11 @@
           {
             "group": "XDR Labs",
             "pages": [
-              "index"
+              "index",
+              "choose-project",
+              "projects",
+              "project-map",
+              "principles"
             ],
             "icon": "grid-2"
           }

@@ -1,0 +1,38 @@
+---
+title: "Design Philosophy"
+description: "Shared field-oriented design principles across XDR Labs projects."
+---
+
+# Common Design Philosophy
+
+XDR Labs projects are independent, but they share a common goal: make tools that are practical to deploy, operate, support, and validate in real environments.
+
+<CardGroup cols={2}>
+  <Card title="Solve field problems" icon="wrench">
+    Projects start from recurring deployment, support, validation, and data-operation pain rather than feature-count goals.
+  </Card>
+
+  <Card title="Automate the repetitive parts" icon="gears">
+    Installation, preparation, validation, state handling, and operator workflows are automated where that reduces error and support effort.
+  </Card>
+
+  <Card title="Keep projects independent" icon="boxes-stacked">
+    A user can adopt one project without installing the rest. Repositories and release lifecycles remain separate.
+  </Card>
+
+  <Card title="Document the operational boundary" icon="book-open">
+    Each project should explain prerequisites, responsibility boundaries, supported paths, failure handling, and recovery instead of hiding infrastructure assumptions.
+  </Card>
+</CardGroup>
+
+## Source organizations
+
+<CardGroup cols={2}>
+  <Card title="XDR Labs" icon="github" href="https://github.com/xdr-labs">
+    Deployment, upgrade, lab, detection-validation, and integration utility projects.
+  </Card>
+
+  <Card title="DataRelay Labs" icon="github" href="https://github.com/datarelay-labs">
+    FRP Auto Deploy and Data Relay related projects.
+  </Card>
+</CardGroup>

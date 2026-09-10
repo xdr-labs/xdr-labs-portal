@@ -1,0 +1,69 @@
+---
+title: "Projects"
+description: "Browse the main XDR Labs and DataRelay Labs projects by area."
+---
+
+# Projects
+
+Each project can be used independently. Deploy only the capabilities you need.
+
+## Core projects
+
+<CardGroup cols={2}>
+  <Card title="FRP Auto Deploy" icon="network-wired" href="https://frp.xdr.ooo">
+    Lightweight deployment and operations layer over official FRP. It lets remote Linux systems behind NAT/firewalls establish outbound tunnels, then exposes SSH, HTTP, HTTPS, or custom TCP services through persistent public ports.
+
+    **Documentation:** `frp.xdr.ooo`  
+    **Source:** `datarelay-labs/frp-auto-deploy`
+  </Card>
+
+  <Card title="DP Ubuntu Upgrade Mirror Manager" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
+    Prepares one Ubuntu 24.04 mirror server and uses it to drive controlled Stellar Cyber DP upgrades from Ubuntu 16.04 through 24.04, followed by DP 6.6.0 Phase 2 bringup. DP hosts can work from the local HTTP mirror without direct access to external artifact sources.
+
+    **Documentation:** `dpos.xdr.ooo`  
+    **Source:** `xdr-labs/ubuntu-mirror-automation`
+  </Card>
+
+  <Card title="Data Relay" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
+    Open-source Enterprise Data Control Gateway. It collects data from APIs, webhooks, and supported databases; applies mapping, enrichment, schema/sensitive-data controls and policy; then delivers to multiple destinations with governance, RBAC, audit, quarantine, and replay.
+
+    **Source:** `datarelay-labs/gdc-platform`
+  </Card>
+
+  <Card title="Detection Scenario Platform (DSP)" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
+    Operational security-scenario runner for realistic traffic generation. It supports scenario execution, traffic profiles, structured Event Store evidence, reports, and local or remote execution paths for XDR/NDR POC validation.
+
+    **Source:** `xdr-labs/xdr-poc-script`
+  </Card>
+</CardGroup>
+
+## Deployment & appliance operations
+
+<CardGroup cols={2}>
+  <Card title="OpenXDR KVM Installer" icon="server" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    Automates KVM host preparation and VM deployment for Stellar Cyber Data Processor, Sensor, high-performance Sensor, and AIO + Sensor configurations. It covers hardware detection, networking, KVM/libvirt, storage, SR-IOV/PCI passthrough, and VM deployment workflows.
+  </Card>
+
+  <Card title="Stellar Appliance CLI" icon="terminal" href="https://github.com/xdr-labs/Stellar-appliance-cli">
+    Unified `aella_cli` interface for KVM hosts created by the deployment tooling. It manages network settings, DNS/NTP, ACLs, host information, services, VM console/autostart, and related appliance operations.
+  </Card>
+</CardGroup>
+
+## Lab & integration utilities
+
+<CardGroup cols={2}>
+  <Card title="XDR Lab Appliance" icon="flask" href="https://github.com/xdr-labs/xdr-lab-appliance">
+    Self-contained XDR/NDR lab built on Ubuntu 24.04, KVM, and Open vSwitch. It orchestrates a Stellar Sensor plus Linux and Windows test targets, traffic mirroring, deterministic reverse-NAT access, and rebuildable lab state.
+  </Card>
+
+  <Card title="Stellar Alert & Case Relay" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo">
+    Lightweight Python relay for organizations that want Stellar Cyber alerts and cases delivered into an existing SIEM or SOC portal. It polls the Stellar Cyber API and forwards newline-delimited JSON over TCP, supports alert-only, case-only, or combined operation, and includes checkpoint, retry/recovery, backfill, and separate destinations.
+
+    **Documentation:** `stellar-relay.xdr.ooo`  
+    **Source:** `xdr-labs/Stellar-Case-Alert-to-Sylog`
+  </Card>
+</CardGroup>
+
+<Card title="See project relationships and links" icon="diagram-project" href="/project-map">
+  View the overall project map and jump to documentation or GitHub repositories.
+</Card>
