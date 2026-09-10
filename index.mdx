@@ -36,6 +36,10 @@ XDR Labs brings together independent projects created to remove repetitive field
     **Detection Scenario Platform (DSP)** — generate realistic security-scenario traffic and produce structured evidence and reports for lab/XDR validation.
   </Card>
 
+  <Card title="I need Stellar alerts and cases in my existing SIEM/SOC" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo">
+    **Stellar Alert & Case Relay** — retrieve Stellar Cyber alerts and cases through the API and forward them into existing SIEM/SOC workflows as TCP NDJSON, with independent streams and operational recovery features.
+  </Card>
+
   <Card title="I need to control and route enterprise data" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
     **Data Relay** — an open-source enterprise data control gateway for collection, transformation, protection, governance, and multi-destination delivery.
   </Card>
@@ -92,8 +96,11 @@ XDR Labs brings together independent projects created to remove repetitive field
     Self-contained XDR/NDR lab built on Ubuntu 24.04, KVM, and Open vSwitch. It orchestrates a Stellar Sensor plus Linux and Windows test targets, traffic mirroring, deterministic reverse-NAT access, and rebuildable lab state.
   </Card>
 
-  <Card title="Stellar Alert + Case Syslog Daemon" icon="arrow-right-arrow-left" href="https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog">
-    Long-running Python daemon that polls Stellar Cyber alerts and cases through the API and forwards them to a remote collector over TCP as newline-delimited JSON. Alert and case streams can be enabled independently.
+  <Card title="Stellar Alert & Case Relay" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo">
+    Lightweight Python relay for organizations that want Stellar Cyber alerts and cases delivered into an existing SIEM or SOC portal. It polls the Stellar Cyber API and forwards newline-delimited JSON over TCP, supports alert-only, case-only, or combined operation, and includes checkpoint, retry/recovery, backfill, and separate destinations.
+
+    **Documentation:** `stellar-relay.xdr.ooo`  
+    **Source:** `xdr-labs/Stellar-Case-Alert-to-Sylog`
   </Card>
 </CardGroup>
 
@@ -117,7 +124,7 @@ flowchart TD
 
     subgraph DATA[Data & Integration]
       DR[Data Relay\nControl and route data]
-      SYS[Alert + Case Syslog Daemon\nForward Stellar records]
+      SYS[Stellar Alert & Case Relay\nForward alerts and cases]
     end
 
     P --> KVM
@@ -146,7 +153,7 @@ This is a **toolbox, not a single bundled platform**. Projects can be used indep
 | **OpenXDR KVM Installer** | DP/Sensor/AIO deployment on KVM | Repository README | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
 | **Stellar Appliance CLI** | KVM appliance operations | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
 | **XDR Lab Appliance** | Rebuildable XDR/NDR lab | Repository docs | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
-| **Alert + Case Syslog Daemon** | Stellar alert/case forwarding | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
+| **Stellar Alert & Case Relay** | Stellar alert/case forwarding into existing SIEM/SOC workflows | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## Common design philosophy
 
