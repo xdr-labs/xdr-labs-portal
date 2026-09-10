@@ -55,7 +55,11 @@
           {
             "group": "XDR Labs",
             "pages": [
-              "ko/index"
+              "ko/index",
+              "ko/choose-project",
+              "ko/projects",
+              "ko/project-map",
+              "ko/principles"
             ],
             "icon": "grid-2"
           }

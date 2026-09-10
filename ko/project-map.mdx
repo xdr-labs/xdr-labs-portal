@@ -1,0 +1,69 @@
+---
+title: "프로젝트 관계 및 디렉터리"
+description: "XDR Labs 프로젝트 간 관계와 문서·소스 링크를 한눈에 확인합니다."
+---
+
+# 프로젝트 관계 및 디렉터리
+
+## 프로젝트 관계 한눈에 보기
+
+```mermaid
+flowchart TD
+    P[xdr.ooo\nXDR Labs 통합 포털]
+
+    subgraph INFRA[Infrastructure & Operations]
+      KVM[OpenXDR KVM Installer\nDP / Sensor / AIO 배포]
+      UPG[DP Upgrade Mirror Manager\nUbuntu + DP 업그레이드]
+      CLI[Stellar Appliance CLI\nKVM Appliance 운영]
+      FRP[FRP Auto Deploy\nNAT 뒤 원격 접속]
+    end
+
+    subgraph LAB[Lab & Detection Validation]
+      XLAB[XDR Lab Appliance\n반복 가능한 Lab 구성]
+      DSP[Detection Scenario Platform\n시나리오 트래픽 생성]
+    end
+
+    subgraph DATA[Data & Integration]
+      DR[Data Relay\n데이터 통제 및 전달]
+      SYS[Stellar Alert & Case Relay\nAlert / Case 전달]
+    end
+
+    P --> KVM
+    P --> UPG
+    P --> CLI
+    P --> FRP
+    P --> XLAB
+    P --> DSP
+    P --> DR
+    P --> SYS
+
+    KVM --> CLI
+    XLAB --> DSP
+```
+
+이 구조는 **하나로 묶인 거대한 Platform이 아니라 독립적으로 사용할 수 있는 Toolbox**입니다. 화살표는 함께 쓰기 좋은 일반적인 관계를 보여줄 뿐, 필수 의존성을 의미하지 않습니다.
+
+## 프로젝트 디렉터리
+
+| 프로젝트 | 주요 목적 | 문서 | 소스 |
+| --- | --- | --- | --- |
+| **FRP Auto Deploy** | NAT/방화벽 뒤 Zero-Touch 원격 접속 | [frp.xdr.ooo](https://frp.xdr.ooo) | [GitHub](https://github.com/datarelay-labs/frp-auto-deploy) |
+| **DP Ubuntu Upgrade Mirror Manager** | DP OS + Phase 2 통제 업그레이드 | [dpos.xdr.ooo](https://dpos.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/ubuntu-mirror-automation) |
+| **Data Relay** | Enterprise Data Control / 다중 Destination 전달 | Repository 내 문서 | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
+| **Detection Scenario Platform** | 실제 보안 시나리오 Traffic / Evidence 생성 | Repository 내 문서 | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
+| **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | Repository README | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
+| **Stellar Appliance CLI** | KVM Appliance 운영 | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
+| **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | Repository docs | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Alert & Case Relay** | Stellar Alert/Case를 기존 SIEM/SOC로 전달 | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
+
+## 빠른 이동
+
+<CardGroup cols={2}>
+  <Card title="프로젝트 소개" icon="grid-2" href="/ko/projects">
+    각 프로젝트의 역할과 범위를 확인합니다.
+  </Card>
+
+  <Card title="문제별 프로젝트 찾기" icon="compass" href="/ko/choose-project">
+    해결하려는 문제를 기준으로 바로 적합한 프로젝트를 선택합니다.
+  </Card>
+</CardGroup>
