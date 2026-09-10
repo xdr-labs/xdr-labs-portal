@@ -5,37 +5,49 @@ description: "해결하려는 문제를 기준으로 적합한 XDR Labs 프로�
 
 # 문제별 프로젝트 찾기
 
-지금 해결하려는 문제와 가장 가까운 항목을 선택하세요. 각 카드는 해당 프로젝트의 문서 또는 소스 저장소로 바로 연결됩니다.
+지금 해결하려는 문제와 가장 가까운 항목을 선택하세요. 제품 카드는 GitHub 저장소가 아니라 해당 제품 페이지로 바로 연결됩니다.
 
 <CardGroup cols={2}>
-  <Card title="NAT/방화벽 뒤 서버에 원격 접속하고 싶습니다" icon="network-wired" href="https://frp.xdr.ooo">
-    **FRP Auto Deploy** — Zero-Touch 등록, 영구 Identity, 서비스 공개, `frpctl` 운영을 제공하는 경량 원격 접속 관리 도구입니다.
+  <Card title="NAT/방화벽 뒤 서버에 원격 접속하고 싶습니다" icon="network-wired" href="https://link.datarelay.run/">
+    **Data Relay Link** — NAT/방화벽 뒤 시스템에서 필요한 SSH, HTTP, HTTPS, Custom TCP 서비스만 선택해서 안전하게 공개하는 경량 Secure Connectivity 제품입니다.
+  </Card>
+
+  <Card title="폐쇄/제한망에서 승인된 인터넷 Destination만 접속하고 싶습니다" icon="arrow-up-right-from-square" href="https://link.datarelay.run/">
+    **Data Relay Link — Controlled Egress** — Agent 설치 없이 HTTP/HTTPS Proxy를 사용하여 승인된 Source, FQDN, Port만 허용하는 Fail-Closed 방식의 Outbound Access입니다. 현재 Controlled Egress는 Release Qualification 중입니다.
   </Card>
 
   <Card title="Stellar DP를 Ubuntu 24.04로 업그레이드해야 합니다" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
     **DP Ubuntu Upgrade Mirror Manager** — 로컬 Mirror Server를 준비하고 Ubuntu 16.04 → 24.04 및 DP 6.6.0 Phase 2 절차를 제어합니다.
   </Card>
 
-  <Card title="DP / Sensor를 KVM에 자동 배포하고 싶습니다" icon="server" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
-    **OpenXDR KVM Installer** — Data Processor, Sensor, AIO + Sensor 환경의 KVM 배포를 자동화합니다.
+  <Card title="DP / Sensor를 KVM에 자동 배포하고 싶습니다" icon="server" href="/ko/products/openxdr-kvm-installer">
+    **OpenXDR KVM Installer** — Data Processor, Sensor, High-Performance Sensor, AIO + Sensor 환경의 KVM 배포를 자동화합니다.
   </Card>
 
-  <Card title="반복해서 재구축 가능한 XDR / NDR Lab이 필요합니다" icon="flask" href="https://github.com/xdr-labs/xdr-lab-appliance">
-    **XDR Lab Appliance** — KVM + Open vSwitch 기반으로 Sensor, Linux/Windows target, traffic mirror, 외부 접속을 포함한 Lab을 구성합니다.
+  <Card title="배포된 KVM Appliance를 하나의 CLI로 운영하고 싶습니다" icon="terminal" href="/ko/products/stellar-appliance-cli">
+    **Stellar Appliance CLI** — `aella_cli`에서 Network, DNS/NTP, ACL, Service, VM Console/Autostart, Patch 및 Appliance 상태를 통합 운영합니다.
   </Card>
 
-  <Card title="XDR 탐지 검증용 실제 트래픽을 만들고 싶습니다" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
-    **Detection Scenario Platform (DSP)** — 보안 시나리오 트래픽을 생성하고 Event Store 기반 evidence와 report를 만듭니다.
+  <Card title="반복해서 재구축 가능한 XDR / NDR Lab이 필요합니다" icon="flask" href="/ko/products/xdr-lab-appliance">
+    **XDR Lab Appliance** — KVM + Open vSwitch 기반으로 Stellar Sensor, Linux/Windows Target, Traffic Mirror, Reverse-NAT 외부 접속을 포함한 Lab을 구성합니다.
   </Card>
 
-  <Card title="Stellar Alert/Case를 기존 SIEM 또는 SOC 포털로 전달하고 싶습니다" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo">
-    **Stellar Alert & Case Relay** — Stellar Cyber API에서 Alert와 Case를 가져와 기존 SIEM/SOC 워크플로우로 TCP NDJSON 형태로 전달하며, 독립적인 스트림 구성과 운영 복구 기능을 제공합니다.
+  <Card title="XDR / NDR POC 검증용 실제 트래픽을 만들고 싶습니다" icon="radar" href="https://dsp.xdr.ooo/">
+    **Detection Scenario Platform (DSP)** — XDR/NDR 고객 POC 검증을 위한 현실적이고 관찰 가능한 Security Activity와 구조화된 Evidence/Report를 생성합니다.
   </Card>
 
-  <Card title="기업 데이터를 통제해서 여러 Destination으로 보내고 싶습니다" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
-    **Data Relay** — 수집, Mapping, Enrichment, 보호/정책, Governance, 다중 Destination 전달을 위한 오픈소스 Enterprise Data Control Gateway입니다.
+  <Card title="Stellar Alert/Case를 기존 SIEM 또는 SOC 포털로 전달하고 싶습니다" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo/">
+    **Stellar Alert & Case Relay** — Stellar Cyber API에서 Alert와 Case를 가져와 기존 SIEM/SOC Workflow로 TCP NDJSON 형태로 전달하며 독립 스트림과 Recovery 기능을 제공합니다.
+  </Card>
+
+  <Card title="기업 데이터를 통제해서 여러 Destination으로 보내고 싶습니다" icon="arrows-left-right" href="https://control.datarelay.run/">
+    **Data Relay Control** — **One Stream → Many Routes → Many Destinations** 구조에서 Route별 Transform, Protection, Policy, Governance 및 Delivery를 제어하는 Enterprise Data Control Gateway입니다.
   </Card>
 </CardGroup>
+
+<Note>
+  **Data Relay Link와 Data Relay Control은 서로 다른 제품입니다.** Link는 Secure Connectivity와 Controlled Egress를 담당하고, Control은 Enterprise Data Flow의 처리와 전달을 담당합니다. Control은 Link의 중앙 관리 제품이 아닙니다.
+</Note>
 
 <Card title="전체 프로젝트 설명 보기" icon="grid-2" href="/ko/projects">
   각 프로젝트의 역할과 범위를 조금 더 자세히 확인합니다.
