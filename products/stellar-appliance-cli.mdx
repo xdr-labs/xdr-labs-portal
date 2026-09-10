@@ -1,0 +1,38 @@
+---
+title: "Stellar Appliance CLI"
+description: "Unified aella_cli operations for KVM hosts running Stellar Cyber Data Processor and Sensor components."
+---
+
+# Stellar Appliance CLI
+
+Stellar Appliance CLI provides a single `aella_cli` interface for operating KVM hosts deployed with the OpenXDR KVM Installer. It recognizes the networking and appliance conventions created by the installer and centralizes common day-2 operations.
+
+## What it manages
+
+- network interfaces, IP addressing, gateway, and DNS
+- NTP configuration across supported Linux time services
+- staged ACL / firewall policy and rule application
+- hostname, timezone, system information, and service control
+- VM console access and VM autostart
+- appliance monitoring and patch operations
+
+## Typical relationship
+
+```mermaid
+flowchart LR
+  I[OpenXDR KVM Installer] --> H[KVM Host + OpenXDR VMs]
+  H --> C[Stellar Appliance CLI\naella_cli]
+  C --> N[Network / NTP / ACL]
+  C --> V[VM / Service Operations]
+```
+
+The CLI is primarily intended for Linux KVM hosts. The current repository documents Python 3.10+ and sudo privileges for system-changing operations.
+
+<CardGroup cols={2}>
+  <Card title="OpenXDR KVM Installer" icon="server" href="/products/openxdr-kvm-installer">
+    See the deployment tooling that prepares the appliance host.
+  </Card>
+  <Card title="Source repository" icon="github" href="https://github.com/xdr-labs/Stellar-appliance-cli">
+    Review commands, installation steps, ACL workflow, and troubleshooting details.
+  </Card>
+</CardGroup>
