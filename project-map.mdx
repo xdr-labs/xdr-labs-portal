@@ -1,6 +1,6 @@
 ---
 title: "Project Relationships & Directory"
-description: "See how XDR Labs projects relate and find documentation and source links in one place."
+description: "See how XDR Labs projects relate and find product documentation and source links in one place."
 ---
 
 # Project Relationships & Directory
@@ -15,46 +15,50 @@ flowchart TD
       KVM[OpenXDR KVM Installer\nDeploy DP / Sensor / AIO]
       UPG[DP Upgrade Mirror Manager\nUpgrade Ubuntu + DP]
       CLI[Stellar Appliance CLI\nOperate KVM appliances]
-      FRP[FRP Auto Deploy\nRemote access behind NAT]
+      LINK[Data Relay Link\nSecure remote access + controlled egress]
     end
 
     subgraph LAB[Lab & Detection Validation]
-      XLAB[XDR Lab Appliance\nBuild repeatable lab]
-      DSP[Detection Scenario Platform\nGenerate scenario traffic]
+      XLAB[XDR Lab Appliance\nBuild repeatable XDR / NDR lab]
+      DSP[Detection Scenario Platform\nXDR / NDR POC activity + evidence]
     end
 
     subgraph DATA[Data & Integration]
-      DR[Data Relay\nControl and route data]
+      CTRL[Data Relay Control\nEnterprise data processing + delivery]
       SYS[Stellar Alert & Case Relay\nForward alerts and cases]
     end
 
     P --> KVM
     P --> UPG
     P --> CLI
-    P --> FRP
+    P --> LINK
     P --> XLAB
     P --> DSP
-    P --> DR
+    P --> CTRL
     P --> SYS
 
     KVM --> CLI
     XLAB --> DSP
 ```
 
-This is a **toolbox, not a single bundled platform**. Projects can be used independently. The arrows only show common operational relationships and do not represent mandatory dependencies.
+This is a **toolbox, not a single bundled platform**. Projects can be used independently. The arrows show common operational relationships, not mandatory dependencies.
+
+<Note>
+  Data Relay Link and Data Relay Control intentionally appear as separate nodes. **Link is a secure-connectivity product; Control is an enterprise data-control product.** The current Data Relay Control implementation is not a centralized manager for Link.
+</Note>
 
 ## Project directory
 
-| Project | Primary purpose | Documentation | Source |
+| Project | Primary purpose | Product page | Source |
 | --- | --- | --- | --- |
-| **FRP Auto Deploy** | Zero-Touch remote access behind NAT/firewalls | [frp.xdr.ooo](https://frp.xdr.ooo) | [GitHub](https://github.com/datarelay-labs/frp-auto-deploy) |
+| **Data Relay Link** | Secure Remote Access + controlled outbound egress for isolated/restricted networks | [link.datarelay.run](https://link.datarelay.run/) | [GitHub](https://github.com/xdr-labs/frp-auto-deploy) |
+| **Data Relay Control** | Enterprise data-flow processing, policy/governance, and multi-destination delivery | [control.datarelay.run](https://control.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
 | **DP Ubuntu Upgrade Mirror Manager** | Controlled DP OS + Phase 2 upgrade workflow | [dpos.xdr.ooo](https://dpos.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/ubuntu-mirror-automation) |
-| **Data Relay** | Enterprise data control and multi-destination delivery | Project docs in repository | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
-| **Detection Scenario Platform** | Realistic security-scenario traffic and evidence generation | Project docs in repository | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
-| **OpenXDR KVM Installer** | DP/Sensor/AIO deployment on KVM | Repository README | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
-| **Stellar Appliance CLI** | KVM appliance operations | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
-| **XDR Lab Appliance** | Rebuildable XDR/NDR lab | Repository docs | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
-| **Stellar Alert & Case Relay** | Stellar alert/case forwarding into existing SIEM/SOC workflows | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
+| **Detection Scenario Platform** | Realistic security activity and evidence for XDR/NDR POC validation | [dsp.xdr.ooo](https://dsp.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
+| **OpenXDR KVM Installer** | DP/Sensor/AIO deployment on KVM | [Product page](/products/openxdr-kvm-installer) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
+| **Stellar Appliance CLI** | KVM appliance operations | [Product page](/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
+| **XDR Lab Appliance** | Rebuildable XDR/NDR lab | [Product page](/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Alert & Case Relay** | Stellar Alert/Case forwarding into existing SIEM/SOC workflows | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## Quick navigation
 
