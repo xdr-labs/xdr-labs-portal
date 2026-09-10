@@ -1,0 +1,45 @@
+---
+title: "OpenXDR KVM Installer"
+description: "Automated KVM deployment for Stellar Cyber Data Processor, Sensor, high-performance Sensor, and AIO + Sensor environments."
+---
+
+# OpenXDR KVM Installer
+
+OpenXDR KVM Installer automates preparation of a KVM host and deployment of Stellar Cyber OpenXDR components. It provides interactive, menu-driven workflows with state tracking so operators can validate configuration, execute the full deployment, or resume after required reboots.
+
+## What it deploys
+
+- **Data Processor (DP)** — standalone DP deployment
+- **Sensor** — standard modular Sensor deployment
+- **High-performance Sensor** — dual-VM / NUMA-oriented high-throughput Sensor deployment
+- **AIO + Sensor** — integrated AIO Data Processor and Sensor deployment on one host
+
+## What it automates
+
+<CardGroup cols={2}>
+  <Card title="Host preparation" icon="microchip">
+    Hardware/NIC detection, virtualization checks, kernel preparation, KVM/libvirt, storage, and system tuning.
+  </Card>
+  <Card title="Networking" icon="network-wired">
+    Management and VM networking, SR-IOV where applicable, bridge/NAT choices for Sensor deployments, and SPAN interface handling.
+  </Card>
+  <Card title="VM deployment" icon="server">
+    Image preparation, LVM storage, VM creation, CPU/resource assignment, PCI passthrough, and component-specific deployment steps.
+  </Card>
+  <Card title="Safe operations" icon="rotate">
+    DRY_RUN support, configuration validation, step-level execution, persistent state, logging, and resume after reboot.
+  </Card>
+</CardGroup>
+
+## Basic requirements
+
+Supported host OS versions depend on the selected installer. Ubuntu Server 20.04, 22.04, and 24.04 are used by the current Sensor/AIO paths; some DP workflows also support Ubuntu 16.04. Root access and hardware virtualization are required. IOMMU must be enabled for SR-IOV or PCI passthrough, and Internet access is normally required to download packages and Stellar component images.
+
+<CardGroup cols={2}>
+  <Card title="Stellar Appliance CLI" icon="terminal" href="/products/stellar-appliance-cli">
+    Operate KVM hosts after deployment with the unified `aella_cli` interface.
+  </Card>
+  <Card title="Source repository" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    Review installer scripts, detailed requirements, and current implementation.
+  </Card>
+</CardGroup>
