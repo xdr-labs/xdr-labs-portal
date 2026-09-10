@@ -5,37 +5,49 @@ description: "Quickly select the right XDR Labs project based on the problem you
 
 # Choose by Problem
 
-Select the item closest to what you need to solve. Each card links directly to the relevant project documentation or source repository.
+Select the item closest to what you need to solve. Product cards open the relevant product page rather than dropping you directly into a source repository.
 
 <CardGroup cols={2}>
-  <Card title="I need remote access behind NAT/firewalls" icon="network-wired" href="https://frp.xdr.ooo">
-    **FRP Auto Deploy** — Zero-Touch remote access with secure enrollment, persistent identity, service publishing, and `frpctl` operations.
+  <Card title="I need remote access behind NAT/firewalls" icon="network-wired" href="https://link.datarelay.run/">
+    **Data Relay Link** — lightweight secure connectivity that publishes only the SSH, HTTP, HTTPS, or custom TCP services you need from systems behind NAT/firewalls.
+  </Card>
+
+  <Card title="I need controlled Internet access from a restricted network" icon="arrow-up-right-from-square" href="https://link.datarelay.run/">
+    **Data Relay Link — Controlled Egress** — agentless HTTP/HTTPS proxy access to approved Internet destinations with source, FQDN, port, and fail-closed policy controls. Controlled Egress is currently under release qualification.
   </Card>
 
   <Card title="I need to upgrade a Stellar DP to Ubuntu 24.04" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
     **DP Ubuntu Upgrade Mirror Manager** — prepare a local mirror and run controlled Ubuntu 16.04 → 24.04 plus DP 6.6.0 Phase 2 workflows.
   </Card>
 
-  <Card title="I need to deploy DP / Sensor on KVM" icon="server" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
-    **OpenXDR KVM Installer** — automated KVM deployment for Data Processor, Sensor, and AIO + Sensor environments.
+  <Card title="I need to deploy DP / Sensor on KVM" icon="server" href="/products/openxdr-kvm-installer">
+    **OpenXDR KVM Installer** — automated KVM deployment for Data Processor, Sensor, high-performance Sensor, and AIO + Sensor environments.
   </Card>
 
-  <Card title="I need a repeatable XDR / NDR lab" icon="flask" href="https://github.com/xdr-labs/xdr-lab-appliance">
-    **XDR Lab Appliance** — a rebuildable KVM + Open vSwitch lab with Sensor, Linux/Windows targets, traffic mirroring, and external access.
+  <Card title="I need to operate a deployed KVM appliance" icon="terminal" href="/products/stellar-appliance-cli">
+    **Stellar Appliance CLI** — unified `aella_cli` operations for network, DNS/NTP, ACL, services, VM console/autostart, patching, and appliance status.
   </Card>
 
-  <Card title="I need realistic detection-validation traffic" icon="radar" href="https://github.com/xdr-labs/xdr-poc-script">
-    **Detection Scenario Platform (DSP)** — generate realistic security-scenario traffic and produce structured evidence and reports for XDR/NDR validation.
+  <Card title="I need a repeatable XDR / NDR lab" icon="flask" href="/products/xdr-lab-appliance">
+    **XDR Lab Appliance** — a rebuildable KVM + Open vSwitch lab with a Stellar Sensor, Linux/Windows targets, traffic mirroring, and reverse-NAT access.
   </Card>
 
-  <Card title="I need Stellar alerts and cases in my existing SIEM/SOC" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo">
-    **Stellar Alert & Case Relay** — retrieve Stellar Cyber alerts and cases through the API and forward them into existing SIEM/SOC workflows as TCP NDJSON, with independent streams and operational recovery features.
+  <Card title="I need realistic XDR / NDR POC validation traffic" icon="radar" href="https://dsp.xdr.ooo/">
+    **Detection Scenario Platform (DSP)** — generate realistic, observable security activity and produce structured evidence and reports for XDR/NDR customer POC validation.
   </Card>
 
-  <Card title="I need to control and route enterprise data" icon="arrows-left-right" href="https://github.com/datarelay-labs/gdc-platform">
-    **Data Relay** — an open-source enterprise data control gateway for collection, transformation, protection, governance, and multi-destination delivery.
+  <Card title="I need Stellar alerts and cases in my existing SIEM/SOC" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo/">
+    **Stellar Alert & Case Relay** — retrieve Stellar Cyber alerts and cases through the API and forward them into existing SIEM/SOC workflows as TCP NDJSON, with independent streams and recovery features.
+  </Card>
+
+  <Card title="I need to control and route enterprise data" icon="arrows-left-right" href="https://control.datarelay.run/">
+    **Data Relay Control** — Enterprise Data Control Gateway using a **One Stream → Many Routes → Many Destinations** model with route-specific Transform, Protection, Policy, governance, and delivery controls.
   </Card>
 </CardGroup>
+
+<Note>
+  **Data Relay Link and Data Relay Control are separate products.** Link handles secure connectivity and controlled egress. Control handles enterprise data-flow processing and delivery; it is not a centralized manager for Link.
+</Note>
 
 <Card title="Browse all projects" icon="grid-2" href="/projects">
   Review each project's role and scope in more detail.
