@@ -1,6 +1,6 @@
 ---
 title: "프로젝트 관계 및 디렉터리"
-description: "XDR Labs 프로젝트 간 관계와 문서·소스 링크를 한눈에 확인합니다."
+description: "XDR Labs 프로젝트 간 관계와 제품 문서·소스 링크를 한눈에 확인합니다."
 ---
 
 # 프로젝트 관계 및 디렉터리
@@ -15,46 +15,50 @@ flowchart TD
       KVM[OpenXDR KVM Installer\nDP / Sensor / AIO 배포]
       UPG[DP Upgrade Mirror Manager\nUbuntu + DP 업그레이드]
       CLI[Stellar Appliance CLI\nKVM Appliance 운영]
-      FRP[FRP Auto Deploy\nNAT 뒤 원격 접속]
+      LINK[Data Relay Link\nSecure Remote Access + Controlled Egress]
     end
 
     subgraph LAB[Lab & Detection Validation]
-      XLAB[XDR Lab Appliance\n반복 가능한 Lab 구성]
-      DSP[Detection Scenario Platform\n시나리오 트래픽 생성]
+      XLAB[XDR Lab Appliance\n반복 가능한 XDR / NDR Lab]
+      DSP[Detection Scenario Platform\nXDR / NDR POC Activity + Evidence]
     end
 
     subgraph DATA[Data & Integration]
-      DR[Data Relay\n데이터 통제 및 전달]
+      CTRL[Data Relay Control\nEnterprise Data Processing + Delivery]
       SYS[Stellar Alert & Case Relay\nAlert / Case 전달]
     end
 
     P --> KVM
     P --> UPG
     P --> CLI
-    P --> FRP
+    P --> LINK
     P --> XLAB
     P --> DSP
-    P --> DR
+    P --> CTRL
     P --> SYS
 
     KVM --> CLI
     XLAB --> DSP
 ```
 
-이 구조는 **하나로 묶인 거대한 Platform이 아니라 독립적으로 사용할 수 있는 Toolbox**입니다. 화살표는 함께 쓰기 좋은 일반적인 관계를 보여줄 뿐, 필수 의존성을 의미하지 않습니다.
+이 구조는 **하나로 묶인 거대한 Platform이 아니라 독립적으로 사용할 수 있는 Toolbox**입니다. 화살표는 함께 쓰기 좋은 일반적인 관계를 보여줄 뿐 필수 의존성을 의미하지 않습니다.
+
+<Note>
+  Data Relay Link와 Data Relay Control은 의도적으로 별도 Node로 표시합니다. **Link는 Secure Connectivity 제품이고, Control은 Enterprise Data Control 제품입니다.** 현재 Data Relay Control은 Link의 중앙 관리 제품이 아닙니다.
+</Note>
 
 ## 프로젝트 디렉터리
 
-| 프로젝트 | 주요 목적 | 문서 | 소스 |
+| 프로젝트 | 주요 목적 | 제품 페이지 | 소스 |
 | --- | --- | --- | --- |
-| **FRP Auto Deploy** | NAT/방화벽 뒤 Zero-Touch 원격 접속 | [frp.xdr.ooo](https://frp.xdr.ooo) | [GitHub](https://github.com/datarelay-labs/frp-auto-deploy) |
+| **Data Relay Link** | 제한망/사설망의 Secure Remote Access + Controlled Egress | [link.datarelay.run](https://link.datarelay.run/) | [GitHub](https://github.com/xdr-labs/frp-auto-deploy) |
+| **Data Relay Control** | Enterprise Data Flow Processing, Policy/Governance, Multi-Destination Delivery | [control.datarelay.run](https://control.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
 | **DP Ubuntu Upgrade Mirror Manager** | DP OS + Phase 2 통제 업그레이드 | [dpos.xdr.ooo](https://dpos.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/ubuntu-mirror-automation) |
-| **Data Relay** | Enterprise Data Control / 다중 Destination 전달 | Repository 내 문서 | [GitHub](https://github.com/datarelay-labs/gdc-platform) |
-| **Detection Scenario Platform** | 실제 보안 시나리오 Traffic / Evidence 생성 | Repository 내 문서 | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
-| **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | Repository README | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
-| **Stellar Appliance CLI** | KVM Appliance 운영 | Repository README | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
-| **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | Repository docs | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
-| **Stellar Alert & Case Relay** | Stellar Alert/Case를 기존 SIEM/SOC로 전달 | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
+| **Detection Scenario Platform** | XDR/NDR POC 검증용 실제 Security Activity / Evidence 생성 | [dsp.xdr.ooo](https://dsp.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
+| **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | [제품 페이지](/ko/products/openxdr-kvm-installer) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
+| **Stellar Appliance CLI** | KVM Appliance 운영 | [제품 페이지](/ko/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
+| **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | [제품 페이지](/ko/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Alert & Case Relay** | Stellar Alert/Case를 기존 SIEM/SOC로 전달 | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## 빠른 이동
 
