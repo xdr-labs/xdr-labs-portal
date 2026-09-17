@@ -9,6 +9,10 @@
   "navbar": {
     "links": [
       {
+        "label": "한국어",
+        "href": "/ko"
+      },
+      {
         "type": "github",
         "href": "https://github.com/xdr-labs"
       }
