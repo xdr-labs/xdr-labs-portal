@@ -1,45 +1,56 @@
 ---
 title: "OpenXDR KVM Installer"
-description: "Stellar Cyber Data Processor, Sensor, High-Performance Sensor 및 AIO + Sensor의 KVM 자동 배포 도구입니다."
+description: "Stellar Cyber Data Processor, Sensor, High-Performance Sensor 및 AIO + Sensor를 KVM에 배포하기 위한 전용 문서와 자동화 Workflow입니다."
 ---
 
 # OpenXDR KVM Installer
 
-OpenXDR KVM Installer는 KVM Host를 준비하고 Stellar Cyber OpenXDR 구성 요소를 배포하는 과정을 자동화합니다. Interactive Menu와 상태 추적을 사용하여 설정을 검증하고 전체 배포를 수행하거나, 필요한 Reboot 후 이어서 실행할 수 있습니다.
+OpenXDR KVM Installer는 KVM Host를 준비하고 Stellar Cyber OpenXDR 구성 요소를 배포하기 위한 Script 기반 자동화 Framework입니다. 전용 문서는 **[kvm.xdr.ooo](https://kvm.xdr.ooo/ko)**에서 제공합니다.
 
-## 배포 대상
+Interactive Menu와 Persistent State를 사용하여 Safe Mode에서 설정을 검증하고, 전체 배포 또는 개별 Step을 실행하며, 필요한 Reboot 후 다음 미완료 Step부터 Resume할 수 있습니다.
 
-- **Data Processor (DP)** — Standalone DP 배포
-- **Sensor** — Standard Modular Sensor 배포
+## 배포 경로
+
+- **Data Processor (DP)** — DL-master / DA-master, Storage, Network, SR-IOV 또는 Bridge 기반 Cluster Network, CPU Placement 및 NFS Backup 구성
+- **Standard Sensor** — NAT 또는 Bridge Management Network와 PCI 또는 Bridge 방식 SPAN 연결을 사용하는 Modular Sensor 배포
 - **High-Performance Sensor** — Dual VM / NUMA 기반 고성능 Sensor 배포
-- **AIO + Sensor** — 한 Host에 AIO Data Processor와 Sensor 통합 배포
+- **AIO + Sensor** — 하나의 KVM Host에 AIO Data Processor와 Sensor 통합 배포
 
-## 자동화 범위
+## 안전한 배포 흐름
+
+```text
+Hardware 확인
+  → DRY_RUN을 유지한 상태에서 Installer 입력값 구성
+  → DRY_RUN으로 전체 흐름 점검
+  → Full Configuration Validation
+  → FAIL 해결 및 WARN 검토
+  → NIC, IP, Disk, Version, Credential 재확인
+  → DRY_RUN=0 전환
+  → 전체 Step 또는 개별 Step 실행
+  → 필요한 시점에 Reboot
+  → 동일 Installer 재실행 후 Resume
+  → 배포 후 Validation
+```
+
+<Warning>
+  `DRY_RUN=0`부터는 Network, Storage, Kernel, Virtualization 설정과 VM 정의가 실제로 변경될 수 있습니다. 원격 Host의 Network를 변경하기 전에 Console 또는 Out-of-Band 접근을 확보하십시오.
+</Warning>
+
+## Host Platform
+
+현재 문서의 기본 설치 경로는 **Ubuntu Server 24.04 LTS**입니다. Installer Source에는 이전 Ubuntu/OpenXDR Release용 Compatibility Path가 남아 있을 수 있지만, Legacy 배포는 24.04 절차가 그대로 적용된다고 가정하지 말고 현재 구현과 대상 Release 지원 범위를 확인해야 합니다.
 
 <CardGroup cols={2}>
-  <Card title="Host 준비" icon="microchip">
-    Hardware/NIC 감지, Virtualization 확인, Kernel 준비, KVM/libvirt, Storage 및 System Tuning을 자동화합니다.
+  <Card title="KVM Installer 한국어 문서" icon="book-open" href="https://kvm.xdr.ooo/ko">
+    Installer 선택, 배포 설계, 요구사항, Ubuntu 준비, DRY_RUN/Validation 및 개별 Installer 절차를 확인합니다.
   </Card>
-  <Card title="Network 구성" icon="network-wired">
-    Management/VM Network, 필요한 경우 SR-IOV, Sensor 배포의 Bridge/NAT 선택 및 SPAN Interface 구성을 처리합니다.
+  <Card title="English Documentation" icon="language" href="https://kvm.xdr.ooo/">
+    영문 Deployment, Operations, Recovery 및 Reference 문서를 확인합니다.
   </Card>
-  <Card title="VM 배포" icon="server">
-    Image 준비, LVM Storage, VM 생성, Resource 할당, PCI Passthrough 및 Component별 Deployment 절차를 수행합니다.
+  <Card title="Installer Source" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    현재 Installer 구현을 확인합니다.
   </Card>
-  <Card title="안전한 운영" icon="rotate">
-    DRY_RUN, Configuration Validation, Step별 실행, Persistent State, Logging 및 Reboot 후 Resume를 지원합니다.
-  </Card>
-</CardGroup>
-
-## 기본 요구사항
-
-지원 Host OS는 Installer에 따라 다릅니다. 현재 Sensor/AIO 경로는 Ubuntu Server 20.04, 22.04, 24.04를 사용하며 일부 DP Workflow는 Ubuntu 16.04도 지원합니다. Root 권한과 Hardware Virtualization이 필요하며 SR-IOV/PCI Passthrough를 사용하는 경우 BIOS에서 IOMMU가 활성화되어야 합니다. Package와 Stellar Component Image 다운로드를 위해 일반적으로 Internet Access도 필요합니다.
-
-<CardGroup cols={2}>
-  <Card title="Stellar Appliance CLI" icon="terminal" href="/ko/products/stellar-appliance-cli">
-    배포 후 통합 `aella_cli`로 KVM Host를 운영합니다.
-  </Card>
-  <Card title="Source Repository" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
-    Installer Script, 세부 요구사항 및 현재 구현을 확인합니다.
+  <Card title="Documentation Source" icon="github" href="https://github.com/xdr-labs/openxdr-kvm-installer-docs">
+    문서 Source와 변경 이력을 확인합니다.
   </Card>
 </CardGroup>
