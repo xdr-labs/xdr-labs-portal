@@ -1,45 +1,56 @@
 ---
 title: "OpenXDR KVM Installer"
-description: "Automated KVM deployment for Stellar Cyber Data Processor, Sensor, high-performance Sensor, and AIO + Sensor environments."
+description: "Dedicated documentation and automation workflows for deploying Stellar Cyber Data Processor, Sensor, High-Performance Sensor, and AIO + Sensor on KVM."
 ---
 
 # OpenXDR KVM Installer
 
-OpenXDR KVM Installer automates preparation of a KVM host and deployment of Stellar Cyber OpenXDR components. It provides interactive, menu-driven workflows with state tracking so operators can validate configuration, execute the full deployment, or resume after required reboots.
+OpenXDR KVM Installer is a script-based automation framework for preparing KVM hosts and deploying Stellar Cyber OpenXDR components. The dedicated documentation now lives at **[kvm.xdr.ooo](https://kvm.xdr.ooo/)**.
 
-## What it deploys
+It uses interactive, menu-driven workflows with persistent state so operators can validate configuration in safe mode, execute the complete deployment or individual steps, reboot when required, and resume from the next incomplete step.
 
-- **Data Processor (DP)** — standalone DP deployment
-- **Sensor** — standard modular Sensor deployment
-- **High-performance Sensor** — dual-VM / NUMA-oriented high-throughput Sensor deployment
-- **AIO + Sensor** — integrated AIO Data Processor and Sensor deployment on one host
+## Deployment paths
 
-## What it automates
+- **Data Processor (DP)** — DL-master / DA-master deployment with storage, networking, SR-IOV or bridge-based cluster networking, CPU placement, and NFS backup configuration
+- **Standard Sensor** — modular Sensor deployment with NAT or bridge management networking and PCI or bridge SPAN attachment
+- **High-Performance Sensor** — dual-VM / NUMA-oriented high-throughput Sensor deployment
+- **AIO + Sensor** — integrated AIO Data Processor and Sensor deployment on one KVM host
+
+## Safe deployment workflow
+
+```text
+Check hardware
+  → Configure installer inputs with DRY_RUN enabled
+  → Review the complete DRY_RUN flow
+  → Run Full Configuration Validation
+  → Resolve FAIL results and review WARN results
+  → Re-check NIC, IP, disk, version, and credentials
+  → Set DRY_RUN=0
+  → Run all steps or a specific step
+  → Reboot when required
+  → Relaunch the same installer and resume
+  → Perform post-deployment validation
+```
+
+<Warning>
+  With `DRY_RUN=0`, the installer can modify networking, storage, kernel settings, virtualization configuration, and VM definitions. Ensure console or out-of-band access is available before changing remote host networking.
+</Warning>
+
+## Host platform
+
+The primary documented installation path is **Ubuntu Server 24.04 LTS**. The installer source may retain compatibility paths for older Ubuntu/OpenXDR releases, but legacy deployments should verify the current implementation and target-release support rather than assuming the 24.04 procedure applies unchanged.
 
 <CardGroup cols={2}>
-  <Card title="Host preparation" icon="microchip">
-    Hardware/NIC detection, virtualization checks, kernel preparation, KVM/libvirt, storage, and system tuning.
+  <Card title="Open KVM Installer documentation" icon="book-open" href="https://kvm.xdr.ooo/">
+    Use the complete English deployment, operations, recovery, and reference documentation.
   </Card>
-  <Card title="Networking" icon="network-wired">
-    Management and VM networking, SR-IOV where applicable, bridge/NAT choices for Sensor deployments, and SPAN interface handling.
+  <Card title="한국어 문서" icon="language" href="https://kvm.xdr.ooo/ko">
+    한국어 설치·운영 가이드에서 Installer 선택, Ubuntu 준비, DRY_RUN/Validation, 개별 설치 절차를 확인합니다.
   </Card>
-  <Card title="VM deployment" icon="server">
-    Image preparation, LVM storage, VM creation, CPU/resource assignment, PCI passthrough, and component-specific deployment steps.
+  <Card title="Installer source" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
+    Review the current installer implementation.
   </Card>
-  <Card title="Safe operations" icon="rotate">
-    DRY_RUN support, configuration validation, step-level execution, persistent state, logging, and resume after reboot.
-  </Card>
-</CardGroup>
-
-## Basic requirements
-
-Supported host OS versions depend on the selected installer. Ubuntu Server 20.04, 22.04, and 24.04 are used by the current Sensor/AIO paths; some DP workflows also support Ubuntu 16.04. Root access and hardware virtualization are required. IOMMU must be enabled for SR-IOV or PCI passthrough, and Internet access is normally required to download packages and Stellar component images.
-
-<CardGroup cols={2}>
-  <Card title="Stellar Appliance CLI" icon="terminal" href="/products/stellar-appliance-cli">
-    Operate KVM hosts after deployment with the unified `aella_cli` interface.
-  </Card>
-  <Card title="Source repository" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
-    Review installer scripts, detailed requirements, and current implementation.
+  <Card title="Documentation source" icon="github" href="https://github.com/xdr-labs/openxdr-kvm-installer-docs">
+    Review or contribute to the documentation.
   </Card>
 </CardGroup>
