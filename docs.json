@@ -58,7 +58,6 @@
           {
             "group": "Product Pages",
             "pages": [
-              "products/openxdr-kvm-installer",
               "products/stellar-appliance-cli",
               "products/xdr-lab-appliance"
             ],
@@ -83,7 +82,6 @@
           {
             "group": "제품 상세",
             "pages": [
-              "ko/products/openxdr-kvm-installer",
               "ko/products/stellar-appliance-cli",
               "ko/products/xdr-lab-appliance"
             ],
