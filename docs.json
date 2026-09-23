@@ -96,5 +96,17 @@
     "dark": "/logo/dark.svg",
     "href": "https://xdr.ooo"
   },
-  "favicon": "/favicon.svg"
+  "favicon": "/favicon.svg",
+  "redirects": [
+    {
+      "source": "/products/openxdr-kvm-installer",
+      "destination": "https://kvm.xdr.ooo/",
+      "permanent": true
+    },
+    {
+      "source": "/ko/products/openxdr-kvm-installer",
+      "destination": "https://kvm.xdr.ooo/ko",
+      "permanent": true
+    }
+  ]
 }
