@@ -10,7 +10,7 @@ Stellar Appliance CLI는 OpenXDR KVM Installer로 배포된 KVM Host를 하나�
 ## 주요 관리 기능
 
 - Network Interface, IP, Gateway 및 DNS
-- 여러 Linux Time Service를 지원하는 NTP 설정
+- NTPsec 기반 NTP 설정
 - Staging 방식의 ACL / Firewall Policy 및 Rule 적용
 - Hostname, Timezone, System Information 및 Service 제어
 - VM Console과 VM Autostart
@@ -25,6 +25,8 @@ flowchart LR
   C --> N[Network / NTP / ACL]
   C --> V[VM / Service 운영]
 ```
+
+현재 구현의 NTP Backend는 **NTPsec만 지원**합니다. Chrony, systemd-timesyncd, legacy ntp로 자동 전환하지 않습니다.
 
 현재 Repository는 주로 Linux KVM Host를 대상으로 하며 Python 3.10+와 System 변경 작업을 위한 sudo 권한을 요구합니다.
 
