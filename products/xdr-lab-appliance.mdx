@@ -37,7 +37,14 @@ The lab is designed to be destroyed and rebuilt from source-controlled configura
 
 ## Host requirements
 
-The documented architecture uses Ubuntu 24.04 with KVM/libvirt and Open vSwitch. When the appliance itself runs as a VM, nested virtualization must be exposed by the outer hypervisor. Traffic mirroring and nested L2 operation also require appropriate virtual-switch security settings.
+The documented architecture uses Ubuntu 24.04 with KVM/libvirt and Open vSwitch.
+
+- **Reduced footprint:** about 4 vCPU / 16 GiB RAM / 200 GiB disk
+- **Recommended for all four declared VMs together:** about 12+ vCPU / 24–32 GiB RAM plus snapshot/disk headroom
+
+When the appliance itself runs as a VM, nested virtualization must be exposed by the outer hypervisor. Traffic mirroring and nested L2 operation also require appropriate virtual-switch security settings.
+
+Use `docs/deployment-readiness.md` in the source repository for the current sizing and topology readiness details.
 
 <Card title="Source repository" icon="github" href="https://github.com/xdr-labs/xdr-lab-appliance">
   Review the authoritative lab architecture, deployment-readiness documents, runtime validation, and operator workflows.
