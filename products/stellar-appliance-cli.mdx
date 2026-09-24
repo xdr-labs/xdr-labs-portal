@@ -10,7 +10,7 @@ Stellar Appliance CLI provides a single `aella_cli` interface for operating KVM 
 ## What it manages
 
 - network interfaces, IP addressing, gateway, and DNS
-- NTP configuration across supported Linux time services
+- NTP configuration through the NTPsec backend
 - staged ACL / firewall policy and rule application
 - hostname, timezone, system information, and service control
 - VM console access and VM autostart
@@ -25,6 +25,8 @@ flowchart LR
   C --> N[Network / NTP / ACL]
   C --> V[VM / Service Operations]
 ```
+
+The current implementation supports **NTPsec only** for NTP management; it does not automatically switch to chrony, systemd-timesyncd, or legacy ntp.
 
 The CLI is primarily intended for Linux KVM hosts. The current repository documents Python 3.10+ and sudo privileges for system-changing operations.
 
