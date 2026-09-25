@@ -15,6 +15,8 @@ Central Mintlify portal for XDR Labs projects and related DataRelay Labs product
 - OpenXDR KVM Installer — https://kvm.xdr.ooo/
 - Stellar Alert & Case Relay — https://stellar-relay.xdr.ooo/
 - Stellar Appliance CLI — https://xdr.ooo/products/stellar-appliance-cli
+- Stellar Data Exporter — https://xdr.ooo/products/stellar-data-exporter
+- Stellar Data Exporter User Guide — https://xdr.ooo/products/stellar-data-exporter-guide
 - XDR Lab Appliance — https://xdr.ooo/products/xdr-lab-appliance
 
 ## Repository structure

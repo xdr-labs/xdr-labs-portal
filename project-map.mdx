@@ -25,6 +25,7 @@ flowchart TD
 
     subgraph DATA[Data & Integration]
       CTRL[Data Relay Control\nEnterprise data processing + delivery]
+      EXP[Stellar Data Exporter\nQuery + export raw data]
       SYS[Stellar Alert & Case Relay\nForward alerts and cases]
     end
 
@@ -35,6 +36,7 @@ flowchart TD
     P --> XLAB
     P --> DSP
     P --> CTRL
+    P --> EXP
     P --> SYS
 
     KVM --> CLI
@@ -58,6 +60,7 @@ This is a **toolbox, not a single bundled platform**. Projects can be used indep
 | **OpenXDR KVM Installer** | DP/Sensor/AIO deployment on KVM | [kvm.xdr.ooo](https://kvm.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
 | **Stellar Appliance CLI** | KVM appliance operations | [Product page](/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
 | **XDR Lab Appliance** | Rebuildable XDR/NDR lab | [Product page](/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Data Exporter** | Multi-source Stellar raw-data query, Preview, and file/object/SFTP export | [Product page](/products/stellar-data-exporter) · [User guide](/products/stellar-data-exporter-guide) | [GitHub](https://github.com/xdr-labs/stellar-data-exporter) |
 | **Stellar Alert & Case Relay** | Stellar Alert/Case forwarding into existing SIEM/SOC workflows | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## Quick navigation

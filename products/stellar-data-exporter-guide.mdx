@@ -1,0 +1,393 @@
+---
+title: "Stellar Data Exporter User Guide"
+description: "Scenario-based examples for common Stellar Cyber raw-data query and export workflows."
+---
+
+# Stellar Data Exporter User Guide
+
+The easiest way to use Stellar Data Exporter is to start from the job you want to accomplish.
+
+Pick a scenario below and follow it from top to bottom.
+
+## Before you start
+
+Run the exporter:
+
+```bash
+git clone https://github.com/xdr-labs/stellar-data-exporter.git
+cd stellar-data-exporter
+uv sync --frozen
+uv run stellar-data-exporter
+```
+
+Open:
+
+```text
+http://127.0.0.1:8787
+```
+
+Start in **Basic** mode. Use **Advanced** only when a scenario tells you to.
+
+---
+
+## Scenario 1 — Export the last hour of Alerts to CSV
+
+Use this when someone asks:
+
+> “Give me the Alerts from the last hour as a CSV file.”
+
+### Do this
+
+1. Open **Stellar Cyber**.
+2. Enter your Stellar Cyber host.
+3. Select your credential type:
+   - **Root Scope** → Email + All-Access Token
+   - **User Scope** → User API Key
+4. Select **Alerts**.
+5. Choose **Last 1 hour**.
+6. In Query:
+   - User Scope: use `*:*`
+   - Root Scope: you can also use `*:*` in Stellar Cyber Query mode
+7. Click **Preview 100 records**.
+8. Confirm the returned records look correct.
+9. Select **CSV**.
+10. Select **Download**.
+11. Click **Run export**.
+
+### Result
+
+You get a CSV file containing Alerts from the selected one-hour window.
+
+<Tip>
+  This is the best first test after installation. Keep the time range small and confirm Preview before exporting more data.
+</Tip>
+
+---
+
+## Scenario 2 — Use a User API Key to find specific raw data
+
+Use this when you have a **User Scope API Key** and want to search raw data directly.
+
+Example request:
+
+> “Find New events from the last 24 hours.”
+
+### Do this
+
+1. Select **User Scope**.
+2. Paste the **User API Key**.
+3. Select the data source you want, for example **Alerts**.
+4. Choose **Last 24 hours**.
+5. In **Stellar Cyber Query**, enter:
+
+```text
+event_status:New
+```
+
+6. Click **Preview 100 records**.
+7. Check the sample records.
+8. Choose **JSON** or **CSV**.
+9. Select **Download**.
+10. Click **Run export**.
+
+### Result
+
+The exporter uses the User API Key for raw-data search and exports only the records matching the query and time range.
+
+<Note>
+  User Scope automatically uses Stellar Cyber Query mode. You do not need an account email for this flow.
+</Note>
+
+---
+
+## Scenario 3 — Investigate login failures from one network
+
+Use this during an investigation when you want to narrow the export before downloading it.
+
+Example request:
+
+> “Show me login failures from the 10.10.10.0/24 network today.”
+
+### Do this
+
+1. Select the relevant data source, such as **Windows Events**, **Linux Events**, or **Alerts**.
+2. Set the time range to the period you want to investigate.
+3. Use a Stellar Cyber Query such as:
+
+```text
+event_name:"Login Failure" AND srcip:10.10.10.*
+```
+
+4. Click **Preview 100 records**.
+5. Check:
+   - the matched count
+   - sample timestamps
+   - source IP values
+   - event names
+6. If the result is too broad, add another condition.
+7. When the result looks right, select **CSV**.
+8. Click **Run export**.
+
+### Result
+
+You get only the investigation data you actually need instead of exporting a large raw-data window first.
+
+---
+
+## Scenario 4 — Export multiple data sources into one JSON file
+
+Use this when you need a combined dataset from several Stellar Cyber source families.
+
+Example request:
+
+> “Collect Alerts, Traffic, and Windows Events for the same incident window.”
+
+### Do this
+
+1. Select:
+   - **Alerts**
+   - **Traffic**
+   - **Windows Events**
+2. Set the incident **Start** and **End** time.
+3. Enter the query condition that all selected sources should use.
+4. Click **Preview 100 records**.
+5. Open **Advanced** and check **Resolved indices** if you want to confirm the actual target indices.
+6. Select **JSON**.
+7. Select **Download**.
+8. Click **Run export**.
+
+### Result
+
+The exporter queries the selected source families for the same time window and creates one export result.
+
+<Tip>
+  If one source produces much more data than the others, first test each source separately with Preview.
+</Tip>
+
+---
+
+## Scenario 5 — Export only the fields needed for a report
+
+Use this when the raw records contain too many fields.
+
+Example request:
+
+> “I only need timestamp, source IP, destination IP, event name, and severity.”
+
+### Do this
+
+1. Build the query and run **Preview** first.
+2. Switch to **Advanced**.
+3. In the field selector, choose only the fields needed for the report.
+4. Select **CSV**.
+5. Keep **Header** enabled.
+6. Run the export.
+
+### Result
+
+The CSV contains only the selected fields and is easier to open in Excel or send to another team.
+
+---
+
+## Scenario 6 — Send a large export to S3 or Cloudflare R2
+
+Use this when the result is too large for a browser download or needs to go directly to object storage.
+
+Example request:
+
+> “Export seven days of Alerts to our R2 bucket.”
+
+### Do this
+
+1. Select **Alerts**.
+2. Choose **Last 7 days** or set the exact Start/End time.
+3. Enter the query.
+4. Run **Preview** with the smaller sample first.
+5. Switch to **Advanced**.
+6. Optional:
+   - enable **gzip**
+   - set a **Max file size**
+   - select only required fields
+7. Select **S3-compatible** as Destination.
+8. Enter:
+   - Endpoint URL
+   - Region
+   - Bucket
+   - Prefix
+   - Access Key
+   - Secret Key
+9. Test the destination.
+10. Click **Run export**.
+11. Watch **Records**, **Bytes**, **Files**, and **Progress** until the job completes.
+
+### Result
+
+The exporter sends the data directly to S3/R2/MinIO instead of downloading the full dataset through the browser.
+
+<Tip>
+  For a very large export, set a file-size limit so the result is split into numbered files.
+</Tip>
+
+---
+
+## Scenario 7 — Split a large export and send it to SFTP
+
+Use this when another system expects files over SFTP.
+
+Example request:
+
+> “Send the last 24 hours of data to our SFTP server in 500 MB parts.”
+
+### Do this
+
+1. Build the query and verify it with **Preview**.
+2. Switch to **Advanced**.
+3. Select the output format, for example **NDJSON** or **CSV**.
+4. Set **Max file size** to the desired limit.
+5. Optional: enable **gzip**.
+6. Select **SFTP**.
+7. Enter:
+   - Host
+   - Port
+   - Username
+   - Password or Private Key
+   - Remote Path
+8. Test the destination.
+9. Click **Run export**.
+
+### Result
+
+The exporter writes numbered files to the remote SFTP path.
+
+If a supported split export is interrupted, use the job history to retry/resume after re-entering the required credentials.
+
+---
+
+## Scenario 8 — Use Elasticsearch DSL with a Root Scope token
+
+Use this when you already have an Elasticsearch DSL query and a Root Scope credential.
+
+Example request:
+
+> “Run this existing DSL query for the selected time period and export the result.”
+
+### Do this
+
+1. Select **Root Scope**.
+2. Enter the account email and **All-Access Token**.
+3. Select the data source.
+4. Set Start/End time.
+5. Select **Elasticsearch DSL**.
+6. Paste your query, for example:
+
+```json
+{
+  "query": {
+    "term": {
+      "event_status": "New"
+    }
+  }
+}
+```
+
+7. Click **Validate JSON**.
+8. Click **Preview 100 records**.
+9. Confirm the result.
+10. Choose the output format and destination.
+11. Run the export.
+
+### Result
+
+Your DSL condition is combined with the time range selected in the UI and used for the export.
+
+---
+
+## Scenario 9 — Create a recurring export to S3 or SFTP
+
+Use this when the same export must run repeatedly.
+
+Example request:
+
+> “Every hour, send the next hour of Alerts to S3.”
+
+### Do this
+
+1. First configure the export as a normal manual S3/SFTP job.
+2. Run it once and make sure it succeeds.
+3. Switch to **Advanced**.
+4. Create a schedule.
+5. Set:
+   - schedule name
+   - interval
+   - export window
+   - S3 or SFTP destination
+6. Save the schedule.
+7. Use **Run now** once to verify it.
+8. Leave the schedule **Enabled**.
+
+### Result
+
+The exporter continues from the previous successful window so scheduled runs can progress through contiguous time ranges.
+
+<Warning>
+  Scheduled jobs store their configuration encrypted. In production, configure a stable `STELLAR_EXPORTER_SCHEDULE_KEY`.
+</Warning>
+
+---
+
+## Scenario 10 — Troubleshoot an export that does not look right
+
+Use this when Preview is empty, the count is unexpected, or an export is much larger than expected.
+
+### Do this
+
+1. Switch to **Advanced**.
+2. Open **Query Inspector**.
+3. Check:
+   - selected sources
+   - resolved indices
+   - Start/End time
+   - effective query
+   - matched record count
+   - export plan
+4. Reduce the time range.
+5. Run Preview again.
+6. Add query conditions one at a time.
+7. Export only after the Preview result looks correct.
+
+### Common fixes
+
+| Problem | Try this |
+| --- | --- |
+| Authentication failed | Verify Root Scope vs User Scope and re-enter the matching credential |
+| Preview returns 0 | Widen the time range or simplify the query |
+| Too many results | Narrow the time range or add query conditions |
+| Elasticsearch DSL is disabled | You selected User Scope; use Stellar Cyber Query |
+| Browser export is too large | Use S3/SFTP, gzip, field selection, or file splitting |
+| S3/SFTP fails | Test the destination and recheck credentials/path settings |
+
+---
+
+## Which scenario should I use?
+
+| Goal | Start with |
+| --- | --- |
+| Quick one-time export | Scenario 1 |
+| User API Key raw-data query | Scenario 2 |
+| Incident investigation | Scenario 3 |
+| Multi-source collection | Scenario 4 |
+| Clean report with selected fields | Scenario 5 |
+| Large object-storage export | Scenario 6 |
+| Large SFTP delivery | Scenario 7 |
+| Existing Elasticsearch DSL | Scenario 8 |
+| Repeated automated export | Scenario 9 |
+| Unexpected results / troubleshooting | Scenario 10 |
+
+<CardGroup cols={2}>
+  <Card title="Product Overview" icon="box" href="/products/stellar-data-exporter">
+    Review the product scope and major capabilities.
+  </Card>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/xdr-labs/stellar-data-exporter">
+    Source, tests, production deployment templates, and issue tracking.
+  </Card>
+</CardGroup>

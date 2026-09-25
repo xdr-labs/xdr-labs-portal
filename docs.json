@@ -59,6 +59,8 @@
             "group": "Product Pages",
             "pages": [
               "products/stellar-appliance-cli",
+              "products/stellar-data-exporter",
+              "products/stellar-data-exporter-guide",
               "products/xdr-lab-appliance"
             ],
             "icon": "box"
@@ -83,6 +85,8 @@
             "group": "제품 상세",
             "pages": [
               "ko/products/stellar-appliance-cli",
+              "ko/products/stellar-data-exporter",
+              "ko/products/stellar-data-exporter-guide",
               "ko/products/xdr-lab-appliance"
             ],
             "icon": "box"
