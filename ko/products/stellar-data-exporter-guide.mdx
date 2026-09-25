@@ -1,0 +1,402 @@
+---
+title: "Stellar Data Exporter 사용 설명서"
+description: "실제 업무 상황별 시나리오를 따라 Stellar Cyber Raw Data를 검색하고 Export하는 방법을 설명합니다."
+---
+
+# Stellar Data Exporter 사용 설명서
+
+Stellar Data Exporter는 기능을 하나씩 배우는 것보다 **지금 하려는 작업과 비슷한 시나리오를 골라 그대로 따라하는 방식**이 가장 쉽습니다.
+
+아래에서 목적에 맞는 시나리오를 선택하세요.
+
+## 시작하기 전에
+
+Exporter를 실행합니다.
+
+```bash
+git clone https://github.com/xdr-labs/stellar-data-exporter.git
+cd stellar-data-exporter
+uv sync --frozen
+uv run stellar-data-exporter
+```
+
+Browser에서 다음 주소를 엽니다.
+
+```text
+http://127.0.0.1:8787
+```
+
+처음에는 **Basic** Mode로 시작하세요. 각 시나리오에서 필요한 경우에만 **Advanced** Mode로 전환합니다.
+
+---
+
+## 시나리오 1 — 최근 1시간 Alert를 CSV로 받기
+
+다음과 같은 요청을 받았을 때 사용합니다.
+
+> “최근 1시간 Alert를 CSV 파일로 주세요.”
+
+### 따라하기
+
+1. **Stellar Cyber** 영역에 Host를 입력합니다.
+2. Credential Type을 선택합니다.
+   - **Root Scope** → Email + All-Access Token
+   - **User Scope** → User API Key
+3. Data Source에서 **Alerts**를 선택합니다.
+4. Time Range를 **Last 1 hour**로 선택합니다.
+5. Query에는 다음을 사용합니다.
+
+```text
+*:*
+```
+
+6. **Preview 100 records**를 실행합니다.
+7. 원하는 Alert가 보이는지 확인합니다.
+8. Output을 **CSV**로 선택합니다.
+9. Destination을 **Download**로 선택합니다.
+10. **Run export**를 실행합니다.
+
+### 결과
+
+선택한 최근 1시간 Alert가 CSV 파일로 Download됩니다.
+
+<Tip>
+  설치 후 첫 테스트는 이 시나리오가 가장 좋습니다. 먼저 짧은 시간 범위로 Preview를 확인한 뒤 더 큰 Export를 진행하세요.
+</Tip>
+
+---
+
+## 시나리오 2 — User API Key로 원하는 Raw Data 찾기
+
+**User Scope API Key**를 가지고 있고 Raw Data를 직접 검색하려는 경우입니다.
+
+예:
+
+> “최근 24시간 중 New 상태 Event만 찾아주세요.”
+
+### 따라하기
+
+1. **User Scope**를 선택합니다.
+2. **User API Key**를 입력합니다.
+3. Data Source에서 예를 들어 **Alerts**를 선택합니다.
+4. **Last 24 hours**를 선택합니다.
+5. **Stellar Cyber Query**에 다음을 입력합니다.
+
+```text
+event_status:New
+```
+
+6. **Preview 100 records**를 실행합니다.
+7. Sample Record를 확인합니다.
+8. **JSON** 또는 **CSV**를 선택합니다.
+9. Destination은 **Download**를 선택합니다.
+10. **Run export**를 실행합니다.
+
+### 결과
+
+User API Key를 사용해 Raw Data를 검색하고 Query와 Time Range에 해당하는 결과만 Export합니다.
+
+<Note>
+  User Scope는 Account Email이 필요하지 않습니다. Stellar Cyber Query Mode가 자동으로 선택됩니다.
+</Note>
+
+---
+
+## 시나리오 3 — 특정 네트워크의 Login Failure 조사하기
+
+Incident Investigation 중 범위를 좁혀서 데이터를 받고 싶을 때 사용합니다.
+
+예:
+
+> “오늘 10.10.10.0/24에서 발생한 Login Failure만 보고 싶습니다.”
+
+### 따라하기
+
+1. 조사할 Data Source를 선택합니다.
+   - Windows Events
+   - Linux Events
+   - Alerts
+2. 조사할 Start/End Time을 선택합니다.
+3. Stellar Cyber Query에 예를 들어 다음을 입력합니다.
+
+```text
+event_name:"Login Failure" AND srcip:10.10.10.*
+```
+
+4. **Preview 100 records**를 실행합니다.
+5. 다음 항목을 확인합니다.
+   - Timestamp
+   - Source IP
+   - Event Name
+   - 전체 Matching Count
+6. 결과가 너무 많으면 조건을 하나 더 추가합니다.
+7. 원하는 데이터가 맞으면 **CSV**를 선택합니다.
+8. **Run export**를 실행합니다.
+
+### 결과
+
+전체 Raw Data를 먼저 내려받지 않고 실제 조사에 필요한 Record만 받을 수 있습니다.
+
+---
+
+## 시나리오 4 — 여러 Data Source를 한 번에 JSON으로 Export하기
+
+같은 Incident 시간대의 여러 Source를 함께 수집할 때 사용합니다.
+
+예:
+
+> “같은 시간대의 Alerts, Traffic, Windows Events를 같이 모아주세요.”
+
+### 따라하기
+
+1. Data Source에서 다음을 같이 선택합니다.
+   - **Alerts**
+   - **Traffic**
+   - **Windows Events**
+2. Incident의 **Start**와 **End** Time을 입력합니다.
+3. 공통으로 적용할 Query를 입력합니다.
+4. **Preview 100 records**를 실행합니다.
+5. 필요하면 **Advanced** → **Resolved indices**에서 실제 Target Index를 확인합니다.
+6. Output은 **JSON**을 선택합니다.
+7. Destination은 **Download**를 선택합니다.
+8. **Run export**를 실행합니다.
+
+### 결과
+
+선택한 여러 Source Family를 동일한 Time Range와 Query로 조회한 결과를 하나의 Export로 받을 수 있습니다.
+
+<Tip>
+  한 Source의 데이터가 너무 많다면 먼저 Source별로 Preview한 뒤 Multi-Source Export를 실행하세요.
+</Tip>
+
+---
+
+## 시나리오 5 — 보고서에 필요한 Field만 CSV로 받기
+
+Raw Record의 Field가 너무 많고 보고서에 필요한 값만 받고 싶을 때 사용합니다.
+
+예:
+
+> “timestamp, source IP, destination IP, event name, severity만 필요합니다.”
+
+### 따라하기
+
+1. Query를 작성하고 **Preview**를 먼저 실행합니다.
+2. **Advanced**로 전환합니다.
+3. Field Selector에서 필요한 Field만 선택합니다.
+4. Output은 **CSV**를 선택합니다.
+5. **Header**는 Enabled 상태로 둡니다.
+6. Export를 실행합니다.
+
+### 결과
+
+Excel이나 다른 팀에 전달하기 쉬운 최소 Field CSV를 받을 수 있습니다.
+
+---
+
+## 시나리오 6 — 7일치 데이터를 S3 또는 Cloudflare R2로 보내기
+
+Browser Download로 받기에는 데이터가 크거나 Object Storage로 바로 전달해야 할 때 사용합니다.
+
+예:
+
+> “7일치 Alerts를 R2 Bucket으로 Export하세요.”
+
+### 따라하기
+
+1. **Alerts**를 선택합니다.
+2. **Last 7 days** 또는 정확한 Start/End Time을 선택합니다.
+3. Query를 입력합니다.
+4. 먼저 **Preview**를 실행합니다.
+5. **Advanced**로 전환합니다.
+6. 필요하면:
+   - **gzip** Enable
+   - **Max file size** 설정
+   - 필요한 Field만 선택
+7. Destination에서 **S3-compatible**을 선택합니다.
+8. 다음 값을 입력합니다.
+   - Endpoint URL
+   - Region
+   - Bucket
+   - Prefix
+   - Access Key
+   - Secret Key
+9. Destination Test를 실행합니다.
+10. **Run export**를 실행합니다.
+11. Records / Bytes / Files / Progress를 확인합니다.
+
+### 결과
+
+대용량 결과를 Browser를 거치지 않고 AWS S3, Cloudflare R2, MinIO 등으로 직접 보냅니다.
+
+<Tip>
+  데이터가 매우 크다면 Max File Size를 지정해 여러 Part로 나누는 것이 좋습니다.
+</Tip>
+
+---
+
+## 시나리오 7 — 큰 Export를 여러 File로 나눠 SFTP 전송하기
+
+외부 시스템이 SFTP로 파일을 받는 환경에서 사용합니다.
+
+예:
+
+> “최근 24시간 데이터를 500 MB씩 나눠 SFTP로 보내세요.”
+
+### 따라하기
+
+1. Query를 만들고 **Preview**로 먼저 검증합니다.
+2. **Advanced**로 전환합니다.
+3. Output Format을 선택합니다.
+   - NDJSON
+   - CSV
+4. **Max file size**를 원하는 크기로 설정합니다.
+5. 필요하면 **gzip**을 Enable합니다.
+6. Destination을 **SFTP**로 선택합니다.
+7. 다음 값을 입력합니다.
+   - Host
+   - Port
+   - Username
+   - Password 또는 Private Key
+   - Remote Path
+8. Destination Test를 실행합니다.
+9. **Run export**를 실행합니다.
+
+### 결과
+
+Remote Path에 번호가 붙은 여러 File이 생성됩니다.
+
+지원되는 Split Export가 중단되면 Job History에서 필요한 Credential을 다시 입력한 뒤 Retry/Resume할 수 있습니다.
+
+---
+
+## 시나리오 8 — 기존 Elasticsearch DSL을 그대로 사용하기
+
+이미 사용 중인 Elasticsearch DSL Query가 있고 Root Scope Credential이 있을 때 사용합니다.
+
+예:
+
+> “이 DSL Query를 지정된 시간대에 실행해서 결과를 Export하세요.”
+
+### 따라하기
+
+1. **Root Scope**를 선택합니다.
+2. Account Email과 **All-Access Token**을 입력합니다.
+3. Data Source를 선택합니다.
+4. Start/End Time을 설정합니다.
+5. **Elasticsearch DSL**을 선택합니다.
+6. Query를 붙여 넣습니다.
+
+예:
+
+```json
+{
+  "query": {
+    "term": {
+      "event_status": "New"
+    }
+  }
+}
+```
+
+7. **Validate JSON**을 실행합니다.
+8. **Preview 100 records**를 실행합니다.
+9. 결과를 확인합니다.
+10. Output과 Destination을 선택합니다.
+11. Export를 실행합니다.
+
+### 결과
+
+기존 DSL 조건에 UI에서 선택한 Time Range를 결합해서 Export합니다.
+
+---
+
+## 시나리오 9 — 매시간 자동으로 S3/SFTP에 Export하기
+
+같은 Export를 주기적으로 반복해야 할 때 사용합니다.
+
+예:
+
+> “매시간 새로운 Alert 데이터를 S3로 보내세요.”
+
+### 따라하기
+
+1. 먼저 일반 S3/SFTP Export를 한 번 구성합니다.
+2. 실제 Manual Export를 실행해서 성공하는지 확인합니다.
+3. **Advanced**로 전환합니다.
+4. Schedule을 생성합니다.
+5. 다음을 설정합니다.
+   - Schedule Name
+   - Interval
+   - Export Window
+   - S3 또는 SFTP Destination
+6. Schedule을 저장합니다.
+7. **Run now**로 한 번 검증합니다.
+8. 정상 동작하면 **Enabled** 상태로 둡니다.
+
+### 결과
+
+이전 성공 시점 이후의 연속된 Time Window를 기준으로 정기 Export가 실행됩니다.
+
+<Warning>
+  Scheduled Export는 Credential을 Encrypted At Rest로 저장합니다. 운영 환경에서는 `STELLAR_EXPORTER_SCHEDULE_KEY`에 고정된 Master Key를 설정하세요.
+</Warning>
+
+---
+
+## 시나리오 10 — Preview나 Export 결과가 이상할 때 확인하기
+
+Preview가 비어 있거나 Record Count가 예상과 다르거나 Export가 너무 클 때 사용합니다.
+
+### 따라하기
+
+1. **Advanced**로 전환합니다.
+2. **Query Inspector**를 엽니다.
+3. 다음을 확인합니다.
+   - 선택한 Data Source
+   - Resolved Indices
+   - Start/End Time
+   - Effective Query
+   - Matched Record Count
+   - Export Plan
+4. Time Range를 줄입니다.
+5. Preview를 다시 실행합니다.
+6. Query 조건을 하나씩 추가합니다.
+7. Preview 결과가 맞을 때만 Export를 실행합니다.
+
+### 자주 해결되는 방법
+
+| 문제 | 먼저 해볼 것 |
+| --- | --- |
+| Authentication failed | Root/User Scope 선택과 입력한 Credential Type이 맞는지 확인 |
+| Preview가 0건 | Time Range를 넓히거나 Query를 단순화 |
+| 결과가 너무 많음 | Time Range를 줄이거나 Query Condition 추가 |
+| Elasticsearch DSL이 Disabled | User Scope이므로 Stellar Cyber Query 사용 |
+| Browser Export가 너무 큼 | S3/SFTP, gzip, Field 선택, File Split 사용 |
+| S3/SFTP 실패 | Destination Test 후 Credential/Path 설정 재확인 |
+
+---
+
+## 어떤 시나리오부터 보면 되나요?
+
+| 목적 | 시나리오 |
+| --- | --- |
+| 가장 간단한 1회성 Export | 시나리오 1 |
+| User API Key 사용 | 시나리오 2 |
+| Incident 조사 | 시나리오 3 |
+| 여러 Source를 한 번에 수집 | 시나리오 4 |
+| 필요한 Field만 보고서로 Export | 시나리오 5 |
+| 대용량 S3/R2 Export | 시나리오 6 |
+| 대용량 SFTP Delivery | 시나리오 7 |
+| 기존 Elasticsearch DSL 사용 | 시나리오 8 |
+| 정기 자동 Export | 시나리오 9 |
+| 결과가 이상할 때 Troubleshooting | 시나리오 10 |
+
+<CardGroup cols={2}>
+  <Card title="제품 개요" icon="box" href="/ko/products/stellar-data-exporter">
+    제품 범위와 주요 기능을 확인합니다.
+  </Card>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/xdr-labs/stellar-data-exporter">
+    Source, Test, Production Deployment Template 및 Issue를 확인합니다.
+  </Card>
+</CardGroup>

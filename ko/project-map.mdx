@@ -25,6 +25,7 @@ flowchart TD
 
     subgraph DATA[Data & Integration]
       CTRL[Data Relay Control\nEnterprise Data Processing + Delivery]
+      EXP[Stellar Data Exporter\nRaw Data Query + Export]
       SYS[Stellar Alert & Case Relay\nAlert / Case 전달]
     end
 
@@ -35,6 +36,7 @@ flowchart TD
     P --> XLAB
     P --> DSP
     P --> CTRL
+    P --> EXP
     P --> SYS
 
     KVM --> CLI
@@ -58,6 +60,7 @@ flowchart TD
 | **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | [kvm.xdr.ooo](https://kvm.xdr.ooo/ko) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
 | **Stellar Appliance CLI** | KVM Appliance 운영 | [제품 페이지](/ko/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
 | **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | [제품 페이지](/ko/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Data Exporter** | Multi-Source Stellar Raw Data Query, Preview 및 File/Object/SFTP Export | [제품 페이지](/ko/products/stellar-data-exporter) · [사용 설명서](/ko/products/stellar-data-exporter-guide) | [GitHub](https://github.com/xdr-labs/stellar-data-exporter) |
 | **Stellar Alert & Case Relay** | Stellar Alert/Case를 기존 SIEM/SOC로 전달 | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## 빠른 이동
