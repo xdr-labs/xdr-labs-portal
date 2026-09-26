@@ -61,6 +61,7 @@ Do these steps before every scenario:
    - **Root Scope** → Elasticsearch DSL or Stellar Cyber Query
    - **User Scope** → Stellar Cyber Query (Lucene) only; Elasticsearch DSL is disabled and marked **Root Scope only**
 8. If you change the Host, credential, authentication mode, or TLS setting, run **Test connection** again and reselect the Tenant.
+9. If you want the connection to survive a page refresh, click **Remember this session**. Host, credential, TLS setting, and Tenant are stored only in that browser session. They are **not** stored as a shared connection on the Exporter server and are not available to another browser or device. Use **Clear session** to remove the temporary browser copy.
 
 ### What happens when you click Run export
 
@@ -172,7 +173,11 @@ Use this when someone asks:
 3. Choose the destination:
    - **S3-compatible**: AWS S3, Cloudflare R2, MinIO, etc.
    - **SFTP**: Password or Private Key authentication
-4. Enter the destination details and run **Test destination** before exporting.
+4. Enter the destination details.
+   - For a new SFTP host, click **Get host key**.
+   - Compare the displayed **SHA256 fingerprint** with the value provided by the SFTP server administrator through a trusted channel.
+   - If it matches, click **Trust this host key**.
+   - Then run **Test destination**. Password/private-key authentication is tested after host-key verification succeeds.
 5. Click **Run export** and review the Count Preflight.
 6. If a large-export warning appears, re-check Tenant/Time/Query and use **Export anyway** only when the large transfer is intentional.
 7. During the job, monitor Records, Bytes, Files, and Progress.
@@ -228,7 +233,7 @@ Use this when someone asks:
 
 ### Result
 
-You get a CSV file containing Alerts from the selected one-hour window.
+You get a CSV file containing Alerts from the selected one-hour window. The exporter prepares the complete browser-download file on the server first, marks the job complete, and then starts the browser download with a fixed Content-Length. This prevents the browser from finalizing an incomplete 0-byte placeholder while the export is still being generated.
 
 <Tip>
   This is the best first test after installation. Keep the time range small and confirm Preview before exporting more data.
@@ -558,7 +563,9 @@ Use this when Preview is empty, the count is unexpected, or an export is much la
 | Large-export warning appears | Review the fresh count; use **Go back and refine** unless the large export is intentional |
 | Elasticsearch DSL is disabled | You selected User Scope; use Stellar Cyber Query |
 | Browser export is too large | Use S3/SFTP, gzip, field selection, or file splitting |
+| SFTP says host key is not trusted | Use **Get host key**, verify the SHA256 fingerprint out-of-band, then click **Trust this host key** before testing credentials |
 | S3/SFTP fails | Test the destination and recheck credentials/path settings |
+| Stellar connection drops temporarily | Preview/count/export automatically retries transient network failures, HTTP 408/429, and HTTP 5xx with exponential backoff; persistent failures are still reported |
 
 ---
 

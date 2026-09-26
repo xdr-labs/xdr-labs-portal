@@ -77,13 +77,13 @@ After **Test connection**, the exporter loads the tenants visible to that creden
 
 <CardGroup cols={3}>
   <Card title="Browser download" icon="download">
-    Export CSV, JSON, or NDJSON directly to the browser. Split browser exports can be delivered as a ZIP.
+    Export CSV, JSON, or NDJSON directly to the browser. The complete file is prepared before download starts, and split browser exports can be delivered as a ZIP.
   </Card>
   <Card title="S3-compatible" icon="cloud">
     Send output to AWS S3, Cloudflare R2, MinIO, or another supported S3-compatible endpoint.
   </Card>
   <Card title="SFTP" icon="arrow-right-arrow-left">
-    Send output over SFTP with password or SSH private-key authentication.
+    Send output over SFTP with password or SSH private-key authentication, with SHA256 host-key discovery and explicit key pinning.
   </Card>
 </CardGroup>
 

@@ -61,6 +61,7 @@ Exporter가 설치된 Host에서는 `https://localhost:8787`을 열고, 같은 �
    - **Root Scope** → Elasticsearch DSL 또는 Stellar Cyber Query
    - **User Scope** → Stellar Cyber Query (Lucene)만 사용하며 Elasticsearch DSL은 비활성화되고 **Root Scope 전용**으로 표시됩니다.
 8. Host, Credential, Auth Mode, TLS 설정을 바꾸면 기존 Tenant 선택이 무효화되므로 **Test connection**을 다시 실행하고 Tenant를 재선택합니다.
+9. 새로고침 후에도 현재 연결을 유지하려면 **Remember this session**을 누릅니다. Host, Credential, TLS 설정, Tenant는 현재 Browser Session에만 임시 저장됩니다. Exporter 서버의 공용 Connection으로 저장되지 않으며 다른 Browser나 다른 PC에서는 보이지 않습니다. 임시 저장값을 지우려면 **Clear session**을 사용합니다.
 
 ### Run export를 누르면 실제로 일어나는 일
 
@@ -173,7 +174,11 @@ Advanced Mode는 모든 옵션을 항상 설정하는 화면이 아닙니다. **
 3. Destination을 선택합니다.
    - **S3-compatible**: AWS S3, Cloudflare R2, MinIO 등
    - **SFTP**: Password 또는 Private Key 인증
-4. Destination 정보를 입력하고 반드시 **Test destination**을 먼저 실행합니다.
+4. Destination 정보를 입력합니다.
+   - 새로운 SFTP Host라면 **Get host key**를 누릅니다.
+   - 화면의 **SHA256 Fingerprint**를 SFTP 서버 관리자가 별도의 신뢰 가능한 경로로 제공한 값과 비교합니다.
+   - 일치하면 **Trust this host key**를 누릅니다.
+   - 그 다음 **Test destination**을 실행합니다. Password/Private Key 인증은 Host Key 검증이 성공한 뒤 진행됩니다.
 5. **Run export**를 누르고 Count Preflight를 확인합니다.
 6. 대용량 경고가 나오면 Tenant/Time/Query가 의도한 범위인지 다시 확인한 뒤 필요한 경우에만 **Export anyway**를 선택합니다.
 7. 실행 중에는 Records, Bytes, Files, Progress를 확인합니다.
@@ -232,7 +237,7 @@ Advanced Mode는 모든 옵션을 항상 설정하는 화면이 아닙니다. **
 
 ### 결과
 
-선택한 최근 1시간 Alert가 CSV 파일로 Download됩니다.
+선택한 최근 1시간 Alert가 CSV 파일로 Download됩니다. Browser Download는 서버에서 파일 생성을 완전히 끝내고 Job을 Completed로 만든 다음 고정된 Content-Length로 다운로드를 시작합니다. 따라서 Export 생성 중 Browser가 0-byte Placeholder를 먼저 확정하는 문제를 방지합니다.
 
 <Tip>
   설치 후 첫 테스트는 이 시나리오가 가장 좋습니다. 먼저 짧은 시간 범위로 Preview를 확인한 뒤 더 큰 Export를 진행하세요.
@@ -569,7 +574,9 @@ Preview가 비어 있거나 Record Count가 예상과 다르거나 Export가 너
 | 대용량 경고가 표시됨 | 새 Count를 확인하고 의도한 대용량 작업이 아니면 **Go back and refine** 선택 |
 | Elasticsearch DSL이 Disabled | User Scope이므로 Stellar Cyber Query 사용 |
 | Browser Export가 너무 큼 | S3/SFTP, gzip, Field 선택, File Split 사용 |
+| SFTP에서 Host Key를 신뢰하지 않는다고 표시 | **Get host key**로 SHA256 Fingerprint를 확인하고 별도 경로로 검증한 뒤 **Trust this host key** 선택 |
 | S3/SFTP 실패 | Destination Test 후 Credential/Path 설정 재확인 |
+| Stellar 연결이 일시적으로 끊김 | Preview/Count/Export가 Network 오류, HTTP 408/429, HTTP 5xx를 Exponential Backoff로 자동 재시도하며 지속적인 장애만 오류로 표시 |
 
 ---
 

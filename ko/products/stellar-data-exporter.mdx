@@ -77,13 +77,13 @@ flowchart LR
 
 <CardGroup cols={3}>
   <Card title="Browser Download" icon="download">
-    CSV, JSON, NDJSON을 Browser로 직접 Download합니다. Split된 Browser Export는 ZIP으로 묶을 수 있습니다.
+    CSV, JSON, NDJSON을 Browser로 직접 Download합니다. 전체 파일을 먼저 완성한 뒤 Download를 시작하며 Split된 Browser Export는 ZIP으로 묶을 수 있습니다.
   </Card>
   <Card title="S3-Compatible" icon="cloud">
     AWS S3, Cloudflare R2, MinIO 또는 지원되는 S3-Compatible Endpoint로 전송합니다.
   </Card>
   <Card title="SFTP" icon="arrow-right-arrow-left">
-    Password 또는 SSH Private Key 인증으로 SFTP Destination에 전송합니다.
+    Password 또는 SSH Private Key 인증으로 SFTP Destination에 전송하며 SHA256 Host Key 조회와 명시적 Key Pinning을 지원합니다.
   </Card>
 </CardGroup>
 
