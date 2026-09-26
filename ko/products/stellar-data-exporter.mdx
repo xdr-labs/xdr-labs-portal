@@ -108,6 +108,7 @@ flowchart LR
 - UI와 API는 HTTP Basic Login으로 보호하며 `/api/health`만 Health Check를 위해 인증 없이 사용할 수 있습니다.
 - Hosted Service의 현재 공용 Exporter Login은 `stellar / stellar`입니다.
 - Self-Hosted 설치도 같은 기본 Login을 사용하며 필요하면 `STELLAR_EXPORTER_UI_USERNAME`, `STELLAR_EXPORTER_UI_PASSWORD`로 변경할 수 있습니다.
+- 직접 실행하는 Self-Hosted 인스턴스는 기본적으로 HTTPS `0.0.0.0:8787`에 Bind하므로 허용된 네트워크에서는 `https://<exporter-host-ip>:8787`로 접속합니다. 필요한 경우 Host Firewall에서 TCP/8787 접근 범위를 제한하세요.
 - Stellar Cyber 연결 후 접근 가능한 Tenant 중 하나를 반드시 선택하며 Backend가 Raw Data Query에 해당 Tenant를 강제로 적용합니다.
 - 일반 Interactive Export Credential은 Persistent Job History에 기록하지 않습니다.
 - Browser Saved Profile에는 Credential과 Destination Secret을 저장하지 않습니다.

@@ -37,11 +37,11 @@ uv sync --frozen
 uv run stellar-data-exporter
 ```
 
-The local launcher enables HTTPS automatically and creates a persistent self-signed certificate on first run.
+The local launcher enables HTTPS automatically, binds to `0.0.0.0:8787` by default, and creates a persistent self-signed certificate on first run.
 
-Open `https://127.0.0.1:8787` or `https://localhost:8787`. The local instance uses the same default Exporter login as the hosted service. A browser may show a one-time warning because the local certificate is self-signed.
+On the exporter host, open `https://localhost:8787`. From any allowed computer on the network, open `https://<exporter-host-ip>:8787` — no extra `--host` option is required. For example, if the exporter host is `192.168.1.50`, use `https://192.168.1.50:8787`.
 
-To access the local instance from another computer, run `uv run stellar-data-exporter --host 0.0.0.0` and open `https://<server-ip>:8787`.
+The local instance uses the same default Exporter login as the hosted service. A browser may show a one-time warning because the local certificate is self-signed. The generated certificate includes localhost, the server hostname, and detected local IP addresses. Allow inbound TCP/8787 only from networks that should use the exporter.
 
 Start in **Basic** mode. Use **Advanced** only when a scenario tells you to.
 
