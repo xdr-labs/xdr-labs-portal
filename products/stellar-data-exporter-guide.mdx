@@ -59,6 +59,133 @@ Do these steps before every scenario:
 
 ---
 
+## Advanced Mode — Use it by scenario
+
+Advanced Mode is not a screen where every option must be configured. The easiest workflow is to **finish the query and Preview in Basic mode first, then switch to Advanced only for a specific job**.
+
+| What you need to do | Where to look in Advanced |
+| --- | --- |
+| Verify the exact API request | Query Inspector → Request / Query / Copy tools |
+| Export only the columns needed for a report | Export Fields |
+| Plan the size and number of files for a large export | Statistics + Export Plan |
+| Send data to S3/R2/SFTP instead of the browser | Destination + File Split + gzip |
+| Repeat the same export automatically | Scheduled Export |
+| Troubleshoot unexpected Preview/Export results | Query Inspector |
+
+<Note>
+  The same rule applies in Advanced Mode: first settle **Tenant → Data Source → Time → Query → Preview**, then tune Advanced options.
+</Note>
+
+### Advanced scenario A — Verify the exact request that will be sent
+
+Use this when someone asks:
+
+> “How are my Tenant and time range actually applied to this query?”
+
+1. In Basic mode, set Tenant, Data Source, Time Range, and Query, then run **Preview 100 records**.
+2. Switch to **Advanced**.
+3. In **Query Inspector → Request**, check:
+   - **Final endpoint**: the Stellar Cyber endpoint the exporter will call
+   - **Request path**: the `/connect/api/data/.../_search` API path
+   - **Resolved indices**: the index pattern produced from the selected Data Sources
+4. In **Query**, review the final Effective Query. It should include exporter-managed Tenant and time filters.
+5. Use Copy tools when you need to inspect or reproduce the request elsewhere.
+   - **Copy DSL**: copies the final query JSON including managed Tenant/time filters
+   - **Copy request path**: copies only the API path and index pattern
+   - **Copy cURL**: copies a terminal-ready reproduction command; tokens and credentials remain redacted
+
+**Useful for:** validating query scope, sharing reproducible request details with another engineer, or checking API behavior.
+
+### Advanced scenario B — Build a report with only the columns you need
+
+Use this when someone asks:
+
+> “The raw record has hundreds of fields, but the report only needs timestamp, tenantid, and event_name.”
+
+1. Run **Preview** first. Export Fields are discovered from the Preview sample.
+2. Open **Advanced → Export Fields**.
+3. Use Search when there are many fields.
+4. Click **Clear**, then select only the fields you need.
+5. Use the up/down controls to set the export column order.
+6. Confirm the selection in **Query Inspector → Export Plan → Selected fields**.
+7. For CSV, the output header follows the selected field order.
+8. Click **Run export**, review the Count Preflight, and continue.
+
+<Tip>
+  Reducing fields also recalculates **Estimated output size / Estimated output files** using the selected columns.
+</Tip>
+
+### Advanced scenario C — Plan a large export before running it
+
+Use this when someone asks:
+
+> “How large will this export be, and how many files will it create?”
+
+1. Run **Preview**.
+2. In **Query Inspector → Statistics**, review:
+   - **Matched records**: total records matched by the query
+   - **Preview latency**: response time of the Preview request
+   - **Preview bytes**: size of the Preview sample
+   - **Estimated output size**: estimated export size after current field selection and Record Limit
+3. In **Export Plan**, review:
+   - **Export limit**
+   - **Target records/query**
+   - **Estimated slices**
+   - **Max file size**
+   - **Estimated output files**
+   - **Overlap policy**
+4. If the result is too large, narrow the Time Range or Query first.
+5. Use **Record Limit** when appropriate and **Max file size** to split large files.
+6. Enable **gzip** when you want to reduce transfer/storage size.
+
+<Warning>
+  Estimated size and file count are **planning estimates based on the Preview sample**. Actual records can have a different size distribution. Record Limit also limits output rows, not the scope of the source query used by Count Preflight.
+</Warning>
+
+### Advanced scenario D — Send a large result directly to S3/R2/SFTP
+
+Use this when someone asks:
+
+> “Do not download several GB through the browser; send it directly to object storage or SFTP.”
+
+1. Check the expected size in Preview and Export Plan.
+2. Optionally reduce fields, enable gzip, and set Max file size.
+3. Choose the destination:
+   - **S3-compatible**: AWS S3, Cloudflare R2, MinIO, etc.
+   - **SFTP**: Password or Private Key authentication
+4. Enter the destination details and run **Test destination** before exporting.
+5. Click **Run export** and review the Count Preflight.
+6. If a large-export warning appears, re-check Tenant/Time/Query and use **Export anyway** only when the large transfer is intentional.
+7. During the job, monitor Records, Bytes, Files, and Progress.
+
+### Advanced scenario E — Schedule the same export to run repeatedly
+
+Use this when someone asks:
+
+> “Send new Alerts to S3 every hour.”
+
+1. First make the same configuration succeed as a **manual export**.
+2. The destination must be **S3 or SFTP**. Browser Download cannot be scheduled.
+3. In **Advanced → Scheduled Export**, set Name, Interval, and Export Window.
+4. Save it, then run **Run now** once as a verification.
+5. Leave the schedule Enabled after the verification succeeds.
+6. The selected Tenant and required credentials are stored encrypted with the schedule.
+
+### Advanced scenario F — Troubleshoot results that do not look right
+
+Use this order to narrow down most problems quickly:
+
+1. Confirm the selected **Tenant**.
+2. Check that **Resolved indices** match the intended Data Sources.
+3. Inspect the Effective Query for the expected **Tenant and time filters**.
+4. If **Matched records** is unexpectedly large, narrow the Query or Time Range.
+5. Confirm Selected fields and Export limit.
+6. If splitting files, review Estimated output size/files.
+7. When an external reproduction is needed, use **Copy DSL / Copy request path / Copy cURL**.
+8. After changing query-related settings, **run Preview again** to refresh Statistics before exporting.
+
+---
+
 ## Scenario 1 — Export the last hour of Alerts to CSV
 
 Use this when someone asks:
