@@ -11,12 +11,15 @@ Stellar Data Exporter는 Stellar Cyber Raw Data를 검색하고 결과를 Previe
 
 ## 주요 기능
 
+- Exporter UI/API 접근을 위한 공통 HTTP Basic Login
 - Account Email + All-Access Token을 사용하는 Root Scope 인증
 - User API Key를 사용하는 User Scope 인증
+- Credential로 접근 가능한 Stellar Cyber Tenant 자동 조회 및 단일 Tenant 선택
 - 친숙한 Data Source 다중 선택과 내부 Stellar Cyber Index 자동 매핑
 - Start/End Time 지정
 - Elasticsearch DSL 및 Stellar Cyber/Lucene Query
 - Export 전에 결과 Preview
+- 실제 Export 시작 전 Count-Only Preflight 및 대용량 Export 명시적 확인
 - CSV, JSON Array, NDJSON 출력
 - Browser Download, S3-Compatible Storage, SFTP Destination
 - Field 선택, Record Limit, gzip, File Split
@@ -29,12 +32,16 @@ Stellar Data Exporter는 Stellar Cyber Raw Data를 검색하고 결과를 Previe
 
 ```mermaid
 flowchart LR
-  A[Stellar Cyber 연결] --> B[Data Source 선택]
-  B --> C[시간 범위 설정]
-  C --> D[Query 입력]
-  D --> E[Preview]
-  E --> F[Output 선택]
-  F --> G[Export]
+  A[Exporter Login] --> B[Stellar Cyber 연결]
+  B --> C[Tenant 1개 선택]
+  C --> D[Data Source와 시간 선택]
+  D --> E[Query 입력]
+  E --> F[Preview]
+  F --> G[Output 선택]
+  G --> H[Run export]
+  H --> I[Count Preflight]
+  I --> J[대용량이면 확인]
+  J --> K[Export]
 ```
 
 ## 인증 방식
@@ -46,8 +53,10 @@ flowchart LR
 
 두 방식 모두 실제 Raw Data 요청 전에 입력된 Credential을 Short-Lived Stellar Cyber Access Token으로 교환합니다.
 
+**Test connection**을 실행하면 해당 Credential로 접근 가능한 Tenant 목록을 불러옵니다. Preview나 Export를 실행하기 전에 Tenant를 정확히 하나 선택해야 하며, Backend가 모든 Raw Data Query에 선택 Tenant를 강제로 적용합니다. 따라서 Preview, Count Check, Manual Export, Resume, Schedule이 같은 Tenant 범위 안에서 동작합니다.
+
 <Note>
-  User Scope API Key도 Raw Data 검색과 Export에 사용할 수 있습니다. Preview 전용이나 Metadata 전용 Mode로 취급하지 않습니다.
+  User Scope API Key도 Raw Data 검색과 Export에 사용할 수 있습니다. Preview 전용이나 Metadata 전용 Mode로 취급하지 않습니다. User API Key라도 실제 권한에 따라 여러 Tenant가 보일 수 있으므로 Tenant 선택은 항상 필요합니다.
 </Note>
 
 ## Output Destination
@@ -82,14 +91,17 @@ flowchart LR
 
 ## 보안 경계
 
+- UI와 API는 HTTP Basic Login으로 보호하며 `/api/health`만 Health Check를 위해 인증 없이 사용할 수 있습니다.
+- 운영 배포에서는 `STELLAR_EXPORTER_UI_USERNAME`, `STELLAR_EXPORTER_UI_PASSWORD`로 개발 기본 Credential을 변경하세요.
+- Stellar Cyber 연결 후 접근 가능한 Tenant 중 하나를 반드시 선택하며 Backend가 Raw Data Query에 해당 Tenant를 강제로 적용합니다.
 - 일반 Interactive Export Credential은 Persistent Job History에 기록하지 않습니다.
 - Browser Saved Profile에는 Credential과 Destination Secret을 저장하지 않습니다.
 - Scheduled Export 설정과 실행에 필요한 Credential은 Encrypted At Rest로 저장합니다.
 - TLS Verification은 기본 Enabled입니다.
-- 현재 Application은 Multi-User Isolation Layer를 제공하지 않습니다.
+- 공통 Basic Login은 사용자별 RBAC 또는 Multi-User Isolation Layer가 아닙니다.
 - Stellar Cyber **Host** 값에 대한 연결은 사용자의 Browser가 아니라 Exporter Server에서 수행됩니다.
 - Development Uvicorn Listener를 Public Internet에 직접 노출하지 마세요.
-- Nginx 등의 Reverse Proxy로 외부에 공개할 때는 인증/접근제어를 적용하고 Exporter가 연결할 수 있는 Stellar Cyber Outbound Target도 제한하세요.
+- Nginx 등의 Reverse Proxy로 외부에 공개할 때는 Application Authentication을 유지하고 Exporter가 연결할 수 있는 Stellar Cyber Outbound Target도 제한하세요.
 
 Hardened Nginx/systemd 배포는 Source Repository의 Production Runbook을 사용하세요.
 
