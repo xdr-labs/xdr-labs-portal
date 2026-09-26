@@ -9,6 +9,20 @@ Stellar Data Exporter는 Stellar Cyber Raw Data를 검색하고 결과를 Previe
 
 매번 별도의 API Script를 작성하지 않고 여러 Stellar Cyber Data Source에서 반복적으로 데이터를 조회하고 내보내려는 Analyst, Engineer, Administrator에게 적합합니다.
 
+## 지금 바로 사용하기
+
+**Stellar Data Exporter는 데모가 아닙니다.** 아래 Hosted Service는 설치 없이 Browser에서 바로 접속해 실제로 사용할 수 있는 서비스입니다.
+
+- **서비스:** [https://exporter.xdr.ooo](https://exporter.xdr.ooo)
+- **Username:** `stellar`
+- **Password:** `stellar`
+
+로그인한 뒤 자신의 Stellar Cyber Host와 Root Scope 또는 User Scope API Credential을 입력하고 **Test connection**을 실행한 다음 Tenant 하나를 선택해 Preview부터 시작하면 됩니다.
+
+<Note>
+  이 공용 계정은 Exporter 서비스에 접속하기 위한 로그인입니다. Stellar Cyber 데이터를 Query하려면 별도로 자신의 Stellar Cyber API Credential을 Exporter 화면에 입력해야 합니다.
+</Note>
+
 ## 주요 기능
 
 - Exporter UI/API 접근을 위한 공통 HTTP Basic Login
@@ -92,7 +106,8 @@ flowchart LR
 ## 보안 경계
 
 - UI와 API는 HTTP Basic Login으로 보호하며 `/api/health`만 Health Check를 위해 인증 없이 사용할 수 있습니다.
-- 운영 배포에서는 `STELLAR_EXPORTER_UI_USERNAME`, `STELLAR_EXPORTER_UI_PASSWORD`로 개발 기본 Credential을 변경하세요.
+- Hosted Service의 현재 공용 Exporter Login은 `stellar / stellar`입니다.
+- Self-Hosted 설치도 같은 기본 Login을 사용하며 필요하면 `STELLAR_EXPORTER_UI_USERNAME`, `STELLAR_EXPORTER_UI_PASSWORD`로 변경할 수 있습니다.
 - Stellar Cyber 연결 후 접근 가능한 Tenant 중 하나를 반드시 선택하며 Backend가 Raw Data Query에 해당 Tenant를 강제로 적용합니다.
 - 일반 Interactive Export Credential은 Persistent Job History에 기록하지 않습니다.
 - Browser Saved Profile에는 Credential과 Destination Secret을 저장하지 않습니다.

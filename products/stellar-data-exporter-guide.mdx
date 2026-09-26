@@ -11,7 +11,24 @@ Pick a scenario below and follow it from top to bottom.
 
 ## Before you start
 
-Run the exporter:
+### Use the hosted service
+
+**This is a live, ready-to-use service, not a demo.** You do not need to install the exporter locally.
+
+Open:
+
+[https://exporter.xdr.ooo](https://exporter.xdr.ooo)
+
+Sign in with:
+
+- **Username:** `stellar`
+- **Password:** `stellar`
+
+The Exporter login only grants access to the Exporter UI. To query data, enter your own Stellar Cyber Host and Root Scope or User Scope API credential inside the application.
+
+### Optional: run your own instance
+
+Use the following only when you want a local/self-hosted exporter for development or private deployment:
 
 ```bash
 git clone https://github.com/xdr-labs/stellar-data-exporter.git
@@ -20,13 +37,11 @@ uv sync --frozen
 uv run stellar-data-exporter
 ```
 
-Open:
+The local launcher enables HTTPS automatically and creates a persistent self-signed certificate on first run.
 
-```text
-http://127.0.0.1:8787
-```
+Open `https://127.0.0.1:8787` or `https://localhost:8787`. The local instance uses the same default Exporter login as the hosted service. A browser may show a one-time warning because the local certificate is self-signed.
 
-The browser asks for the Exporter HTTP Basic login before the UI opens. Use the login configured by the deployment administrator.
+To access the local instance from another computer, run `uv run stellar-data-exporter --host 0.0.0.0` and open `https://<server-ip>:8787`.
 
 Start in **Basic** mode. Use **Advanced** only when a scenario tells you to.
 

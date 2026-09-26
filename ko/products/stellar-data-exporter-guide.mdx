@@ -11,7 +11,24 @@ Stellar Data Exporter는 기능을 하나씩 배우는 것보다 **지금 하려
 
 ## 시작하기 전에
 
-Exporter를 실행합니다.
+### Hosted Service 바로 사용하기
+
+**이 서비스는 데모가 아니라 실제로 바로 사용할 수 있는 서비스입니다.** Exporter를 로컬에 설치할 필요가 없습니다.
+
+다음 주소를 Browser에서 엽니다.
+
+[https://exporter.xdr.ooo](https://exporter.xdr.ooo)
+
+로그인 정보:
+
+- **Username:** `stellar`
+- **Password:** `stellar`
+
+이 로그인은 Exporter UI에 접속하기 위한 계정입니다. 실제 데이터를 Query하려면 Exporter 화면에서 자신의 Stellar Cyber Host와 Root Scope 또는 User Scope API Credential을 별도로 입력합니다.
+
+### 선택 사항: 직접 설치해서 사용하기
+
+개발 환경이나 Private/Self-Hosted 배포가 필요한 경우에만 다음 절차를 사용합니다.
 
 ```bash
 git clone https://github.com/xdr-labs/stellar-data-exporter.git
@@ -20,13 +37,11 @@ uv sync --frozen
 uv run stellar-data-exporter
 ```
 
-Browser에서 다음 주소를 엽니다.
+로컬 실행도 HTTPS가 자동으로 활성화되며 최초 실행 시 지속적으로 재사용할 Self-Signed 인증서를 자동 생성합니다.
 
-```text
-http://127.0.0.1:8787
-```
+`https://127.0.0.1:8787` 또는 `https://localhost:8787`을 엽니다. 로컬 인스턴스도 Hosted Service와 동일한 기본 Exporter Login을 사용합니다. 로컬 인증서는 Self-Signed이므로 Browser에서 최초 인증서 경고가 표시될 수 있습니다.
 
-UI가 열리기 전에 Exporter HTTP Basic Login이 표시됩니다. 배포 관리자가 설정한 Exporter 계정으로 로그인하세요.
+다른 PC에서 로컬 서버에 접속하려면 `uv run stellar-data-exporter --host 0.0.0.0`으로 실행한 뒤 `https://<server-ip>:8787`로 접속합니다.
 
 처음에는 **Basic** Mode로 시작하세요. 각 시나리오에서 필요한 경우에만 **Advanced** Mode로 전환합니다.
 
