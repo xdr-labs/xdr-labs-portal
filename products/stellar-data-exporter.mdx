@@ -29,9 +29,9 @@ After signing in, enter your own Stellar Cyber Host and Root Scope or User Scope
 - Root Scope authentication with account email + All-Access Token
 - User Scope authentication with a User API Key
 - automatic discovery of accessible Stellar Cyber tenants and required single-tenant selection
-- friendly multi-select data sources mapped internally to Stellar Cyber indices
+- required one-or-more Data Source selection, with Alerts selected by default and internal Stellar Cyber index mapping
 - explicit start/end time selection
-- Elasticsearch DSL and Stellar Cyber/Lucene query modes
+- Elasticsearch DSL for Root Scope and Stellar Cyber/Lucene Query for Root Scope or User Scope
 - query preview before export
 - count-only export preflight with explicit confirmation for large matches
 - CSV, JSON Array, and NDJSON output
@@ -70,7 +70,7 @@ Both credential types are exchanged for a short-lived Stellar Cyber access token
 After **Test connection**, the exporter loads the tenants visible to that credential. Select exactly one tenant before Preview or Export. The backend injects the selected tenant into every raw-data query, so Preview, count checks, manual exports, resume, and schedules stay within that tenant.
 
 <Note>
-  User Scope API Key mode supports raw-data search and export. It is not treated as a preview-only or metadata-only mode. A User API Key can still expose multiple tenants depending on its effective Stellar Cyber permissions, so tenant selection is always required.
+  User Scope API Key mode supports raw-data search and export through **Stellar Cyber Query (Lucene)**. Elasticsearch DSL is intentionally disabled for User Scope and is available only with **Root Scope**. A User API Key can still expose multiple tenants depending on its effective Stellar Cyber permissions, so tenant selection is always required.
 </Note>
 
 ## Output destinations

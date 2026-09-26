@@ -29,9 +29,9 @@ Stellar Data Exporter는 Stellar Cyber Raw Data를 검색하고 결과를 Previe
 - Account Email + All-Access Token을 사용하는 Root Scope 인증
 - User API Key를 사용하는 User Scope 인증
 - Credential로 접근 가능한 Stellar Cyber Tenant 자동 조회 및 단일 Tenant 선택
-- 친숙한 Data Source 다중 선택과 내부 Stellar Cyber Index 자동 매핑
+- 최소 1개가 반드시 유지되는 Data Source 선택, 기본 Alerts 선택 및 내부 Stellar Cyber Index 자동 매핑
 - Start/End Time 지정
-- Elasticsearch DSL 및 Stellar Cyber/Lucene Query
+- Root Scope의 Elasticsearch DSL과 Root/User Scope의 Stellar Cyber/Lucene Query
 - Export 전에 결과 Preview
 - 실제 Export 시작 전 Count-Only Preflight 및 대용량 Export 명시적 확인
 - CSV, JSON Array, NDJSON 출력
@@ -70,7 +70,7 @@ flowchart LR
 **Test connection**을 실행하면 해당 Credential로 접근 가능한 Tenant 목록을 불러옵니다. Preview나 Export를 실행하기 전에 Tenant를 정확히 하나 선택해야 하며, Backend가 모든 Raw Data Query에 선택 Tenant를 강제로 적용합니다. 따라서 Preview, Count Check, Manual Export, Resume, Schedule이 같은 Tenant 범위 안에서 동작합니다.
 
 <Note>
-  User Scope API Key도 Raw Data 검색과 Export에 사용할 수 있습니다. Preview 전용이나 Metadata 전용 Mode로 취급하지 않습니다. User API Key라도 실제 권한에 따라 여러 Tenant가 보일 수 있으므로 Tenant 선택은 항상 필요합니다.
+  User Scope API Key도 **Stellar Cyber Query (Lucene)**를 사용해 Raw Data 검색과 Export를 할 수 있습니다. Elasticsearch DSL은 User Scope에서는 의도적으로 비활성화되며 **Root Scope 전용**입니다. User API Key라도 실제 권한에 따라 여러 Tenant가 보일 수 있으므로 Tenant 선택은 항상 필요합니다.
 </Note>
 
 ## Output Destination
