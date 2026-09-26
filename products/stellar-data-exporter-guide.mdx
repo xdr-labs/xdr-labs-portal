@@ -26,7 +26,36 @@ Open:
 http://127.0.0.1:8787
 ```
 
+The browser asks for the Exporter HTTP Basic login before the UI opens. Use the login configured by the deployment administrator.
+
 Start in **Basic** mode. Use **Advanced** only when a scenario tells you to.
+
+### Connection and tenant selection
+
+Do these steps before every scenario:
+
+1. Enter the Stellar Cyber host.
+2. Select the credential type:
+   - **Root Scope** → Account Email + All-Access Token
+   - **User Scope** → User API Key
+3. Click **Test connection**.
+4. The exporter loads every tenant visible to that credential.
+5. Select **exactly one Tenant**. Preview, count checks, manual exports, resume, and scheduled exports are restricted to that tenant.
+6. If you change the Host, credential, authentication mode, or TLS setting, run **Test connection** again and reselect the Tenant.
+
+### What happens when you click Run export
+
+**Run export does not immediately start the export job.** The exporter first performs a count-only query using the selected Tenant, data sources, time range, and query.
+
+- If the count is `0`, no export job is created.
+- For a normal-sized result, the export starts after the count is shown.
+- For a large result, a performance warning appears before any export job is created.
+- Choose **Go back and refine** to cancel safely, or **Export anyway** to explicitly continue.
+- The default warning threshold is 100,000 matched records and the critical threshold is 1,000,000 records. Deployments can override these thresholds.
+
+<Warning>
+  **Record Limit** limits output rows, but the count preflight still evaluates the full source query. A broad multi-source query can therefore be expensive even when the final export limit is small.
+</Warning>
 
 ---
 
@@ -38,21 +67,18 @@ Use this when someone asks:
 
 ### Do this
 
-1. Open **Stellar Cyber**.
-2. Enter your Stellar Cyber host.
-3. Select your credential type:
-   - **Root Scope** → Email + All-Access Token
-   - **User Scope** → User API Key
-4. Select **Alerts**.
-5. Choose **Last 1 hour**.
-6. In Query:
+1. Complete **Connection and tenant selection** above.
+2. Select **Alerts**.
+3. Click the **1h** time shortcut.
+4. In Query:
    - User Scope: use `*:*`
    - Root Scope: you can also use `*:*` in Stellar Cyber Query mode
-7. Click **Preview 100 records**.
-8. Confirm the returned records look correct.
-9. Select **CSV**.
-10. Select **Download**.
-11. Click **Run export**.
+5. Click **Preview 100 records**.
+6. Confirm the returned records and selected Tenant look correct.
+7. Select **CSV**.
+8. Select **Download**.
+9. Click **Run export**.
+10. Review the matched count shown by the preflight. If a large-export warning appears, refine the query/time range or explicitly choose **Export anyway**.
 
 ### Result
 
@@ -74,21 +100,21 @@ Example request:
 
 ### Do this
 
-1. Select **User Scope**.
-2. Paste the **User API Key**.
-3. Select the data source you want, for example **Alerts**.
-4. Choose **Last 24 hours**.
-5. In **Stellar Cyber Query**, enter:
+1. In **Connection and tenant selection**, choose **User Scope**, enter the User API Key, click **Test connection**, and select one Tenant.
+2. Select the data source you want, for example **Alerts**.
+3. Click the **24h** time shortcut.
+4. In **Stellar Cyber Query**, enter:
 
 ```text
 event_status:New
 ```
 
-6. Click **Preview 100 records**.
-7. Check the sample records.
-8. Choose **JSON** or **CSV**.
-9. Select **Download**.
-10. Click **Run export**.
+5. Click **Preview 100 records**.
+6. Check the sample records and confirm they belong to the selected Tenant.
+7. Choose **JSON** or **CSV**.
+8. Select **Download**.
+9. Click **Run export**.
+10. Review the count preflight before the job starts. Continue only if the result size is appropriate.
 
 ### Result
 
@@ -110,23 +136,25 @@ Example request:
 
 ### Do this
 
-1. Select the relevant data source, such as **Windows Events**, **Linux Events**, or **Alerts**.
-2. Set the time range to the period you want to investigate.
-3. Use a Stellar Cyber Query such as:
+1. Complete **Connection and tenant selection** and choose the Tenant you are investigating.
+2. Select the relevant data source, such as **Windows Events**, **Linux Events**, or **Alerts**.
+3. Set the time range to the period you want to investigate.
+4. Use a Stellar Cyber Query such as:
 
 ```text
 event_name:"Login Failure" AND srcip:10.10.10.*
 ```
 
-4. Click **Preview 100 records**.
-5. Check:
+5. Click **Preview 100 records**.
+6. Check:
    - the matched count
    - sample timestamps
    - source IP values
    - event names
-6. If the result is too broad, add another condition.
-7. When the result looks right, select **CSV**.
-8. Click **Run export**.
+7. If Preview returns **0**, the example values may simply not exist in your environment. Start with `*:*`, inspect real `event_name` and `srcip` values from your data, then rebuild the filter with values that exist.
+8. If the result is too broad, add another condition.
+9. When the result looks right, select **CSV**.
+10. Click **Run export** and review the count preflight before continuing.
 
 ### Result
 
@@ -144,21 +172,28 @@ Example request:
 
 ### Do this
 
-1. Select:
+1. Complete **Connection and tenant selection** for the incident Tenant.
+2. Select:
    - **Alerts**
    - **Traffic**
    - **Windows Events**
-2. Set the incident **Start** and **End** time.
-3. Enter the query condition that all selected sources should use.
-4. Click **Preview 100 records**.
-5. Open **Advanced** and check **Resolved indices** if you want to confirm the actual target indices.
-6. Select **JSON**.
-7. Select **Download**.
-8. Click **Run export**.
+3. Start with a short incident **Start** / **End** window.
+4. Enter a selective query that is meaningful for the incident.
+5. Click **Preview 100 records** and check **Matched records** before exporting.
+6. If the matched count is unexpectedly large, shorten the time range or narrow the query first.
+7. Switch to **Advanced**. In **Query Inspector**, confirm **Resolved indices** and the effective query.
+8. Select **JSON**.
+9. Use **Download** only when the result is reasonably sized. For a large result, use S3-compatible storage or SFTP instead.
+10. Click **Run export**. The exporter counts the full Tenant-scoped query again before creating a job.
+11. If a warning appears, prefer **Go back and refine** unless the large export is intentional.
 
 ### Result
 
 The exporter queries the selected source families for the same time window and creates one export result.
+
+<Warning>
+  Avoid a broad multi-source `*:*` export over a long window. Traffic can make the match count extremely large. A very large search can increase load on both Stellar Cyber and the exporter and may cause noticeable performance degradation. **Record Limit** limits exported rows, but it does not guarantee that the backend search itself will be inexpensive. If Preview shows a very large match count, shorten the time range or add query conditions before running the export, and prefer S3/SFTP over a browser download.
+</Warning>
 
 <Tip>
   If one source produces much more data than the others, first test each source separately with Preview.
@@ -176,12 +211,13 @@ Example request:
 
 ### Do this
 
-1. Build the query and run **Preview** first.
-2. Switch to **Advanced**.
-3. In the field selector, choose only the fields needed for the report.
-4. Select **CSV**.
-5. Keep **Header** enabled.
-6. Run the export.
+1. Complete **Connection and tenant selection**.
+2. Build the query and run **Preview** first.
+3. Switch to **Advanced**.
+4. In the field selector, choose only the fields needed for the report.
+5. Select **CSV**.
+6. Keep **Header** enabled.
+7. Click **Run export** and review the count preflight before the job starts.
 
 ### Result
 
@@ -199,33 +235,35 @@ Example request:
 
 ### Do this
 
-1. Select **Alerts**.
-2. Choose **Last 7 days** or set the exact Start/End time.
-3. Enter the query.
-4. Run **Preview** with the smaller sample first.
-5. Switch to **Advanced**.
-6. Optional:
+1. Complete **Connection and tenant selection**.
+2. Select **Alerts**.
+3. Click **7d** or set the exact Start/End time.
+4. Enter the query.
+5. Run **Preview** with the smaller sample first.
+6. Switch to **Advanced**.
+7. Optional:
    - enable **gzip**
    - set a **Max file size**
    - select only required fields
-7. Select **S3-compatible** as Destination.
-8. Enter:
+8. Select **S3-compatible** as Destination.
+9. Enter:
    - Endpoint URL
    - Region
    - Bucket
    - Prefix
    - Access Key
    - Secret Key
-9. Test the destination.
-10. Click **Run export**.
-11. Watch **Records**, **Bytes**, **Files**, and **Progress** until the job completes.
+10. Test the destination.
+11. Click **Run export**.
+12. Review the count preflight. For a large result, the warning appears before any export job is created; choose **Export anyway** only when the large transfer is intentional.
+13. Watch **Records**, **Bytes**, **Files**, and **Progress** until the job completes.
 
 ### Result
 
 The exporter sends the data directly to S3/R2/MinIO instead of downloading the full dataset through the browser.
 
 <Tip>
-  For a very large export, set a file-size limit so the result is split into numbered files.
+  For a very large export, set a file-size limit so the result is split into numbered files. Because new events can arrive between Preview and Run export, the final record count may be slightly different from the Preview count.
 </Tip>
 
 ---
@@ -240,24 +278,26 @@ Example request:
 
 ### Do this
 
-1. Build the query and verify it with **Preview**.
-2. Switch to **Advanced**.
-3. Select the output format, for example **NDJSON** or **CSV**.
-4. Set **Max file size** to the desired limit.
-5. Optional: enable **gzip**.
-6. Select **SFTP**.
-7. Enter:
+1. Complete **Connection and tenant selection**.
+2. Build the query and verify it with **Preview**.
+3. Switch to **Advanced**.
+4. Select the output format, for example **NDJSON** or **CSV**.
+5. Set **Max file size** to the desired limit.
+6. Optional: enable **gzip**.
+7. Select **SFTP**.
+8. Enter:
    - Host
    - Port
    - Username
    - Password or Private Key
    - Remote Path
-8. Test the destination.
-9. Click **Run export**.
+9. Test the destination.
+10. Click **Run export** and review the count preflight.
+11. If the large-export warning appears, confirm only when the SFTP transfer is intentional and the time/query scope is correct.
 
 ### Result
 
-The exporter writes numbered files to the remote SFTP path.
+The exporter writes numbered files to the remote SFTP path. **Max file size** is a split target rather than a byte-perfect hard boundary, so a part can be slightly larger when a complete record crosses the target.
 
 If a supported split export is interrupted, use the job history to retry/resume after re-entering the required credentials.
 
@@ -273,12 +313,11 @@ Example request:
 
 ### Do this
 
-1. Select **Root Scope**.
-2. Enter the account email and **All-Access Token**.
-3. Select the data source.
-4. Set Start/End time.
-5. Select **Elasticsearch DSL**.
-6. Paste your query, for example:
+1. In **Connection and tenant selection**, choose **Root Scope**, enter the account email and **All-Access Token**, click **Test connection**, and select one Tenant.
+2. Select the data source.
+3. Set Start/End time.
+4. Select **Elasticsearch DSL**.
+5. Paste your query, for example:
 
 ```json
 {
@@ -290,15 +329,19 @@ Example request:
 }
 ```
 
-7. Click **Validate JSON**.
-8. Click **Preview 100 records**.
-9. Confirm the result.
-10. Choose the output format and destination.
-11. Run the export.
+6. Click **Validate JSON**.
+7. Click **Preview 100 records**.
+8. Confirm the result and selected Tenant.
+9. Choose the output format and destination.
+10. Click **Run export** and review the count preflight before the job starts.
 
 ### Result
 
 Your DSL condition is combined with the time range selected in the UI and used for the export.
+
+<Note>
+  Elasticsearch DSL requires **Root Scope** with an account email and All-Access Token. A **User Scope API Key** intentionally disables DSL mode; use Scenario 2 and Stellar Cyber Query instead.
+</Note>
 
 ---
 
@@ -312,18 +355,21 @@ Example request:
 
 ### Do this
 
-1. First configure the export as a normal manual S3/SFTP job.
-2. Run it once and make sure it succeeds.
-3. Switch to **Advanced**.
-4. Create a schedule.
-5. Set:
+1. Complete **Connection and tenant selection** and choose the Tenant that this schedule should own.
+2. Configure the export as a normal manual S3/SFTP job.
+3. Run it once, review the count preflight, and make sure it succeeds.
+4. Switch to **Advanced**.
+5. Create a schedule.
+6. Set:
    - schedule name
    - interval
    - export window
    - S3 or SFTP destination
-6. Save the schedule.
-7. Use **Run now** once to verify it.
-8. Leave the schedule **Enabled**.
+7. Save the schedule.
+8. Use **Run now** once to verify it.
+9. Leave the schedule **Enabled**.
+
+The selected Tenant is stored with the encrypted schedule configuration and remains part of the schedule's overlap/resume identity.
 
 ### Result
 
@@ -341,27 +387,29 @@ Use this when Preview is empty, the count is unexpected, or an export is much la
 
 ### Do this
 
-1. Switch to **Advanced**.
-2. Open **Query Inspector**.
-3. Check:
-   - selected sources
-   - resolved indices
-   - Start/End time
-   - effective query
-   - matched record count
-   - export plan
-4. Reduce the time range.
-5. Run Preview again.
-6. Add query conditions one at a time.
-7. Export only after the Preview result looks correct.
+1. Confirm that **Test connection** succeeded and that the intended Tenant is selected. If the Host/API credential changed, reload the Tenant list first.
+2. Switch to **Advanced**. **Query Inspector** appears automatically inside the Query section; there is no separate Open action.
+3. Confirm the selected data sources and Start/End time in the normal Query controls.
+4. In **Query Inspector**, check:
+   - Request path and **Resolved indices**
+   - Effective Query, including the managed Tenant/time filters
+   - **Matched records**, Preview latency/bytes, and estimated output size
+   - **Export Plan**: selected fields, export limit, adaptive slicing, estimated slices/files, max file size, and overlap policy
+5. Reduce the time range if the matched count or estimated output is too large.
+6. Run Preview again.
+7. Add query conditions one at a time.
+8. Click **Run export** only after the Preview result looks correct, then review the fresh count preflight before continuing.
 
 ### Common fixes
 
 | Problem | Try this |
 | --- | --- |
-| Authentication failed | Verify Root Scope vs User Scope and re-enter the matching credential |
-| Preview returns 0 | Widen the time range or simplify the query |
-| Too many results | Narrow the time range or add query conditions |
+| Exporter login prompt repeats | Recheck the Exporter HTTP Basic login configured by the deployment administrator |
+| Stellar authentication failed | Verify Root Scope vs User Scope and re-enter the matching Stellar Cyber credential |
+| Tenant selector is disabled | Run **Test connection** again; changing Host/API credentials invalidates the previous Tenant selection |
+| Preview returns 0 | Confirm the Tenant, then widen the time range or simplify the query |
+| Too many results | Narrow the time range or add query conditions before Run export |
+| Large-export warning appears | Review the fresh count; use **Go back and refine** unless the large export is intentional |
 | Elasticsearch DSL is disabled | You selected User Scope; use Stellar Cyber Query |
 | Browser export is too large | Use S3/SFTP, gzip, field selection, or file splitting |
 | S3/SFTP fails | Test the destination and recheck credentials/path settings |
