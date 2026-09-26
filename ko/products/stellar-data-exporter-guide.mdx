@@ -56,7 +56,11 @@ Exporter가 설치된 Host에서는 `https://localhost:8787`을 열고, 같은 �
 3. **Test connection**을 실행합니다.
 4. 해당 Credential로 접근 가능한 Tenant 목록이 표시됩니다.
 5. Query 대상 **Tenant를 정확히 하나 선택**합니다. Preview, Count Check, Manual Export, Resume, Schedule은 모두 이 Tenant로 제한됩니다.
-6. Host, Credential, Auth Mode, TLS 설정을 바꾸면 기존 Tenant 선택이 무효화되므로 **Test connection**을 다시 실행하고 Tenant를 재선택합니다.
+6. **Data Source를 최소 1개 이상 선택**합니다. 기본값은 Alerts이며, 마지막으로 남은 Source는 해제할 수 없습니다. **Alerts only**를 누르면 Alerts 1개 선택 상태로 되돌아갑니다.
+7. Credential에 맞는 Query Mode를 사용합니다.
+   - **Root Scope** → Elasticsearch DSL 또는 Stellar Cyber Query
+   - **User Scope** → Stellar Cyber Query (Lucene)만 사용하며 Elasticsearch DSL은 비활성화되고 **Root Scope 전용**으로 표시됩니다.
+8. Host, Credential, Auth Mode, TLS 설정을 바꾸면 기존 Tenant 선택이 무효화되므로 **Test connection**을 다시 실행하고 Tenant를 재선택합니다.
 
 ### Run export를 누르면 실제로 일어나는 일
 

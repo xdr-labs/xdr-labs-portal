@@ -56,7 +56,11 @@ Do these steps before every scenario:
 3. Click **Test connection**.
 4. The exporter loads every tenant visible to that credential.
 5. Select **exactly one Tenant**. Preview, count checks, manual exports, resume, and scheduled exports are restricted to that tenant.
-6. If you change the Host, credential, authentication mode, or TLS setting, run **Test connection** again and reselect the Tenant.
+6. Select at least **one Data Source**. Alerts is selected by default. The UI prevents removing the final selected source; use **Alerts only** to reset the selection back to Alerts.
+7. Choose the Query mode that matches the credential:
+   - **Root Scope** → Elasticsearch DSL or Stellar Cyber Query
+   - **User Scope** → Stellar Cyber Query (Lucene) only; Elasticsearch DSL is disabled and marked **Root Scope only**
+8. If you change the Host, credential, authentication mode, or TLS setting, run **Test connection** again and reselect the Tenant.
 
 ### What happens when you click Run export
 
