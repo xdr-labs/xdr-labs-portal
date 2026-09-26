@@ -77,16 +77,19 @@ flowchart LR
 - 최대 File Size 및 File Split
 - Adaptive Slicing 설정
 - Overlap Policy
-- Remote Destination 세부 설정
+- TLS Verification, S3 Path-Style Addressing, SFTP Host-Key Verification
 - Saved Profile, Query History, Export History, Scheduling
 
 ## 보안 경계
 
 - 일반 Interactive Export Credential은 Persistent Job History에 기록하지 않습니다.
 - Browser Saved Profile에는 Credential과 Destination Secret을 저장하지 않습니다.
+- Scheduled Export 설정과 실행에 필요한 Credential은 Encrypted At Rest로 저장합니다.
 - TLS Verification은 기본 Enabled입니다.
 - 현재 Application은 Multi-User Isolation Layer를 제공하지 않습니다.
+- Stellar Cyber **Host** 값에 대한 연결은 사용자의 Browser가 아니라 Exporter Server에서 수행됩니다.
 - Development Uvicorn Listener를 Public Internet에 직접 노출하지 마세요.
+- Nginx 등의 Reverse Proxy로 외부에 공개할 때는 인증/접근제어를 적용하고 Exporter가 연결할 수 있는 Stellar Cyber Outbound Target도 제한하세요.
 
 Hardened Nginx/systemd 배포는 Source Repository의 Production Runbook을 사용하세요.
 

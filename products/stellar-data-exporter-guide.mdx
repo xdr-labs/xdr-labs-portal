@@ -44,7 +44,7 @@ Use this when someone asks:
    - **Root Scope** → Email + All-Access Token
    - **User Scope** → User API Key
 4. Select **Alerts**.
-5. Choose **Last 1 hour**.
+5. Click the **1h** time shortcut.
 6. In Query:
    - User Scope: use `*:*`
    - Root Scope: you can also use `*:*` in Stellar Cyber Query mode
@@ -77,7 +77,7 @@ Example request:
 1. Select **User Scope**.
 2. Paste the **User API Key**.
 3. Select the data source you want, for example **Alerts**.
-4. Choose **Last 24 hours**.
+4. Click the **24h** time shortcut.
 5. In **Stellar Cyber Query**, enter:
 
 ```text
@@ -124,9 +124,10 @@ event_name:"Login Failure" AND srcip:10.10.10.*
    - sample timestamps
    - source IP values
    - event names
-6. If the result is too broad, add another condition.
-7. When the result looks right, select **CSV**.
-8. Click **Run export**.
+6. If Preview returns **0**, the example values may simply not exist in your environment. Start with `*:*`, inspect real `event_name` and `srcip` values from your data, then rebuild the filter with values that exist.
+7. If the result is too broad, add another condition.
+8. When the result looks right, select **CSV**.
+9. Click **Run export**.
 
 ### Result
 
@@ -148,17 +149,22 @@ Example request:
    - **Alerts**
    - **Traffic**
    - **Windows Events**
-2. Set the incident **Start** and **End** time.
-3. Enter the query condition that all selected sources should use.
-4. Click **Preview 100 records**.
-5. Open **Advanced** and check **Resolved indices** if you want to confirm the actual target indices.
-6. Select **JSON**.
-7. Select **Download**.
-8. Click **Run export**.
+2. Start with a short incident **Start** / **End** window.
+3. Enter a selective query that is meaningful for the incident.
+4. Click **Preview 100 records** and check **Matched records** before exporting.
+5. If the matched count is unexpectedly large, shorten the time range or narrow the query first.
+6. Switch to **Advanced**. In **Query Inspector**, confirm **Resolved indices** and the effective query.
+7. Select **JSON**.
+8. Use **Download** only when the result is reasonably sized. For a large result, use S3-compatible storage or SFTP instead.
+9. Click **Run export**.
 
 ### Result
 
 The exporter queries the selected source families for the same time window and creates one export result.
+
+<Warning>
+  Avoid a broad multi-source `*:*` export over a long window. Traffic can make the match count extremely large. A very large search can increase load on both Stellar Cyber and the exporter and may cause noticeable performance degradation. **Record Limit** limits exported rows, but it does not guarantee that the backend search itself will be inexpensive. If Preview shows a very large match count, shorten the time range or add query conditions before running the export, and prefer S3/SFTP over a browser download.
+</Warning>
 
 <Tip>
   If one source produces much more data than the others, first test each source separately with Preview.
@@ -200,7 +206,7 @@ Example request:
 ### Do this
 
 1. Select **Alerts**.
-2. Choose **Last 7 days** or set the exact Start/End time.
+2. Click **7d** or set the exact Start/End time.
 3. Enter the query.
 4. Run **Preview** with the smaller sample first.
 5. Switch to **Advanced**.
@@ -225,7 +231,7 @@ Example request:
 The exporter sends the data directly to S3/R2/MinIO instead of downloading the full dataset through the browser.
 
 <Tip>
-  For a very large export, set a file-size limit so the result is split into numbered files.
+  For a very large export, set a file-size limit so the result is split into numbered files. Because new events can arrive between Preview and Run export, the final record count may be slightly different from the Preview count.
 </Tip>
 
 ---
@@ -257,7 +263,7 @@ Example request:
 
 ### Result
 
-The exporter writes numbered files to the remote SFTP path.
+The exporter writes numbered files to the remote SFTP path. **Max file size** is a split target rather than a byte-perfect hard boundary, so a part can be slightly larger when a complete record crosses the target.
 
 If a supported split export is interrupted, use the job history to retry/resume after re-entering the required credentials.
 
@@ -300,6 +306,10 @@ Example request:
 
 Your DSL condition is combined with the time range selected in the UI and used for the export.
 
+<Note>
+  Elasticsearch DSL requires **Root Scope** with an account email and All-Access Token. A **User Scope API Key** intentionally disables DSL mode; use Scenario 2 and Stellar Cyber Query instead.
+</Note>
+
 ---
 
 ## Scenario 9 — Create a recurring export to S3 or SFTP
@@ -341,16 +351,14 @@ Use this when Preview is empty, the count is unexpected, or an export is much la
 
 ### Do this
 
-1. Switch to **Advanced**.
-2. Open **Query Inspector**.
-3. Check:
-   - selected sources
-   - resolved indices
-   - Start/End time
-   - effective query
-   - matched record count
-   - export plan
-4. Reduce the time range.
+1. Switch to **Advanced**. **Query Inspector** appears automatically inside the Query section; there is no separate Open action.
+2. Confirm the selected data sources and Start/End time in the normal Query controls.
+3. In **Query Inspector**, check:
+   - Request path and **Resolved indices**
+   - Effective Query
+   - **Matched records**, Preview latency/bytes, and estimated output size
+   - **Export Plan**: selected fields, export limit, adaptive slicing, estimated slices/files, max file size, and overlap policy
+4. Reduce the time range if the matched count or estimated output is too large.
 5. Run Preview again.
 6. Add query conditions one at a time.
 7. Export only after the Preview result looks correct.

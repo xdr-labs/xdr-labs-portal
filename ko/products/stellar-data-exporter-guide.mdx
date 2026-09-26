@@ -43,7 +43,7 @@ http://127.0.0.1:8787
    - **Root Scope** → Email + All-Access Token
    - **User Scope** → User API Key
 3. Data Source에서 **Alerts**를 선택합니다.
-4. Time Range를 **Last 1 hour**로 선택합니다.
+4. Time Range에서 **1h** 버튼을 선택합니다.
 5. Query에는 다음을 사용합니다.
 
 ```text
@@ -79,7 +79,7 @@ http://127.0.0.1:8787
 1. **User Scope**를 선택합니다.
 2. **User API Key**를 입력합니다.
 3. Data Source에서 예를 들어 **Alerts**를 선택합니다.
-4. **Last 24 hours**를 선택합니다.
+4. **24h** 버튼을 선택합니다.
 5. **Stellar Cyber Query**에 다음을 입력합니다.
 
 ```text
@@ -129,9 +129,10 @@ event_name:"Login Failure" AND srcip:10.10.10.*
    - Source IP
    - Event Name
    - 전체 Matching Count
-6. 결과가 너무 많으면 조건을 하나 더 추가합니다.
-7. 원하는 데이터가 맞으면 **CSV**를 선택합니다.
-8. **Run export**를 실행합니다.
+6. Preview가 **0건**이면 예제 값이 현재 환경에 없는 것일 수 있습니다. 먼저 `*:*`로 Preview한 뒤 실제 데이터에 존재하는 `event_name`, `srcip` 값을 확인하고 그 값으로 조건을 다시 만드세요.
+7. 결과가 너무 많으면 조건을 하나 더 추가합니다.
+8. 원하는 데이터가 맞으면 **CSV**를 선택합니다.
+9. **Run export**를 실행합니다.
 
 ### 결과
 
@@ -153,17 +154,22 @@ event_name:"Login Failure" AND srcip:10.10.10.*
    - **Alerts**
    - **Traffic**
    - **Windows Events**
-2. Incident의 **Start**와 **End** Time을 입력합니다.
-3. 공통으로 적용할 Query를 입력합니다.
-4. **Preview 100 records**를 실행합니다.
-5. 필요하면 **Advanced** → **Resolved indices**에서 실제 Target Index를 확인합니다.
-6. Output은 **JSON**을 선택합니다.
-7. Destination은 **Download**를 선택합니다.
-8. **Run export**를 실행합니다.
+2. 처음에는 짧은 Incident **Start** / **End** Time으로 시작합니다.
+3. Incident에 필요한 조건으로 Query 범위를 충분히 좁힙니다.
+4. **Preview 100 records**를 실행하고 **Matched records**를 확인합니다.
+5. 예상보다 건수가 크면 Export하기 전에 Time Range를 더 줄이거나 Query 조건을 좁힙니다.
+6. **Advanced**로 전환한 뒤 **Query Inspector**에서 **Resolved indices**와 Effective Query를 확인합니다.
+7. Output은 **JSON**을 선택합니다.
+8. 결과가 충분히 작을 때만 **Download**를 사용합니다. 결과가 크면 S3-Compatible Storage 또는 SFTP를 사용하세요.
+9. **Run export**를 실행합니다.
 
 ### 결과
 
 선택한 여러 Source Family를 동일한 Time Range와 Query로 조회한 결과를 하나의 Export로 받을 수 있습니다.
+
+<Warning>
+  넓은 시간 범위에서 여러 Source에 `*:*`를 그대로 적용하지 마세요. 특히 Traffic 때문에 Matching Count가 매우 커질 수 있습니다. 데이터 양이 매우 크면 Stellar Cyber와 Exporter 양쪽에 부하가 증가하여 **시스템 성능 저하가 발생할 수 있습니다.** **Record Limit**은 최종 Export 건수만 제한하며 넓은 Backend Search 자체의 부하를 줄여준다고 보장할 수 없습니다. Preview의 Matching Count가 매우 크면 Time Range를 줄이거나 Query 조건을 추가한 뒤 Export하고, Browser Download보다 S3/SFTP를 우선 사용하세요.
+</Warning>
 
 <Tip>
   한 Source의 데이터가 너무 많다면 먼저 Source별로 Preview한 뒤 Multi-Source Export를 실행하세요.
@@ -205,7 +211,7 @@ Browser Download로 받기에는 데이터가 크거나 Object Storage로 바로
 ### 따라하기
 
 1. **Alerts**를 선택합니다.
-2. **Last 7 days** 또는 정확한 Start/End Time을 선택합니다.
+2. **7d** 버튼을 선택하거나 정확한 Start/End Time을 지정합니다.
 3. Query를 입력합니다.
 4. 먼저 **Preview**를 실행합니다.
 5. **Advanced**로 전환합니다.
@@ -230,7 +236,7 @@ Browser Download로 받기에는 데이터가 크거나 Object Storage로 바로
 대용량 결과를 Browser를 거치지 않고 AWS S3, Cloudflare R2, MinIO 등으로 직접 보냅니다.
 
 <Tip>
-  데이터가 매우 크다면 Max File Size를 지정해 여러 Part로 나누는 것이 좋습니다.
+  데이터가 매우 크다면 Max File Size를 지정해 여러 Part로 나누는 것이 좋습니다. Preview와 Run export 사이에도 새 Event가 유입될 수 있으므로 최종 Record Count는 Preview Count와 조금 달라질 수 있습니다.
 </Tip>
 
 ---
@@ -264,7 +270,7 @@ Browser Download로 받기에는 데이터가 크거나 Object Storage로 바로
 
 ### 결과
 
-Remote Path에 번호가 붙은 여러 File이 생성됩니다.
+Remote Path에 번호가 붙은 여러 File이 생성됩니다. **Max file size**는 byte 단위의 절대 상한이라기보다 Split 목표값이므로, 하나의 Record가 경계를 넘는 경우 Part가 설정값보다 조금 커질 수 있습니다.
 
 지원되는 Split Export가 중단되면 Job History에서 필요한 Credential을 다시 입력한 뒤 Retry/Resume할 수 있습니다.
 
@@ -309,6 +315,10 @@ Remote Path에 번호가 붙은 여러 File이 생성됩니다.
 
 기존 DSL 조건에 UI에서 선택한 Time Range를 결합해서 Export합니다.
 
+<Note>
+  Elasticsearch DSL은 Account Email + All-Access Token을 사용하는 **Root Scope** 전용입니다. **User Scope API Key**에서는 DSL Mode가 의도적으로 Disabled되므로 시나리오 2의 Stellar Cyber Query를 사용하세요.
+</Note>
+
 ---
 
 ## 시나리오 9 — 매시간 자동으로 S3/SFTP에 Export하기
@@ -350,16 +360,14 @@ Preview가 비어 있거나 Record Count가 예상과 다르거나 Export가 너
 
 ### 따라하기
 
-1. **Advanced**로 전환합니다.
-2. **Query Inspector**를 엽니다.
-3. 다음을 확인합니다.
-   - 선택한 Data Source
-   - Resolved Indices
-   - Start/End Time
+1. **Advanced**로 전환합니다. **Query Inspector**는 Query 영역 안에 자동으로 표시되며 별도의 Open 버튼은 없습니다.
+2. 일반 Query 설정에서 선택한 Data Source와 Start/End Time을 확인합니다.
+3. **Query Inspector**에서 다음을 확인합니다.
+   - Request Path와 **Resolved indices**
    - Effective Query
-   - Matched Record Count
-   - Export Plan
-4. Time Range를 줄입니다.
+   - **Matched records**, Preview Latency/Bytes, Estimated Output Size
+   - **Export Plan**의 Selected Fields, Export Limit, Adaptive Slicing, Estimated Slices/Files, Max File Size, Overlap Policy
+4. Matched Count 또는 Estimated Output Size가 너무 크면 Time Range를 줄입니다.
 5. Preview를 다시 실행합니다.
 6. Query 조건을 하나씩 추가합니다.
 7. Preview 결과가 맞을 때만 Export를 실행합니다.

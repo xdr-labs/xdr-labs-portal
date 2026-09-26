@@ -77,16 +77,19 @@ Both credential types are exchanged for a short-lived Stellar Cyber access token
 - maximum file size and split files
 - adaptive slicing controls
 - overlap policy
-- remote destination details
+- TLS verification, S3 path-style addressing, and SFTP host-key verification
 - saved profiles, query history, export history, and scheduling controls
 
 ## Security boundary
 
 - interactive credentials are not written into persistent job history
 - browser-saved profiles exclude credentials and destination secrets
+- scheduled export configurations, including required credentials, are encrypted at rest
 - TLS verification is enabled by default
 - the current application does not provide a multi-user isolation layer
+- the Stellar Cyber **Host** value is reached from the exporter server, not from the user's browser
 - the development Uvicorn listener should not be exposed directly to the public Internet
+- if Nginx or another reverse proxy publishes the exporter, require authentication/access control and restrict the outbound Stellar Cyber targets the exporter is allowed to reach
 
 For hardened Nginx/systemd deployment guidance, use the production runbook in the source repository.
 
