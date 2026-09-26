@@ -9,6 +9,20 @@ Stellar Data Exporter is a Web UI for querying Stellar Cyber raw data, previewin
 
 It is useful when an analyst or engineer needs repeatable exports across multiple Stellar Cyber data sources without building a new API script for every request.
 
+## Use the live service now
+
+**Stellar Data Exporter is not a demo.** The hosted service below is a live, ready-to-use service that you can open and use immediately without installing the exporter locally.
+
+- **Service:** [https://exporter.xdr.ooo](https://exporter.xdr.ooo)
+- **Username:** `stellar`
+- **Password:** `stellar`
+
+After signing in, enter your own Stellar Cyber Host and Root Scope or User Scope API credential, run **Test connection**, select one Tenant, and start with Preview.
+
+<Note>
+  The shared Exporter account authenticates access to the Exporter service. It is separate from your Stellar Cyber API credential, which you still provide inside the Exporter for querying your own Stellar Cyber data.
+</Note>
+
 ## What it provides
 
 - shared HTTP Basic login for access to the exporter UI/API
@@ -92,7 +106,8 @@ After **Test connection**, the exporter loads the tenants visible to that creden
 ## Security boundary
 
 - the UI and API require HTTP Basic authentication; `/api/health` remains available for health checks
-- production deployments should override the development Basic Auth credentials with `STELLAR_EXPORTER_UI_USERNAME` and `STELLAR_EXPORTER_UI_PASSWORD`
+- the hosted service currently uses the shared Exporter login `stellar / stellar`
+- self-hosted installs use the same default login and can override it with `STELLAR_EXPORTER_UI_USERNAME` and `STELLAR_EXPORTER_UI_PASSWORD`
 - after connection, exactly one accessible Stellar Cyber tenant must be selected and the backend enforces that tenant on raw-data queries
 - interactive credentials are not written into persistent job history
 - browser-saved profiles exclude credentials and destination secrets
