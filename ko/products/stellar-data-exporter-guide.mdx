@@ -37,11 +37,11 @@ uv sync --frozen
 uv run stellar-data-exporter
 ```
 
-로컬 실행도 HTTPS가 자동으로 활성화되며 최초 실행 시 지속적으로 재사용할 Self-Signed 인증서를 자동 생성합니다.
+로컬 실행도 HTTPS가 자동으로 활성화되며 기본적으로 `0.0.0.0:8787`에 Bind합니다. 최초 실행 시 지속적으로 재사용할 Self-Signed 인증서를 자동 생성합니다.
 
-`https://127.0.0.1:8787` 또는 `https://localhost:8787`을 엽니다. 로컬 인스턴스도 Hosted Service와 동일한 기본 Exporter Login을 사용합니다. 로컬 인증서는 Self-Signed이므로 Browser에서 최초 인증서 경고가 표시될 수 있습니다.
+Exporter가 설치된 Host에서는 `https://localhost:8787`을 열고, 같은 네트워크에서 접근이 허용된 다른 PC에서는 별도 `--host` 옵션 없이 `https://<exporter-host-ip>:8787`로 접속합니다. 예를 들어 Exporter Host IP가 `192.168.1.50`이면 `https://192.168.1.50:8787`을 사용합니다.
 
-다른 PC에서 로컬 서버에 접속하려면 `uv run stellar-data-exporter --host 0.0.0.0`으로 실행한 뒤 `https://<server-ip>:8787`로 접속합니다.
+로컬 인스턴스도 Hosted Service와 동일한 기본 Exporter Login을 사용합니다. Self-Signed 인증서이므로 Browser에서 최초 인증서 경고가 표시될 수 있습니다. 자동 생성 인증서에는 localhost, Server Hostname, 감지된 Local IP가 포함됩니다. Host Firewall에서는 Exporter를 사용할 네트워크에만 TCP/8787 Inbound를 허용하세요.
 
 처음에는 **Basic** Mode로 시작하세요. 각 시나리오에서 필요한 경우에만 **Advanced** Mode로 전환합니다.
 
