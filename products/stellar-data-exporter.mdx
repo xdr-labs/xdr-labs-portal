@@ -33,12 +33,12 @@ After signing in, enter your own Stellar Cyber Host and Root Scope or User Scope
 - explicit start/end time selection
 - Elasticsearch DSL for Root Scope and Stellar Cyber/Lucene Query for Root Scope or User Scope
 - query preview before export
-- count-only export preflight with explicit confirmation for large matches
+- count-only export preflight with elapsed-time feedback and explicit confirmation for large matches
 - CSV, JSON Array, and NDJSON output
 - browser download, S3-compatible storage, and SFTP destinations
 - field selection, record limits, gzip, and file splitting
 - adaptive time slicing for large export windows
-- progress, cancellation, persistent sanitized history, and supported retry/resume
+- immutable active-job summary, locked run configuration, current/expected record progress with percentage, cancellation, persistent sanitized history, and supported retry/resume
 - saved non-secret profiles and query history/favorites
 - optional scheduled S3/SFTP exports
 
@@ -111,6 +111,9 @@ After **Test connection**, the exporter loads the tenants visible to that creden
 - direct self-hosted runs bind HTTPS to `0.0.0.0:8787` by default, so users on allowed networks connect with `https://<exporter-host-ip>:8787`; restrict TCP/8787 with the host firewall as needed
 - after connection, exactly one accessible Stellar Cyber tenant must be selected and the backend enforces that tenant on raw-data queries
 - interactive credentials are not written into persistent job history
+- **Remember this session** stores the interactive Stellar Cyber Host/Auth/Credential/TLS/Tenant only in browser `sessionStorage`; it survives refresh in that browser session but is not stored on the Exporter server or shared with another browser/device
+- **Forget session** removes that temporary browser copy and clears the visible connection/tenant state
+- when an interactive export starts, every export-affecting control is locked until the job completes, fails, or is cancelled; refreshing the same browser session reconnects to the active job and preserves the lock
 - browser-saved profiles exclude credentials and destination secrets
 - scheduled export configurations, including required credentials, are encrypted at rest
 - TLS verification is enabled by default

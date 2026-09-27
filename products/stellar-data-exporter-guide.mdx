@@ -61,17 +61,22 @@ Do these steps before every scenario:
    - **Root Scope** → Elasticsearch DSL or Stellar Cyber Query
    - **User Scope** → Stellar Cyber Query (Lucene) only; Elasticsearch DSL is disabled and marked **Root Scope only**
 8. If you change the Host, credential, authentication mode, or TLS setting, run **Test connection** again and reselect the Tenant.
-9. If you want the connection to survive a page refresh, click **Remember this session**. Host, credential, TLS setting, and Tenant are stored only in that browser session. They are **not** stored as a shared connection on the Exporter server and are not available to another browser or device. Use **Clear session** to remove the temporary browser copy.
+9. If you want the connection to survive a page refresh, click **Remember this session**. Host, credential, TLS setting, and Tenant are stored only in that browser session. They are **not** stored as a shared connection on the Exporter server and are not available to another browser or device. Use **Forget session** to remove the temporary browser copy.
 
 ### What happens when you click Run export
 
-**Run export does not immediately start the export job.** The exporter first performs a count-only query using the selected Tenant, data sources, time range, and query.
+**Run export does not immediately start the export job.** As soon as you click it, the exporter freezes the current configuration and disables every control that could change the export: Connection/Tenant, Data Sources, time range, Query, Output/Advanced options, Destination, and the Basic/Advanced mode switch. The exporter then performs a count-only query using that locked Tenant, data sources, time range, and query.
 
-- If the count is `0`, no export job is created.
+- The Count Preflight shows elapsed time so a multi-minute count does not look stuck.
+- If the count is `0`, no export job is created and the settings are unlocked.
 - For a normal-sized result, the export starts after the count is shown.
 - For a large result, a performance warning appears before any export job is created.
-- Choose **Go back and refine** to cancel safely, or **Export anyway** to explicitly continue.
+- Choose **Go back and refine** to cancel safely and unlock the form, or **Export anyway** to explicitly continue.
 - The default warning threshold is 100,000 matched records and the critical threshold is 1,000,000 records. Deployments can override these thresholds.
+
+After the job starts, **Export Summary is the immutable job snapshot**, not a live reflection of editable form state. Records are shown as `current / expected` with a percentage/progress bar for Browser Download, S3, and SFTP. The matched total is kept in sanitized job metadata so the progress target survives API restarts. If you refresh the page in the same browser session, the UI reconnects to the active job and keeps the configuration locked until the job completes, fails, or is cancelled.
+
+For Browser Download, the exporter stages the complete file before starting the browser transfer. During that staging phase, **Transferred** may show **Preparing…** instead of `0 B`; the final byte count appears when the staged file is ready.
 
 <Warning>
   **Record Limit** limits output rows, but the count preflight still evaluates the full source query. A broad multi-source query can therefore be expensive even when the final export limit is small.
@@ -180,7 +185,7 @@ Use this when someone asks:
    - Then run **Test destination**. Password/private-key authentication is tested after host-key verification succeeds.
 5. Click **Run export** and review the Count Preflight.
 6. If a large-export warning appears, re-check Tenant/Time/Query and use **Export anyway** only when the large transfer is intentional.
-7. During the job, monitor Records, Bytes, Files, and Progress.
+7. During the job, monitor `Records current / expected`, percentage, Bytes, Files, partition/query/retry counters, and adaptive splits. The export settings remain locked to the job snapshot.
 
 ### Advanced scenario E — Schedule the same export to run repeatedly
 
@@ -407,7 +412,7 @@ Example request:
 10. Test the destination.
 11. Click **Run export**.
 12. Review the count preflight. For a large result, the warning appears before any export job is created; choose **Export anyway** only when the large transfer is intentional.
-13. Watch **Records**, **Bytes**, **Files**, and **Progress** until the job completes.
+13. Watch **Records current / expected**, percentage, **Bytes**, **Files**, and the detailed progress counters until the job completes.
 
 ### Result
 
@@ -565,6 +570,8 @@ Use this when Preview is empty, the count is unexpected, or an export is much la
 | Browser export is too large | Use S3/SFTP, gzip, field selection, or file splitting |
 | SFTP says host key is not trusted | Use **Get host key**, verify the SHA256 fingerprint out-of-band, then click **Trust this host key** before testing credentials |
 | S3/SFTP fails | Test the destination and recheck credentials/path settings |
+| Settings cannot be changed while an export is running | This is intentional. The form is locked to the active job snapshot. Wait for completion, cancel the job, or refresh the same browser session to reconnect to it |
+| Browser Download shows `Preparing…` for Transferred | The exporter is still staging the complete file on the server; final bytes and the browser download appear when staging completes |
 | Stellar connection drops temporarily | Preview/count/export automatically retries transient network failures, HTTP 408/429, and HTTP 5xx with exponential backoff; persistent failures are still reported |
 
 ---
