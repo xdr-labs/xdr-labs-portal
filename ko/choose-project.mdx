@@ -9,11 +9,11 @@ description: "해결하려는 문제를 기준으로 적합한 XDR Labs 프로�
 
 <CardGroup cols={2}>
   <Card title="NAT/방화벽 뒤 서버에 원격 접속하고 싶습니다" icon="network-wired" href="https://link.datarelay.run/">
-    **Data Relay Link** — NAT/방화벽 뒤 시스템에서 필요한 SSH, HTTP, HTTPS, Custom TCP 서비스만 선택해서 안전하게 공개하는 경량 Secure Connectivity 제품입니다.
+    **Data Relay Link** — NAT/방화벽 뒤 시스템에서 필요한 SSH, HTTP, HTTPS, 사용자 지정 TCP 서비스만 선택해 외부에 안전하게 연결합니다.
   </Card>
 
-  <Card title="폐쇄/제한망에서 승인된 인터넷 Destination만 접속하고 싶습니다" icon="arrow-up-right-from-square" href="https://link.datarelay.run/">
-    **Data Relay Link — Controlled Egress** — Agent 설치 없이 HTTP/HTTPS Proxy를 사용하여 승인된 Source, FQDN, Port만 허용하는 Fail-Closed 방식의 Outbound Access입니다. 현재 Controlled Egress는 Release Qualification 중입니다.
+  <Card title="폐쇄/제한망에서 승인된 인터넷 목적지만 접속하고 싶습니다" icon="arrow-up-right-from-square" href="https://link.datarelay.run/">
+    **Data Relay Link — Controlled Egress** — 에이전트 설치 없이 HTTP/HTTPS 프록시를 사용해 승인된 출발지, FQDN, 포트만 허용합니다. 정책을 확인할 수 없으면 통신을 차단하며, 현재 릴리스 검증 단계에 있습니다.
   </Card>
 
   <Card title="Stellar DP를 Ubuntu 24.04로 업그레이드해야 합니다" icon="arrow-up-from-bracket" href="https://dpos.xdr.ooo/">
@@ -25,32 +25,32 @@ description: "해결하려는 문제를 기준으로 적합한 XDR Labs 프로�
   </Card>
 
   <Card title="배포된 KVM Appliance를 하나의 CLI로 운영하고 싶습니다" icon="terminal" href="/ko/products/stellar-appliance-cli">
-    **Stellar Appliance CLI** — `aella_cli`에서 Network, DNS/NTPsec, ACL, Service, VM Console/Autostart, Patch 및 Appliance 상태를 통합 운영합니다.
+    **Stellar Appliance CLI** — `aella_cli` 하나에서 네트워크, DNS/NTPsec, ACL, 서비스, VM 콘솔/자동 시작, 패치, 어플라이언스 상태를 관리합니다.
   </Card>
 
   <Card title="반복해서 재구축 가능한 XDR / NDR Lab이 필요합니다" icon="flask" href="/ko/products/xdr-lab-appliance">
-    **XDR Lab Appliance** — KVM + Open vSwitch 기반으로 Stellar Sensor, Linux/Windows Target, Traffic Mirror, Reverse-NAT 외부 접속을 포함한 Lab을 구성합니다.
+    **XDR Lab Appliance** — KVM + Open vSwitch 기반으로 Stellar Sensor, Linux/Windows 테스트 대상, 트래픽 미러링, Reverse-NAT 외부 접속을 포함한 테스트 랩을 구성합니다.
   </Card>
 
   <Card title="XDR / NDR POC 검증용 실제 트래픽을 만들고 싶습니다" icon="radar" href="https://dsp.xdr.ooo/">
-    **Detection Scenario Platform (DSP)** — XDR/NDR 고객 POC 검증을 위한 현실적이고 관찰 가능한 Security Activity와 구조화된 Evidence/Report를 생성합니다.
+    **Detection Scenario Platform (DSP)** — XDR/NDR 고객 POC에서 확인할 수 있는 현실적인 보안 활동을 만들고, 실제로 무엇을 실행했는지 검증 자료와 보고서로 남깁니다.
   </Card>
 
   <Card title="Stellar Raw Data를 검색하고 파일로 Export하고 싶습니다" icon="database" href="/ko/products/stellar-data-exporter">
-    **Stellar Data Exporter** — 하나 이상의 Stellar Cyber Data Source와 Time Range, Query를 선택하고 Preview한 뒤 CSV/JSON/NDJSON을 Browser, S3-Compatible Storage 또는 SFTP로 Export합니다.
+    **Stellar Data Exporter** — Stellar Cyber Data Source, 시간 범위, Query를 선택해 결과를 미리 확인한 뒤 CSV/JSON/NDJSON으로 브라우저, S3 호환 스토리지 또는 SFTP에 내보냅니다.
   </Card>
 
   <Card title="Stellar Alert/Case를 기존 SIEM 또는 SOC 포털로 전달하고 싶습니다" icon="arrow-right-arrow-left" href="https://stellar-relay.xdr.ooo/">
-    **Stellar Alert & Case Relay** — Stellar Cyber API에서 Alert와 Case를 가져와 기존 SIEM/SOC Workflow로 TCP NDJSON 형태로 전달하며 독립 스트림과 Recovery 기능을 제공합니다.
+    **Stellar Alert & Case Relay** — Stellar Cyber API에서 Alert와 Case를 가져와 기존 SIEM/SOC로 TCP NDJSON 형태로 전달합니다. Alert와 Case는 독립적으로 처리하며 체크포인트, 재시도, 복구 기능을 제공합니다.
   </Card>
 
   <Card title="기업 데이터를 통제해서 여러 Destination으로 보내고 싶습니다" icon="arrows-left-right" href="https://control.datarelay.run/">
-    **Data Relay Control** — **One Stream → Many Routes → Many Destinations** 구조에서 Route별 Transform, Protection, Policy, Governance 및 Delivery를 제어하는 Enterprise Data Control Gateway입니다.
+    **Data Relay Control** — **One Stream → Many Routes → Many Destinations** 구조로 데이터를 한 번 수집한 뒤 Route마다 변환, 보호, 정책, 거버넌스, 전달 방식을 따로 적용합니다.
   </Card>
 </CardGroup>
 
 <Note>
-  **Data Relay Link와 Data Relay Control은 서로 다른 제품입니다.** Link는 Secure Connectivity와 Controlled Egress를 담당하고, Control은 Enterprise Data Flow의 처리와 전달을 담당합니다. Control은 Link의 중앙 관리 제품이 아닙니다.
+  **Data Relay Link와 Data Relay Control은 서로 다른 제품입니다.** Link는 안전한 원격 연결과 제한망의 승인된 외부 접속을 담당하고, Control은 기업 데이터의 처리와 전달을 담당합니다. Control은 Link의 중앙 관리 제품이 아닙니다.
 </Note>
 
 <Card title="전체 프로젝트 설명 보기" icon="grid-2" href="/ko/projects">

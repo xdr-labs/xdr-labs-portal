@@ -1,56 +1,59 @@
 ---
 title: "OpenXDR KVM Installer"
-description: "Stellar Cyber Data Processor, Sensor, High-Performance Sensor 및 AIO + Sensor를 KVM에 배포하기 위한 전용 문서와 자동화 Workflow입니다."
+description: "Stellar Cyber Data Processor, Sensor, High-Performance Sensor 및 AIO + Sensor를 KVM에 배포하는 자동화 도구와 문서입니다."
 ---
 
 # OpenXDR KVM Installer
 
-OpenXDR KVM Installer는 KVM Host를 준비하고 Stellar Cyber OpenXDR 구성 요소를 배포하기 위한 Script 기반 자동화 Framework입니다. 전용 문서는 **[kvm.xdr.ooo](https://kvm.xdr.ooo/ko)**에서 제공합니다.
+OpenXDR KVM Installer는 KVM 호스트 준비와 Stellar Cyber OpenXDR 구성 요소 배포를 자동화하는 스크립트 기반 도구입니다. 자세한 설치·운영 문서는 **[kvm.xdr.ooo](https://kvm.xdr.ooo/ko)**에서 제공합니다.
 
-Interactive Menu와 Persistent State를 사용하여 Safe Mode에서 설정을 검증하고, 전체 배포 또는 개별 Step을 실행하며, 필요한 Reboot 후 다음 미완료 Step부터 Resume할 수 있습니다.
+대화형 메뉴와 작업 상태 저장 기능을 사용합니다. 먼저 안전 모드에서 설정을 검증하고, 전체 배포 또는 필요한 단계만 실행할 수 있으며, 재부팅 후에는 완료하지 못한 단계부터 이어서 진행할 수 있습니다.
 
 ## 배포 경로
 
-- **Data Processor (DP)** — DL-master / DA-master, Storage, Network, SR-IOV 또는 Bridge 기반 Cluster Network, CPU Placement 및 NFS Backup 구성
-- **Standard Sensor** — NAT 또는 Bridge Management Network와 PCI 또는 Bridge 방식 SPAN 연결을 사용하는 Modular Sensor 배포
-- **High-Performance Sensor** — Dual VM / NUMA 기반 고성능 Sensor 배포
-- **AIO + Sensor** — 하나의 KVM Host에 AIO Data Processor와 Sensor 통합 배포
+- **Data Processor (DP)** — DL-master / DA-master, 스토리지, 네트워크, SR-IOV 또는 브리지 기반 클러스터 네트워크, CPU 배치, NFS 백업 구성
+- **Standard Sensor** — NAT 또는 브리지 관리 네트워크와 PCI 또는 브리지 방식 SPAN 연결을 사용하는 Modular Sensor 배포
+- **High-Performance Sensor** — 듀얼 VM / NUMA 기반 고성능 Sensor 배포
+- **AIO + Sensor** — 하나의 KVM 호스트에 AIO Data Processor와 Sensor를 함께 배포
 
 ## 안전한 배포 흐름
 
 ```text
-Hardware 확인
-  → DRY_RUN을 유지한 상태에서 Installer 입력값 구성
+하드웨어 확인
+  → DRY_RUN 상태에서 설치 입력값 설정
   → DRY_RUN으로 전체 흐름 점검
-  → Full Configuration Validation
-  → FAIL 해결 및 WARN 검토
-  → NIC, IP, Disk, Version, Credential 재확인
+  → 전체 구성 검증
+  → FAIL 해결 및 WARN 확인
+  → NIC, IP, 디스크, 버전, 인증 정보 재확인
   → DRY_RUN=0 전환
-  → 전체 Step 또는 개별 Step 실행
-  → 필요한 시점에 Reboot
-  → 동일 Installer 재실행 후 Resume
-  → 배포 후 Validation
+  → 전체 단계 또는 필요한 단계만 실행
+  → 필요한 시점에 재부팅
+  → 같은 설치 프로그램을 다시 실행해 이어서 진행
+  → 배포 후 검증
 ```
 
 <Warning>
-  `DRY_RUN=0`부터는 Network, Storage, Kernel, Virtualization 설정과 VM 정의가 실제로 변경될 수 있습니다. 원격 Host의 Network를 변경하기 전에 Console 또는 Out-of-Band 접근을 확보하십시오.
+  `DRY_RUN=0`부터는 네트워크, 스토리지, 커널, 가상화 설정과 VM 정의가 실제로 변경될 수 있습니다. 원격 호스트의 네트워크를 변경하기 전에 콘솔 또는 Out-of-Band 접속 수단을 확보하십시오.
 </Warning>
 
-## Host Platform
+## 호스트 운영체제
 
-현재 문서의 기본 설치 경로는 **Ubuntu Server 24.04 LTS**입니다. Installer Source에는 이전 Ubuntu/OpenXDR Release용 Compatibility Path가 남아 있을 수 있지만, Legacy 배포는 24.04 절차가 그대로 적용된다고 가정하지 말고 현재 구현과 대상 Release 지원 범위를 확인해야 합니다.
+현재 문서의 기본 설치 경로는 **Ubuntu Server 24.04 LTS**입니다. 설치 소스에는 이전 Ubuntu/OpenXDR 버전을 위한 호환 코드가 남아 있을 수 있지만, 기존 환경에 24.04 절차가 그대로 적용된다고 가정해서는 안 됩니다. 대상 버전과 현재 지원 범위를 먼저 확인하십시오.
 
 <CardGroup cols={2}>
   <Card title="KVM Installer 한국어 문서" icon="book-open" href="https://kvm.xdr.ooo/ko">
-    Installer 선택, 배포 설계, 요구사항, Ubuntu 준비, DRY_RUN/Validation 및 개별 Installer 절차를 확인합니다.
+    설치 유형 선택, 배포 설계, 요구사항, Ubuntu 준비, DRY_RUN 검증, 개별 설치 절차를 확인합니다.
   </Card>
+
   <Card title="English Documentation" icon="language" href="https://kvm.xdr.ooo/">
-    영문 Deployment, Operations, Recovery 및 Reference 문서를 확인합니다.
+    영문 배포, 운영, 복구, 참고 문서를 확인합니다.
   </Card>
+
   <Card title="Installer Source" icon="github" href="https://github.com/xdr-labs/OpenXDR-KVM-Installer">
-    현재 Installer 구현을 확인합니다.
+    현재 설치 프로그램 구현을 확인합니다.
   </Card>
+
   <Card title="Documentation Source" icon="github" href="https://github.com/xdr-labs/openxdr-kvm-installer-docs">
-    문서 Source와 변경 이력을 확인합니다.
+    문서 소스와 변경 이력을 확인합니다.
   </Card>
 </CardGroup>

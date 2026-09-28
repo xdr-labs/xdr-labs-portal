@@ -1,6 +1,6 @@
 ---
 title: "Stellar Data Exporter 사용 설명서"
-description: "실제 업무 상황별 시나리오를 따라 Stellar Cyber Raw Data를 검색하고 Export하는 방법을 설명합니다."
+description: "실제 업무 시나리오를 따라 Stellar Cyber 원시 데이터를 조회하고 내보내는 방법을 설명합니다."
 ---
 
 # Stellar Data Exporter 사용 설명서
@@ -24,7 +24,7 @@ Stellar Data Exporter는 기능을 하나씩 배우는 것보다 **지금 하려
 - **Username:** `stellar`
 - **Password:** `stellar`
 
-이 로그인은 Exporter UI에 접속하기 위한 계정입니다. 실제 데이터를 Query하려면 Exporter 화면에서 자신의 Stellar Cyber Host와 Root Scope 또는 User Scope API Credential을 별도로 입력합니다.
+이 로그인은 Exporter 화면에 접속하기 위한 계정입니다. 실제 데이터를 조회하려면 화면에서 자신의 Stellar Cyber Host와 Root Scope 또는 User Scope API Credential을 별도로 입력해야 합니다.
 
 ### 선택 사항: 직접 설치해서 사용하기
 
@@ -61,11 +61,11 @@ Exporter가 설치된 Host에서는 `https://localhost:8787`을 열고, 같은 �
    - **Root Scope** → Elasticsearch DSL 또는 Stellar Cyber Query
    - **User Scope** → Stellar Cyber Query (Lucene)만 사용하며 Elasticsearch DSL은 비활성화되고 **Root Scope 전용**으로 표시됩니다.
 8. Host, Credential, Auth Mode, TLS 설정을 바꾸면 기존 Tenant 선택이 무효화되므로 **Test connection**을 다시 실행하고 Tenant를 재선택합니다.
-9. 새로고침 후에도 현재 연결을 유지하려면 **Remember this session**을 누릅니다. Host, Credential, TLS 설정, Tenant는 현재 Browser Session에만 임시 저장됩니다. Exporter 서버의 공용 Connection으로 저장되지 않으며 다른 Browser나 다른 PC에서는 보이지 않습니다. 임시 저장값을 지우려면 **Forget session**을 사용합니다.
+9. 새로고침 후에도 현재 연결을 유지하려면 **Remember this session**을 누릅니다. Host, 인증 정보, TLS 설정, Tenant는 현재 브라우저 세션에만 임시 저장됩니다. Exporter 서버의 공용 설정으로 저장되지 않으며 다른 브라우저나 PC에서는 보이지 않습니다. 임시 저장값을 지우려면 **Forget session**을 사용합니다.
 
 ### Run export를 누르면 실제로 일어나는 일
 
-**Run export는 즉시 Export Job을 만들지 않습니다.** 버튼을 누르는 순간 현재 설정을 고정하고 Export에 영향을 줄 수 있는 Connection/Tenant, Data Source, Time Range, Query, Output/Advanced 옵션, Destination, Basic/Advanced 전환을 모두 Disabled/`LOCKED` 상태로 만듭니다. 그 다음 고정된 Tenant, Data Source, Time Range, Query로 Count-Only Preflight를 실행합니다.
+**Run export를 누르면 먼저 현재 설정을 고정합니다.** 내보내기에 영향을 주는 연결/Tenant, Data Source, 시간 범위, Query, 출력 옵션, Destination, Basic/Advanced 전환은 모두 `LOCKED` 상태가 됩니다. 그 다음 고정된 조건으로 전체 건수를 먼저 확인한 뒤 실제 Export Job을 시작합니다.
 
 - Count Preflight에는 경과시간이 표시되어 수분 걸리는 Count도 멈춘 것처럼 보이지 않습니다.
 - `0건`이면 Export Job을 만들지 않고 설정 Lock을 해제합니다.
@@ -75,12 +75,12 @@ Exporter가 설치된 Host에서는 `https://localhost:8787`을 열고, 같은 �
 - 정말 필요하면 **Export anyway**를 선택해야 실제 Export가 시작됩니다.
 - 기본 Warning 기준은 100,000건, Critical 기준은 1,000,000건이며 배포 환경에서 변경할 수 있습니다.
 
-Job이 시작된 뒤 **Export Summary는 수정 가능한 화면값이 아니라 실행 Job의 고정 Snapshot**을 표시합니다. Browser Download, S3, SFTP 모두 Records를 `현재 / 예상`과 Percentage/Progress Bar로 표시합니다. Matched Total은 Credential이나 Raw Query 없이 Sanitized Job Metadata에 저장되므로 API 재시작 후에도 Progress 기준값을 유지할 수 있습니다. 같은 Browser Session에서 페이지를 새로고침하면 실행 중 Job에 자동으로 다시 연결하고 Job이 Completed/Failed/Cancelled가 될 때까지 설정 Lock을 유지합니다.
+Job이 시작되면 **Export Summary에는 실행 시점에 고정된 설정**이 표시됩니다. Browser Download, S3, SFTP 모두 처리 건수를 `현재 / 예상`과 진행률로 보여줍니다. 예상 총건수는 인증 정보나 원본 Query를 제외한 Job 메타데이터에 저장되므로 API가 재시작되어도 진행률 기준을 유지할 수 있습니다. 같은 브라우저 세션에서 새로고침하면 실행 중인 Job에 다시 연결되고, 완료·실패·취소될 때까지 설정은 잠긴 상태로 유지됩니다.
 
 Browser Download는 전체 파일을 서버에서 먼저 완성한 뒤 Browser Transfer를 시작합니다. 파일 생성 중에는 **Transferred**가 `0 B` 대신 **Preparing…**으로 표시될 수 있으며, 파일이 준비되면 최종 Byte가 표시되고 Download가 시작됩니다.
 
 <Warning>
-  **Record Limit**은 최종 Export Record 수를 제한하지만 Count Preflight는 원본 Query 전체를 확인합니다. 따라서 Multi-Source의 넓은 Query는 Record Limit이 작아도 Backend Search 자체가 무거울 수 있습니다.
+  **Record Limit**은 최종 내보내기 건수만 제한합니다. 사전 건수 확인은 원본 Query 전체를 대상으로 하므로 여러 Data Source에서 넓은 범위를 조회하면 Record Limit이 작아도 검색 부하는 클 수 있습니다.
 </Warning>
 
 ---
@@ -355,7 +355,7 @@ event_name:"Login Failure" AND srcip:10.10.10.*
 선택한 여러 Source Family를 동일한 Time Range와 Query로 조회한 결과를 하나의 Export로 받을 수 있습니다.
 
 <Warning>
-  넓은 시간 범위에서 여러 Source에 `*:*`를 그대로 적용하지 마세요. 특히 Traffic 때문에 Matching Count가 매우 커질 수 있습니다. 데이터 양이 매우 크면 Stellar Cyber와 Exporter 양쪽에 부하가 증가하여 **시스템 성능 저하가 발생할 수 있습니다.** **Record Limit**은 최종 Export 건수만 제한하며 넓은 Backend Search 자체의 부하를 줄여준다고 보장할 수 없습니다. Preview의 Matching Count가 매우 크면 Time Range를 줄이거나 Query 조건을 추가한 뒤 Export하고, Browser Download보다 S3/SFTP를 우선 사용하세요.
+  넓은 시간 범위에서 여러 Data Source에 `*:*`를 그대로 적용하지 마세요. 특히 Traffic 데이터는 조회 건수가 매우 커질 수 있습니다. 데이터 양이 많으면 Stellar Cyber와 Exporter 모두에 부하가 생겨 **성능이 저하될 수 있습니다.** **Record Limit**은 최종 내보내기 건수만 제한하므로 원본 검색 자체의 부하를 줄여주지는 않습니다. Preview에서 조회 건수가 매우 크다면 시간 범위를 줄이거나 Query 조건을 추가하고, 브라우저 다운로드보다 S3/SFTP를 사용하는 것이 좋습니다.
 </Warning>
 
 <Tip>
@@ -507,7 +507,7 @@ Remote Path에 번호가 붙은 여러 File이 생성됩니다. **Max file size*
 기존 DSL 조건에 UI에서 선택한 Time Range를 결합해서 Export합니다.
 
 <Note>
-  Elasticsearch DSL은 Account Email + All-Access Token을 사용하는 **Root Scope** 전용입니다. **User Scope API Key**에서는 DSL Mode가 의도적으로 Disabled되므로 시나리오 2의 Stellar Cyber Query를 사용하세요.
+  Elasticsearch DSL은 Account Email + All-Access Token을 사용하는 **Root Scope 전용**입니다. **User Scope API Key**에서는 DSL을 사용할 수 없으므로 시나리오 2의 Stellar Cyber Query를 사용하세요.
 </Note>
 
 ---

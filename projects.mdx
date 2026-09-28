@@ -29,14 +29,14 @@ Each project can be used independently. Deploy only the capabilities you need.
   </Card>
 
   <Card title="Data Relay Control" icon="arrows-left-right" href="https://control.datarelay.run/">
-    Enterprise Data Control Gateway built around **One Stream → Many Routes → Many Destinations**. Streams own source execution and progress; Routes apply destination-specific Transform, optional Protection/Policy, and delivery controls. Governance, audit, quarantine, replay, backup, and operational evidence are supported in the implemented product lineage.
+    Enterprise Data Control Gateway built around **One Stream → Many Routes → Many Destinations**. Streams own source execution and progress; Routes apply destination-specific Transform, optional Protection/Policy, and delivery controls. The current product supports governance, audit, quarantine, replay, backup, and delivery history.
 
     **Product:** `control.datarelay.run`  
     **Source:** `datarelay-labs/datarelay-control`
   </Card>
 
   <Card title="Detection Scenario Platform (DSP)" icon="radar" href="https://dsp.xdr.ooo/">
-    Operational security-scenario runner that generates realistic, observable security activity and structured Event Store evidence for **XDR/NDR customer POC validation**. Local and remote webshell execution paths are supported within the documented validation boundaries.
+    Runs controlled security scenarios for **XDR/NDR customer POC validation**. It records the activity it generated in the Event Store so engineers can compare that record with XDR/NDR detections. Local and remote webshell execution are supported where documented.
 
     **Product:** `dsp.xdr.ooo`  
     **Source:** `xdr-labs/xdr-poc-script`
@@ -59,7 +59,7 @@ Each project can be used independently. Deploy only the capabilities you need.
 
 <CardGroup cols={2}>
   <Card title="XDR Lab Appliance" icon="flask" href="/products/xdr-lab-appliance">
-    Self-contained XDR/NDR lab built on Ubuntu 24.04, KVM, and Open vSwitch. It orchestrates a Stellar Sensor plus Linux and Windows test targets, traffic mirroring, deterministic reverse-NAT access, and rebuildable lab state.
+    Self-contained XDR/NDR lab built on Ubuntu 24.04, KVM, and Open vSwitch. It runs a Stellar Sensor with Linux and Windows test targets, mirrors lab traffic, provides predictable reverse-NAT access, and can be rebuilt from configuration.
   </Card>
 
   <Card title="Stellar Data Exporter" icon="database" href="/products/stellar-data-exporter">

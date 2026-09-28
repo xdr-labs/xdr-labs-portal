@@ -43,24 +43,24 @@ flowchart TD
     XLAB --> DSP
 ```
 
-이 구조는 **하나로 묶인 거대한 Platform이 아니라 독립적으로 사용할 수 있는 Toolbox**입니다. 화살표는 함께 쓰기 좋은 일반적인 관계를 보여줄 뿐 필수 의존성을 의미하지 않습니다.
+이 구조는 **하나의 통합 플랫폼이 아니라 독립적으로 사용할 수 있는 도구 모음**입니다. 필요한 프로젝트만 선택해 사용할 수 있으며, 화살표는 함께 사용하는 경우가 많은 조합을 보여줄 뿐 필수 의존성을 의미하지 않습니다.
 
 <Note>
-  Data Relay Link와 Data Relay Control은 의도적으로 별도 Node로 표시합니다. **Link는 Secure Connectivity 제품이고, Control은 Enterprise Data Control 제품입니다.** 현재 Data Relay Control은 Link의 중앙 관리 제품이 아닙니다.
+  Data Relay Link와 Data Relay Control은 역할이 달라 별도로 표시합니다. **Link는 안전한 연결을 담당하고, Control은 기업 데이터의 처리와 전달을 담당합니다.** Data Relay Control은 Link의 중앙 관리 제품이 아닙니다.
 </Note>
 
 ## 프로젝트 디렉터리
 
 | 프로젝트 | 주요 목적 | 제품 페이지 | 소스 |
 | --- | --- | --- | --- |
-| **Data Relay Link** | 제한망/사설망의 Secure Remote Access + Controlled Egress | [link.datarelay.run](https://link.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/datarelay-link) |
-| **Data Relay Control** | Enterprise Data Flow Processing, Policy/Governance, Multi-Destination Delivery | [control.datarelay.run](https://control.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/datarelay-control) |
+| **Data Relay Link** | 제한망/사설망의 안전한 원격 접속 + Controlled Egress | [link.datarelay.run](https://link.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/datarelay-link) |
+| **Data Relay Control** | 기업 데이터 처리, 정책/거버넌스, 여러 목적지로 전달 | [control.datarelay.run](https://control.datarelay.run/) | [GitHub](https://github.com/datarelay-labs/datarelay-control) |
 | **DP Ubuntu Upgrade Mirror Manager** | DP OS + Phase 2 통제 업그레이드 | [dpos.xdr.ooo](https://dpos.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/ubuntu-mirror-automation) |
-| **Detection Scenario Platform** | XDR/NDR POC 검증용 실제 Security Activity / Evidence 생성 | [dsp.xdr.ooo](https://dsp.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
+| **Detection Scenario Platform** | XDR/NDR POC 검증용 보안 활동 생성 및 검증 자료 기록 | [dsp.xdr.ooo](https://dsp.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/xdr-poc-script) |
 | **OpenXDR KVM Installer** | KVM 기반 DP/Sensor/AIO 배포 | [kvm.xdr.ooo](https://kvm.xdr.ooo/ko) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
-| **Stellar Appliance CLI** | KVM Appliance 운영 | [제품 페이지](/ko/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
-| **XDR Lab Appliance** | 재구축 가능한 XDR/NDR Lab | [제품 페이지](/ko/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
-| **Stellar Data Exporter** | Multi-Source Stellar Raw Data Query, Preview 및 File/Object/SFTP Export | [제품 페이지](/ko/products/stellar-data-exporter) · [사용 설명서](/ko/products/stellar-data-exporter-guide) | [GitHub](https://github.com/xdr-labs/stellar-data-exporter) |
+| **Stellar Appliance CLI** | KVM 어플라이언스 운영 | [제품 페이지](/ko/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
+| **XDR Lab Appliance** | 다시 구축할 수 있는 XDR/NDR 테스트 랩 | [제품 페이지](/ko/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Stellar Data Exporter** | 여러 Stellar Data Source 조회, Preview, 파일/Object Storage/SFTP 내보내기 | [제품 페이지](/ko/products/stellar-data-exporter) · [사용 설명서](/ko/products/stellar-data-exporter-guide) | [GitHub](https://github.com/xdr-labs/stellar-data-exporter) |
 | **Stellar Alert & Case Relay** | Stellar Alert/Case를 기존 SIEM/SOC로 전달 | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
 ## 빠른 이동
