@@ -119,7 +119,7 @@ a {
 }
 
 .xdr-hero-primary {
-  background: linear-gradient(135deg, var(--xdr-blue-bright), var(--xdr-blue));
+  background: linear-gradient(135deg, var(--xdr-blue), #1E4EB8);
   color: #fff !important;
   box-shadow: 0 12px 28px rgba(31, 89, 224, 0.34);
 }
