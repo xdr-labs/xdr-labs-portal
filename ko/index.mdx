@@ -1,43 +1,66 @@
 ---
 title: "XDR Labs"
-description: "XDR Labs 프로젝트와 문서를 탐색하는 한국어 시작 페이지"
+description: "배포, 업그레이드, 검증, 연동과 XDR/NDR 운영을 위한 현장 중심의 독립 보안 엔지니어링 도구 모음"
 ---
 
-# XDR Labs
+<div className="xdr-hero">
+  <p className="xdr-kicker">Field-ready security engineering</p>
+  <h1 className="xdr-hero-title">구축부터 검증, 운영까지 더 단순하게.</h1>
+  <p className="xdr-hero-copy">
+    XDR Labs는 Stellar Cyber와 XDR/NDR 환경을 위한 독립 엔지니어링 도구 모음입니다. 어플라이언스 배포와 DP 업그레이드부터 탐지 검증, 데이터 내보내기, Alert/Case 연동까지 필요한 기능만 골라 사용할 수 있습니다.
+  </p>
+  <div className="xdr-hero-actions">
+    <a className="xdr-hero-primary" href="/ko/choose-project">문제로 프로젝트 찾기 →</a>
+    <a className="xdr-hero-secondary" href="/ko/projects">전체 프로젝트 보기</a>
+  </div>
+  <div className="xdr-signal-grid">
+    <div className="xdr-signal">
+      <strong>Deploy</strong>
+      <span>KVM 어플라이언스와 지원 인프라를 반복 가능한 방식으로 구축합니다.</span>
+    </div>
+    <div className="xdr-signal">
+      <strong>Validate</strong>
+      <span>실제에 가까운 보안 행위를 생성하고 XDR/NDR POC 검증 근거를 수집합니다.</span>
+    </div>
+    <div className="xdr-signal">
+      <strong>Integrate</strong>
+      <span>Stellar 데이터와 Alert/Case를 기존 운영 워크플로우로 연결합니다.</span>
+    </div>
+  </div>
+</div>
 
-**보안 엔지니어링, 인프라 배포, 원격 접속, 플랫폼 업그레이드, 데이터 전달, 탐지 검증을 위한 실전 프로젝트 포털입니다.**
+## 문제에서 시작하세요
 
-각 프로젝트는 소스 저장소, 릴리스 주기, 문서와 지원 범위를 독립적으로 관리합니다. 이 사이트는 필요한 프로젝트를 찾기 위한 공통 포털입니다.
-
-<Tip>
-  영문 포털은 [XDR Labs English](/)에서 볼 수 있습니다.
-</Tip>
-
-## 여기서 시작하세요
+<p className="xdr-section-intro">
+  각 프로젝트는 저장소, 릴리스 주기, 문서와 지원 범위를 독립적으로 관리합니다. 지금 필요한 기능만 선택하면 됩니다.
+</p>
 
 <CardGroup cols={2}>
   <Card title="문제별 프로젝트 찾기" icon="compass" href="/ko/choose-project">
-    지금 해결하려는 문제를 기준으로 적합한 프로젝트를 바로 선택합니다.
+    배포, 업그레이드, 검증, 내보내기, 연동 문제에 맞는 프로젝트를 바로 찾습니다.
   </Card>
 
-  <Card title="프로젝트 소개" icon="grid-2" href="/ko/projects">
-    프로젝트별 역할과 범위를 간단히 확인합니다.
+  <Card title="프로젝트 둘러보기" icon="grid-2" href="/ko/projects">
+    XDR Labs 프로젝트의 역할과 운영 범위를 간단히 비교합니다.
   </Card>
-
-  <Card title="프로젝트 관계 및 디렉터리" icon="diagram-project" href="/ko/project-map">
-    프로젝트 간 관계와 제품 문서, 소스 저장소 링크를 한곳에서 확인합니다.
+  <Card title="프로젝트 관계" icon="diagram-project" href="/ko/project-map">
+    독립 프로젝트들이 어떤 상황에서 함께 쓰이는지 전체 구성을 확인합니다.
   </Card>
 
   <Card title="설계 철학" icon="book-open" href="/ko/principles">
-    현장 중심, 자동화, 독립성, 명확한 운영 경계라는 공통 원칙을 확인합니다.
+    현장 중심 자동화, 명확한 책임 경계, 반복 가능한 운영이라는 공통 원칙을 확인합니다.
   </Card>
 </CardGroup>
 
 ## 프리세일즈 도구
 
+<p className="xdr-section-intro">
+  Stellar Cyber 제안, 요구사항 분석, 배포 규모 산정에 바로 활용할 수 있는 도구입니다.
+</p>
+
 <CardGroup cols={2}>
   <Card title="RFP Compliance Analyzer" icon="file-lines" href="https://rfp.xdr.ooo">
-    Stellar Cyber Open XDR 기준으로 RFP/TDR 요구사항을 분석합니다. PDF, DOCX, XLSX, TXT 문서를 업로드하고 SaaS 또는 On-Premises 배포 유형을 선택하면 요구사항별 준수 여부와 기술 답변, 관련 제품 문서와 지식 베이스 근거를 확인할 수 있습니다.
+    Stellar Cyber Open XDR 기준으로 RFP/TDR 요구사항을 분석하고 관련 제품 문서와 지식 베이스 근거를 함께 확인합니다.
   </Card>
 
   <Card title="Stellar Cyber Sizing Calculator" icon="calculator" href="https://stellarcyber.ai/sizing-calculator/">
@@ -46,5 +69,5 @@ description: "XDR Labs 프로젝트와 문서를 탐색하는 한국어 시작 �
 </CardGroup>
 
 <Note>
-  XDR Labs는 하나의 통합 플랫폼이 아니라 필요에 따라 골라 쓰는 독립 프로젝트 모음입니다. 지금 필요한 도구만 선택해 사용하면 됩니다.
+  XDR Labs는 하나의 통합 제품이 아니라 서로 독립적으로 사용할 수 있는 엔지니어링 도구 모음입니다.
 </Note>

@@ -4,7 +4,9 @@
   "name": "XDR Labs",
   "description": "A central portal for XDR Labs projects, tools, documentation, and open-source engineering work.",
   "colors": {
-    "primary": "#16A34A"
+    "primary": "#1F59E0",
+    "light": "#2982E8",
+    "dark": "#5B8CFF"
   },
   "navbar": {
     "links": [
@@ -19,7 +21,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Browse Projects",
+      "label": "Explore Projects",
       "href": "/projects"
     }
   },
