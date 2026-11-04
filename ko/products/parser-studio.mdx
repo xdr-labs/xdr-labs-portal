@@ -1,0 +1,86 @@
+---
+title: "Parser Studio: 보안 로그 파서 생성"
+sidebarTitle: "Parser Studio"
+description: "보안 로그를 자동 분석하고 Stellar Cyber 7.0 필드에 매핑한 뒤, ChatGPT 보조 검토와 Ruby/CONF 파서 초안 생성까지 진행하는 웹 도구입니다."
+---
+
+Parser Studio는 방화벽, IDS/IPS, WAF, VPN, 엔드포인트 등 **보안 솔루션의 로그를 Stellar Cyber 7.0용 커스텀 파서 초안으로 만드는 웹 도구**입니다. Ruby 파서 문법부터 작성하지 않아도 로그 구조 분석, 필드 매핑, 원본 검증, 파서 파일 생성 과정을 화면에서 진행할 수 있습니다.
+
+<CardGroup cols={2}>
+  <Card title="Parser Studio 사용하기" icon="arrow-up-right-from-square" href="https://app.parser.xdr.ooo/">
+    웹에서 보안 로그 샘플을 붙여넣고 분석을 시작합니다.
+  </Card>
+
+  <Card title="사용 설명서와 시나리오" icon="book-open" href="https://parser.xdr.ooo/ko">
+    실제 로그 예제, 단계별 설명, 문제 해결 및 동영상 안내를 확인합니다.
+  </Card>
+</CardGroup>
+
+## 어떤 문제를 해결하나요?
+
+신규 보안 장비나 솔루션의 로그를 Stellar Cyber에 맞게 파싱해야 할 때 사용합니다. Syslog, JSON, CEF, LEEF, Key/Value, CSV 등의 구조를 분석하고, 로그에서 추출한 값을 Stellar Cyber 7.0 필드에 어떻게 대응시킬지 검토할 수 있습니다. 비정형 로그는 원문과 미해석 구간을 보여주므로 누락된 부분을 확인할 수 있습니다.
+
+## 두 가지 파서 생성 방식
+
+<CardGroup cols={2}>
+  <Card title="Auto Parser" icon="wand-magic-sparkles">
+    로그 입력 → 구조 분석 → 추출 필드 확인 → Stellar Cyber 7.0 필드 매핑 → 검증 → 파서 초안 생성을 순서대로 진행합니다.
+  </Card>
+
+  <Card title="ChatGPT Assisted Parser" icon="comments">
+    자동 분석이나 매핑에 보완이 필요한 경우 준비된 프롬프트를 사용합니다. 민감정보를 제거한 로그를 사용자가 직접 ChatGPT에 전달하고, 제안된 구조화 결과를 다시 가져와 검증합니다.
+  </Card>
+</CardGroup>
+
+## 기본 사용 순서
+
+<Steps>
+  <Step title="보안 로그 입력">
+    한 제품에서 발생한 대표 로그를 붙여넣거나 업로드합니다. Traffic, Threat, Auth 등 여러 이벤트 유형이 있다면 함께 검토합니다.
+  </Step>
+  <Step title="자동 분석과 원본 확인">
+    인식된 이벤트 수, 필드와 원본 값, 미해석 구간을 확인합니다.
+  </Step>
+  <Step title="필드 매핑 검토">
+    추출 필드를 Stellar Cyber 7.0 필드 사전과 비교하고 필요한 매핑을 조정합니다.
+  </Step>
+  <Step title="파서 파일 생성">
+    필수 검증을 통과하면 서로 맞는 Ruby 파서 로직과 `.conf` 설정 파일을 다운로드합니다. 필요하면 별도 Python 테스트 송신 스크립트도 생성할 수 있습니다.
+  </Step>
+</Steps>
+
+## 주요 특징
+
+- Syslog, JSON, CEF, LEEF, Key/Value, CSV 등 다양한 보안 로그 구조 분석
+- 부분 파싱 시 원문에서 처리되지 않은 구간 표시
+- 한 제품의 여러 이벤트 유형 및 필드 집합 검토
+- Stellar Cyber 7.0 기준 필드 정규화 검토
+- 브라우저 로컬 작업 버전 비교와 샘플 검증, 산출물 무결성 확인
+
+<Warning>
+  생성된 파일은 **검토된 파서 초안**입니다. Parser Studio가 Stellar Cyber Data Processor에 파일을 직접 업로드하거나 파서를 활성화하지는 않습니다. 샘플 분석 성공이 실제 DP 호환성이나 모든 이벤트의 정상 처리를 보장하지 않으므로 Stellar Cyber 7.0 테스트 환경에서 별도로 검증해야 합니다.
+</Warning>
+
+<Note>
+  **Analyze Logs** 실행 시 원본 로그는 Parser Studio 서버로 전송되어 분석되지만 ChatGPT로 자동 전송되지는 않습니다. ChatGPT Assisted는 사용자가 프롬프트를 직접 복사하는 방식입니다. 고객 로그에 민감한 값이 있다면 먼저 비식별화하고 전송 권한을 확인하세요.
+</Note>
+
+## 바로가기
+
+<CardGroup cols={2}>
+  <Card title="웹 애플리케이션" icon="laptop-code" href="https://app.parser.xdr.ooo/">
+    Parser Studio 화면에서 로그를 직접 분석합니다.
+  </Card>
+
+  <Card title="실습 시나리오" icon="list-check" href="https://parser.xdr.ooo/ko/scenarios">
+    예제 로그를 사용해 단계별로 따라합니다.
+  </Card>
+
+  <Card title="한국어 사용 설명서" icon="book-open" href="https://parser.xdr.ooo/ko">
+    사용 흐름과 제한 사항을 확인합니다.
+  </Card>
+
+  <Card title="소스 저장소" icon="github" href="https://github.com/xdr-labs/parser-studio">
+    구현 코드와 현재 릴리스 상태를 확인합니다.
+  </Card>
+</CardGroup>

@@ -1,0 +1,85 @@
+---
+title: "Parser Studio: Security Log Parser Builder"
+sidebarTitle: "Parser Studio"
+description: "Build and review custom security log parsers for Stellar Cyber 7.0 with guided automatic analysis, field mapping, ChatGPT-assisted repair, and Ruby/CONF draft downloads."
+---
+
+Parser Studio helps security engineers turn representative device and security product logs into reviewed **Stellar Cyber 7.0 parser drafts** through a browser UI. You can inspect the extracted fields and mapping results before downloading parser files, without writing Ruby parsing rules from scratch.
+
+<CardGroup cols={2}>
+  <Card title="Open Parser Studio" icon="arrow-up-right-from-square" href="https://app.parser.xdr.ooo/">
+    Start with sample security logs in the browser.
+  </Card>
+
+  <Card title="User guide and scenarios" icon="book-open" href="https://parser.xdr.ooo/">
+    Follow real-log walkthroughs, troubleshooting guides, and video tutorials.
+  </Card>
+</CardGroup>
+
+## When to use it
+
+Use Parser Studio when a security device or product emits logs that need a custom parser or clearer field mapping in Stellar Cyber. It is designed for firewall, IDS/IPS, WAF, VPN, endpoint, identity, network, and other security telemetry formats. Actual parsing success depends on each log's structure and the examples you provide.
+
+## Two parser creation workflows
+
+<CardGroup cols={2}>
+  <Card title="Auto Parser" icon="wand-magic-sparkles">
+    Paste or upload representative logs, analyze their structure, review extracted fields, map them to Stellar Cyber 7.0 fields, and create a parser draft when the checks pass.
+  </Card>
+
+  <Card title="ChatGPT Assisted Parser" icon="comments">
+    When a log or mapping needs extra help, prepare a prompt, manually share an authorized and redacted sample with ChatGPT, then import and validate a structured suggestion. AI output is not automatically approved.
+  </Card>
+</CardGroup>
+
+## From logs to parser files
+
+<Steps>
+  <Step title="Add representative logs">
+    Provide complete sample events, including different event types from the same product where relevant.
+  </Step>
+  <Step title="Analyze and review">
+    Examine detected structures, original field values, event boundaries, and any unparsed text.
+  </Step>
+  <Step title="Map fields">
+    Review and adjust the mappings against the Stellar Cyber 7.0 field catalog. Uncertain mappings need your confirmation.
+  </Step>
+  <Step title="Create and download">
+    When validation succeeds, download the matching Ruby parser logic and companion `.conf` file. An optional Python test sender can help with later lab verification.
+  </Step>
+</Steps>
+
+## Supported review capabilities
+
+- Format review for Syslog, JSON, CEF, LEEF, key/value, CSV, and supported mixed or multiline records.
+- Visibility into partial matches and original unparsed spans instead of silently dropping them.
+- Multiple log types from one product with shared field-mapping review.
+- Browser-local working versions, sample checks, and artifact integrity checks.
+
+<Warning>
+  Parser Studio generates **reviewed parser drafts**, not automatically deployed production parsers. It does not upload or activate parsers on a Stellar Cyber Data Processor, and successful sample validation does not establish DP runtime compatibility. Verify the generated pair in a suitable Stellar Cyber 7.0 test environment before production use.
+</Warning>
+
+<Note>
+  Clicking **Analyze Logs** submits the original samples to the Parser Studio server for analysis. It does **not** automatically send logs to ChatGPT. ChatGPT Assisted requires a separate manual copy step; redact sensitive values and obtain authorization before using customer logs.
+</Note>
+
+## Links
+
+<CardGroup cols={2}>
+  <Card title="Interactive application" icon="laptop-code" href="https://app.parser.xdr.ooo/">
+    Use the hosted Parser Studio UI.
+  </Card>
+
+  <Card title="Scenario playbooks" icon="list-check" href="https://parser.xdr.ooo/scenarios">
+    Practice with documented example security logs.
+  </Card>
+
+  <Card title="Product documentation" icon="book-open" href="https://parser.xdr.ooo/">
+    Learn the workflows and review safety notes.
+  </Card>
+
+  <Card title="Source repository" icon="github" href="https://github.com/xdr-labs/parser-studio">
+    View the project implementation and release status.
+  </Card>
+</CardGroup>
