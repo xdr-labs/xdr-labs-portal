@@ -63,7 +63,8 @@
               "products/stellar-appliance-cli",
               "products/stellar-data-exporter",
               "products/stellar-data-exporter-guide",
-              "products/xdr-lab-appliance"
+              "products/xdr-lab-appliance",
+              "products/parser-studio"
             ],
             "icon": "box"
           }
@@ -89,7 +90,8 @@
               "ko/products/stellar-appliance-cli",
               "ko/products/stellar-data-exporter",
               "ko/products/stellar-data-exporter-guide",
-              "ko/products/xdr-lab-appliance"
+              "ko/products/xdr-lab-appliance",
+              "ko/products/parser-studio"
             ],
             "icon": "box"
           }
