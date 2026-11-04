@@ -27,6 +27,7 @@ flowchart TD
       CTRL[Data Relay Control\nEnterprise data processing + delivery]
       EXP[Stellar Data Exporter\nQuery + export raw data]
       SYS[Stellar Alert & Case Relay\nForward alerts and cases]
+      PARSE[Parser Studio\nSecurity log parsing + 7.0 field mapping]
     end
 
     P --> KVM
@@ -38,6 +39,7 @@ flowchart TD
     P --> CTRL
     P --> EXP
     P --> SYS
+    P --> PARSE
 
     KVM --> CLI
     XLAB --> DSP
@@ -60,6 +62,7 @@ This is a **collection of independent tools, not one bundled platform**. Use onl
 | **OpenXDR KVM Installer** | DP/Sensor/AIO deployment on KVM | [kvm.xdr.ooo](https://kvm.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/OpenXDR-KVM-Installer) |
 | **Stellar Appliance CLI** | KVM appliance operations | [Product page](/products/stellar-appliance-cli) | [GitHub](https://github.com/xdr-labs/Stellar-appliance-cli) |
 | **XDR Lab Appliance** | Rebuildable XDR/NDR lab | [Product page](/products/xdr-lab-appliance) | [GitHub](https://github.com/xdr-labs/xdr-lab-appliance) |
+| **Parser Studio** | Review security logs, normalize fields for Stellar Cyber 7.0, and generate Ruby + CONF parser drafts | [Product page](/products/parser-studio) · [App](https://app.parser.xdr.ooo/) · [Docs](https://parser.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/parser-studio) |
 | **Stellar Data Exporter** | Multi-source Stellar raw-data query, Preview, and file/object/SFTP export | [Product page](/products/stellar-data-exporter) · [User guide](/products/stellar-data-exporter-guide) | [GitHub](https://github.com/xdr-labs/stellar-data-exporter) |
 | **Stellar Alert & Case Relay** | Stellar Alert/Case forwarding into existing SIEM/SOC workflows | [stellar-relay.xdr.ooo](https://stellar-relay.xdr.ooo/) | [GitHub](https://github.com/xdr-labs/Stellar-Case-Alert-to-Sylog) |
 
