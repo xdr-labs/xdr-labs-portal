@@ -1,6 +1,6 @@
 # Surface Reconciliation Contract
 
-Before release, qualify the exact candidate against the rendered XDR Labs portal browser surface.
+Before release, qualify the exact candidate against the rendered ISOC Labs portal browser surface.
 
 - Use a real Chromium/Chrome process against a deployed preview or the public site at https://xdr.ooo.
 - Confirm the landing page renders, primary navigation is usable, and representative English/Korean navigation (when present) resolves without a broken page.
