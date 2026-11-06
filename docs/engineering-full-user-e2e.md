@@ -6,7 +6,7 @@ On the same exact candidate used for Surface Reconciliation, use a real Chromium
 
 Required mission:
 1. Open https://xdr.ooo.
-2. Navigate from the landing page into the main task path (home / choose project / project catalog / linked XDR Labs products).
+2. Navigate from the landing page into the main task path (home / choose project / project catalog / linked ISOC Labs products).
 3. Open a concrete task/reference page from that path.
 4. Verify the page renders readable content and the next/back navigation remains usable.
 5. Record the exact candidate HEAD, public URL, browser evidence, and PASS/FAIL result.

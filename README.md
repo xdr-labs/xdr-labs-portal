@@ -1,6 +1,6 @@
-# XDR Labs Portal
+# ISOC Labs Portal
 
-Central Mintlify portal for XDR Labs projects and related DataRelay Labs products.
+Central Mintlify portal for ISOC Labs projects and related DataRelay Labs products.
 
 ## Production URL
 

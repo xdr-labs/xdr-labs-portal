@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "XDR Labs",
-  "description": "A central portal for XDR Labs projects, tools, documentation, and open-source engineering work.",
+  "name": "ISOC Labs",
+  "description": "A central portal for ISOC Labs projects, tools, documentation, and open-source engineering work.",
   "colors": {
     "primary": "#1F59E0",
     "light": "#2982E8",
@@ -26,7 +26,7 @@
     }
   },
   "search": {
-    "prompt": "Search XDR Labs..."
+    "prompt": "Search ISOC Labs..."
   },
   "seo": {
     "indexing": "navigable",
@@ -47,7 +47,7 @@
         "language": "en",
         "groups": [
           {
-            "group": "XDR Labs",
+            "group": "ISOC Labs",
             "pages": [
               "index",
               "choose-project",
@@ -74,7 +74,7 @@
         "language": "ko",
         "groups": [
           {
-            "group": "XDR Labs",
+            "group": "ISOC Labs",
             "pages": [
               "ko/index",
               "ko/choose-project",
