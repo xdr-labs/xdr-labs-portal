@@ -1,80 +1,39 @@
 ---
 title: "AI 지원 공격 탐지 룰"
 sidebarTitle: "AI 지원 공격 탐지 룰"
-description: "Stellar Cyber 7.0 테스트용 Suricata 탐지 룰 v1.0: 웹 공격, AI 지원 공격 도구 지문, OAST DNS"
+description: "Stellar Cyber 7.0용 Suricata 탐지 룰 v1.0 — 총 333개, 실제 센서에서 신규 룰 11개 탐지 확인"
 ---
 
-**AI 지원 공격 탐지 룰**은 웹 공격과 AI 지원 모의해킹·Red Team 도구의 네트워크 흔적을 탐지하기 위한 Suricata 커스텀 룰 모음입니다. **v1.0은 333개 룰**로 구성되며, 실센서 PoC로 검증한 신규 탐지 패턴 11종이 포함됩니다.
+Stellar Cyber 7.0용 **Suricata 탐지 룰 333개**를 제공합니다. 웹 공격, 취약점 악용, AI 지원 모의해킹 및 Red Team 도구의 네트워크 패턴을 탐지합니다.
 
 <CardGroup cols={2}>
   <Card title="v1.0 룰 다운로드 (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.rules">
-    Suricata Import용 전체 333개 룰 파일.
+    333개 Suricata 탐지 룰
   </Card>
   <Card title="v1.0 ZIP 다운로드" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.zip">
-    룰 파일, SHA-256 및 한국어 적용 안내와 테스트 결과 포함.
+    룰 파일 및 적용 안내
   </Card>
 </CardGroup>
 
-## 탐지 범위
+## 탐지 대상
 
-- **기본 웹 공격:** SQL Injection, Command Injection, Path Traversal, XSS, 웹셸, 실행 파일 업로드
-- **AI 지원 모의해킹·Red Team 도구:** ARTEX, CyberStrikeAI, HexStrike-AI, Cobalt Strike, Havoc 등의 일부 식별 가능한 특징
-- **v1.0 신규 11개:** /dev/tcp 리버스셸 문자열, 인코딩된 명령 구분자, AntSword·China Chopper 지문, Interactsh·Burp Collaborator OAST DNS 조회
+| 탐지 분야 | 룰 수 | 주요 탐지 패턴 |
+| --- | ---: | --- |
+| 웹셸·명령 실행·파일 업로드 | 90 | 웹셸, OS 명령 삽입, PHP/JSP/ASPX 업로드 |
+| SQL Injection | 54 | UNION, 오류·시간 기반 SQL Injection |
+| 기타 웹 취약점 | 61 | XSS, 경로 탐색, LFI/RFI, SSRF, XXE, SSTI, 역직렬화 |
+| 정보 노출·탐색 | 33 | 설정·백업 파일 접근, 경로 스캔, 오류 응답 |
+| AI·Red Team·스캐너 도구 지문 | 35 | ARTEX, CyberStrikeAI, HexStrike-AI, nuclei, sqlmap 등 |
+| 제품 취약점·악성코드 관련 시그니처 | 56 | CVE 공격 패턴, Cobalt Strike, Havoc, Metasploit 등 |
+| OAST DNS | 4 | Interactsh, Burp Collaborator 조회 |
+| **합계** | **333** | |
 
-모든 룰은 alert 전용이고 주소·포트 조건은 any any → any any입니다. **룰 자체에 AI 모델이 포함된 것은 아닙니다.**
+## 실제 센서 테스트
 
-## 검증 현황
+**Stellar Cyber 7.0 Modular Sensor(Suricata 8.0.1)**에서 신규 룰 **11개 모두 Alert 탐지 성공**했습니다.
 
-| 항목 | 결과 |
-| --- | --- |
-| 버전 | v1.0 · 333개 · 2026년 11월 8일 |
-| Suricata 8.0.8 문법·로딩 | PASS |
-| 19종 PCAP × 2룰셋 회귀 | **38/38 정상 실행** |
-| 신규 SID 합성 탐지 | **11/11 확인** |
-| OAST 정상 도메인 / 유사 도메인 구분 | 4/4 탐지 · 4/4 무경고 |
-| 추가 정상 의도 146세션 | 테스트 기준 구성 대비 신규 경고 0건 |
-| 기존 탐지 회귀 | 시험한 범위에서 없음 |
-| Stellar Cyber 7.0 실제 센서 Import·IDS Alert | **PASS** · Suricata 8.0.1, 신규 SID 11/11 탐지 |
-| Stellar Cyber DP/UI Alert 전달 및 운영망 탐지율 | **미검증** |
+- HTTP 명령 실행·웹셸 탐지: **7개**
+- OAST DNS 탐지: **4개**
+- 정상·유사 도메인 대조군 7개: **신규 룰 경고 0건**
 
-## 실제 Stellar Cyber 센서 PoC (2026-11-08)
-
-기존 오프라인 검증에 더해, **Stellar Cyber 7.0 테스트 Modular Sensor(Suricata 8.0.1)**에 설치된 333개 탐지 규칙으로 실제 네트워크 트래픽을 검사했습니다. 별도 JumpHost에서 무해한 HTTP/DNS 테스트 요청을 전송하고 센서의 `eth0` 패킷 캡처 및 `eve.json` Alert를 확인했습니다. 공격 명령 실행이나 실제 침투는 수행하지 않았습니다.
-
-| 실제 센서 검증 항목 | 측정 결과 |
-| --- | --- |
-| 센서 검증 시 사용한 커스텀 룰 | **333개** · v1.0과 모든 탐지 규칙·SID 동일 (버전 주석만 갱신) |
-| 실제 테스트 트래픽 | **18세션 전송 성공** (공격 패턴 11, 정상·유사 도메인 대조군 7) |
-| 신규 룰 Alert | **11/11 SID 모두 실제 `eve.json`에서 관찰** |
-| 대조군의 신규 커스텀 룰 경고 | **0건/7세션** |
-| `eth0` 패킷 캡처 | **110패킷**, 커널 캡처 드롭 0 |
-| 동일 실캡처 PCAP을 기준 탐지 구성으로 재생 | 신규 패턴 Alert **0건** |
-| 동일 PCAP을 333개 룰셋으로 재생 | 신규 패턴 Alert **11건** |
-| OISF 공식 SMB/DCERPC/Kerberos PCAP | **5/5 재생 성공** (이번 버전에 AD 전용 신규 룰 없음) |
-
-### 실제 탐지한 신규 룰 11개
-
-| SID | 테스트한 네트워크 패턴 |
-| --- | --- |
-| `9006001` / `9006002` | HTTP URI / POST 본문의 `/dev/tcp` 리버스셸 문자열 |
-| `9006009` | 인코딩된 줄바꿈 뒤 OS 명령 (`%0a`) |
-| `9006010` | AntSword User-Agent |
-| `9006011` | PHP 웹셸 관리 패턴 (`ini_set` + `set_time_limit`) |
-| `9006071` / `9006072` | 인코딩된 명령 구분자 및 셸 명령 치환 |
-| `9006064`–`9006067` | Interactsh·Burp Collaborator OAST DNS 조회 |
-
-**기본 IDS와 구분:** 유사 DNS 도메인 `notburpcollaborator.net`에 기본 ET SID `2034825`가 경고했습니다. 이는 **v1.0 신규 룰의 경고가 아닌 기존 ET 룰의 경고**입니다. 기본 `exploit.rules`의 ETPRO 2개(SID `2868495`, `2868498`)는 센서에서 `krb5`·`nfs` 프로토콜이 비활성화되어 로딩에 실패했지만, **실제 센서에 설치된 333개 커스텀 룰 로딩 오류는 0개**입니다. 기존 ETPRO 룰과 센서 설정은 변경하지 않았습니다.
-
-이 PoC는 **제작한 평문 HTTP/DNS 탐지 패턴 11종에 대한 실제 센서 IDS 검증**입니다. 실제 공격 성공 여부, 암호화 트래픽 탐지, 운영망 오탐률, Stellar Cyber DP/UI Alert 전달까지 입증하는 것은 아닙니다.
-
-<Warning>
-  **실제 센서 PoC를 통과한 검증본이지만, 운영환경 탐지 성능을 보장하지 않습니다.** Import 전 기존 custom_defined.rules를 반드시 백업하세요. 센서 버전과 기본 ET 룰 중복을 확인하고, DP/UI Alert 생성은 별도로 검증해야 합니다.
-</Warning>
-
-**버전 및 실센서 검증 참고:** 테스트 센서에 설치된 파일과 현재 v1.0 파일은 버전 주석만 다르며 333개 탐지 규칙과 SID가 모두 같습니다. 따라서 v1.0 파일의 SHA-256은 실센서에서 테스트할 당시와 달라졌습니다. 별도의 DP/UI Alert 전달 검증은 아직 수행하지 않았습니다.
-
-**검증 한계:** AD 공격(DCSync, PetitPotam, PsExec, Kerberoasting) 신규 룰은 정상 관리 트래픽과 구별하는 검증이 부족해 이번 버전에서 제외했습니다. 기존 XSS 탐지 패턴은 정상 HTML 예시에도 경고할 수 있으며, OAST DNS는 승인된 모의해킹에서도 나타납니다. HTTPS 페이로드 검사는 평문 트래픽 또는 외부 복호화가 필요합니다.
-
-**v1.0 룰 파일 SHA-256:** 5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96
-
-**출처·라이선스:** [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) 및 [Theori AIPT Detections](https://github.com/theori-io/aipt-detections). 출처·라이선스 고지는 룰 파일에 포함돼 있습니다.
+*전체 333개 중 11개 룰의 실제 센서 Alert를 확인했습니다.*
