@@ -10,7 +10,6 @@ import collections
 import hashlib
 import json
 import re
-import shutil
 import subprocess
 import tempfile
 import time
@@ -30,6 +29,18 @@ EXPECTED = {
     "php-empty105.pcap": (0, 1),
     "php-nonempty105.pcap": (0, 0),
     "php-wrongtype105.pcap": (0, 0),
+    # Known limitations of these candidates, expected as-is to avoid
+    # confusing a matching regression test with permission to release.
+    "nextjs-benign-proxy-http.pcap": (1, 0),
+    "nextjs-benign-proxy-https.pcap": (1, 0),
+    "php-empty100-wide-gap.pcap": (0, 0),
+    "php-empty105-wide-gap.pcap": (0, 0),
+}
+RISK_CASES = {
+    "nextjs-benign-proxy-http.pcap": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT",
+    "nextjs-benign-proxy-https.pcap": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT",
+    "php-empty100-wide-gap.pcap": "MULTIPART_WIDE_GAP_MISS",
+    "php-empty105-wide-gap.pcap": "MULTIPART_WIDE_GAP_MISS",
 }
 SIDS = (9005017, 9005055)
 
@@ -102,7 +113,11 @@ def main() -> None:
     cli.add_argument("--report", help="Write report JSON")
     args = cli.parse_args()
     candidate, report = validate_and_build()
-    report["mode"] = "static-integrity-only"
+    report.update({
+        "mode": "static-integrity-only",
+        "release_ready": False,
+        "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+    })
     if args.run:
         if not args.config:
             cli.error("--config required when --run is set")
@@ -135,9 +150,18 @@ def main() -> None:
                         "Alert mismatch %s: %r expected %r" %
                         (name, observed, expected))
                 actual.append({"fixture": name, "expected": list(expected),
-                               "observed": list(observed), "seconds": elapsed})
-            report.update({"mode": "offline-suricata", "cases": actual,
-                           "result": "PASS"})
+                               "observed": list(observed), "seconds": elapsed,
+                               "known_release_risk": RISK_CASES.get(name)})
+            report.update({
+                "mode": "offline-suricata",
+                "cases": actual,
+                "result": "PASS",
+                "release_ready": False,
+                "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+                "risk_witnesses": [
+                    x for x in actual if x["known_release_risk"] is not None
+                ],
+            })
     if args.report:
         Path(args.report).write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))

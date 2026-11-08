@@ -1,0 +1,21 @@
+{
+  "pcap_sha256": "0cd85f2712cbfc704ae2f9a20c15afe0481583a8038b15dc4f50fb61fe60188c",
+  "sessions": 100,
+  "results": [
+    {
+      "9005017": 0,
+      "9005055": 0,
+      "name": "original",
+      "alerts": 0,
+      "resource_metrics": "CPU_USER_S=0.67 CPU_SYSTEM_S=0.08 MAX_RSS_KB=88444"
+    },
+    {
+      "9005017": 0,
+      "9005055": 100,
+      "name": "candidate",
+      "alerts": 100,
+      "resource_metrics": "CPU_USER_S=0.70 CPU_SYSTEM_S=0.07 MAX_RSS_KB=88808"
+    }
+  ],
+  "note": "isolated replay CPU includes startup, not traffic throughput benchmark"
+}

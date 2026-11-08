@@ -1,0 +1,240 @@
+{
+  "baseline_sha256": "5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96",
+  "candidate_sha256": "5954bf07b148e07b95045cf6459228ab4d7c76ccfc1d2b164d9bff8faf6d3e13",
+  "signature_count": 333,
+  "changed_sids": [
+    9005017,
+    9005055
+  ],
+  "fixture_count": 13,
+  "mode": "offline-suricata",
+  "engine_validate_seconds": 0.42,
+  "cases": [
+    {
+      "fixture": "nextjs-positive.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.497,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "nextjs-origin-form.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.516,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "nextjs-no-upgrade.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.497,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "nextjs-no-key.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.521,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-empty99.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.521,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-empty100.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.5,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-empty105.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.524,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-nonempty105.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.53,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-wrongtype105.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.496,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "nextjs-benign-proxy-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.654,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "nextjs-benign-proxy-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.503,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "php-empty100-wide-gap.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.506,
+      "known_release_risk": "MULTIPART_WIDE_GAP_MISS"
+    },
+    {
+      "fixture": "php-empty105-wide-gap.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.494,
+      "known_release_risk": "MULTIPART_WIDE_GAP_MISS"
+    }
+  ],
+  "result": "PASS",
+  "release_ready": false,
+  "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+  "risk_witnesses": [
+    {
+      "fixture": "nextjs-benign-proxy-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.654,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "nextjs-benign-proxy-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.503,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "php-empty100-wide-gap.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.506,
+      "known_release_risk": "MULTIPART_WIDE_GAP_MISS"
+    },
+    {
+      "fixture": "php-empty105-wide-gap.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.494,
+      "known_release_risk": "MULTIPART_WIDE_GAP_MISS"
+    }
+  ]
+}
