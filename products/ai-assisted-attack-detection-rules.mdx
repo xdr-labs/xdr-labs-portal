@@ -1,80 +1,39 @@
 ---
 title: "AI-Assisted Attack Detection Rules"
 sidebarTitle: "AI-Assisted Attack Detection Rules"
-description: "Stellar Cyber 7.0 lab-tested Suricata rules v1.0: web attacks, AI-assisted red-team fingerprints and OAST DNS"
+description: "Suricata detection rules v1.0 for Stellar Cyber 7.0 — 333 signatures, with 11 verified on a live sensor"
 ---
 
-**AI-Assisted Attack Detection Rules** is a curated Suricata signature pack for web attacks and identifiable red-team tool activity in Stellar Cyber 7.0 test environments. **v1.0 contains 333 rules**, including 11 added signatures validated against real lab sensor traffic.
+**333 Suricata detection rules** for Stellar Cyber 7.0, covering web attacks, vulnerability exploitation, and identifiable AI-assisted and red-team tool activity.
 
 <CardGroup cols={2}>
   <Card title="Download v1.0 rules (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.rules">
-    Complete alert-only Suricata ruleset, 333 signatures.
+    All 333 Suricata signatures
   </Card>
   <Card title="Download v1.0 ZIP" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.zip">
-    Rules, SHA-256 integrity record, English and Korean usage notes and test summary.
+    Rules and setup notes
   </Card>
 </CardGroup>
 
 ## Detection coverage
 
-- **Common web attacks:** SQL injection, command injection, path traversal, XSS, webshell activity and executable uploads.
-- **Selected AI-assisted and red-team tool indicators:** ARTEX, CyberStrikeAI, HexStrike-AI, Cobalt Strike, Havoc and others.
-- **11 new v1.0 signatures:** /dev/tcp reverse shell indicators, encoded command separators, AntSword/China Chopper patterns, and Interactsh/Burp Collaborator OAST DNS lookups.
+| Category | Rules | Example detections |
+| --- | ---: | --- |
+| Webshells, command execution & uploads | 90 | Webshells, OS command injection, PHP/JSP/ASPX uploads |
+| SQL injection | 54 | UNION, error-based and time-based injection |
+| Other web vulnerabilities | 61 | XSS, traversal, LFI/RFI, SSRF, XXE, SSTI, deserialization |
+| Exposure & reconnaissance | 33 | Configuration and backup files, path scans, error responses |
+| AI, red-team & scanner fingerprints | 35 | ARTEX, CyberStrikeAI, HexStrike-AI, nuclei, sqlmap |
+| Product exploits & malware-related signatures | 56 | CVE patterns, Cobalt Strike, Havoc, Metasploit |
+| OAST DNS | 4 | Interactsh and Burp Collaborator queries |
+| **Total** | **333** | |
 
-All signatures are alert-only and use any any → any any network/port headers. **They do not run an AI model.** Tool-specific fingerprints can be modified or spoofed.
+## Real sensor testing
 
-## Lab verification
+All **11 selected new rules triggered alerts** on a **Stellar Cyber 7.0 Modular Sensor (Suricata 8.0.1)**.
 
-| Check | Result |
-| --- | --- |
-| Version | v1.0 · 333 rules · November 8, 2026 |
-| Suricata 8.0.8 syntax/load | PASS |
-| 19 fixtures × two rule sets | **38/38 successful PCAP replays** |
-| New SID positive synthetic checks | **11/11 observed** |
-| OAST DNS valid / lookalike controls | 4/4 detected · 4/4 quiet |
-| Additional 146 benign-intent sessions | Zero additional alerts against the evaluation baseline |
-| Existing detection regression | No losses in tested fixtures |
-| Stellar Cyber 7.0 sensor import and IDS alerts | **PASS** · Suricata 8.0.1, all 11 new SIDs detected |
-| Stellar Cyber DP/UI alert delivery and production detection rate | **Not verified** |
+- HTTP command execution and webshell patterns: **7 rules**
+- OAST DNS patterns: **4 rules**
+- Seven benign/lookalike controls: **0 alerts from the new rules**
 
-## Real Stellar Cyber sensor PoC (November 8, 2026)
-
-Beyond offline checks, we tested the same 333 signatures included in v1.0 on a **Stellar Cyber 7.0 Modular Sensor running Suricata 8.0.1**. A separate lab jump host sent inert HTTP/DNS requests through the network. We confirmed traffic capture on `eth0` and corresponding Suricata alerts in `eve.json`. No exploit or shell command was executed.
-
-| On-sensor verification | Observed result |
-| --- | --- |
-| Sensor-tested custom rules | **333** · all detection signatures and SIDs identical to v1.0 (version comments updated) |
-| Live test traffic | **18 sessions sent** (11 positive patterns; 7 benign/lookalike controls) |
-| Newly added signature alerts | **11/11 SIDs observed** in actual `eve.json` |
-| New custom alerts on 7 negative controls | **0** |
-| Sensor `eth0` capture | **110 packets**, zero kernel capture drops |
-| Replay of captured PCAP with the evaluation baseline | **0** alerts for the new patterns |
-| Replay with the 333-rule set | **11** alerts for these patterns |
-| Official OISF SMB/DCERPC/Kerberos PCAPs | **5/5** replayed (no new AD rules included) |
-
-### The 11 new signatures confirmed on the sensor
-
-| SID | Observed test pattern |
-| --- | --- |
-| `9006001` / `9006002` | `/dev/tcp` reverse-shell strings in HTTP URI / POST body |
-| `9006009` | Encoded newline followed by an OS command (`%0a`) |
-| `9006010` | AntSword User-Agent |
-| `9006011` | PHP webshell manager pattern (`ini_set` plus `set_time_limit`) |
-| `9006071` / `9006072` | Encoded command separators and shell substitution |
-| `9006064`–`9006067` | Interactsh and Burp Collaborator OAST DNS lookups |
-
-**Built-in IDS observations:** The pre-existing ET rule SID `2034825` also alerted on the lookalike domain `notburpcollaborator.net`. **This was not triggered by the newly added v1.0 signatures.** Two pre-existing ETPRO rules in `exploit.rules` (SIDs `2868495` and `2868498`) failed to load because `krb5` and `nfs` detection are disabled on the sensor. **No custom-rule loading errors occurred for the 333-rule sensor-tested set.** Built-in rules and sensor configuration were left unchanged.
-
-This verifies **real sensor-level IDS matching of 11 constructed, visible plaintext HTTP/DNS patterns**. It does not establish exploit execution, encrypted-traffic coverage, a production false-positive rate, or delivery of alerts to the Stellar Cyber DP/UI.
-
-<Warning>
-  **Verified on a real sensor in a controlled lab; not production-certified.** Back up existing custom_defined.rules before import because imports may overwrite the file. Check sensor compatibility and built-in IDS/ET overlap, and independently validate alert delivery to Stellar Cyber DP/UI.
-</Warning>
-
-**Version and on-sensor evidence:** The file installed during the lab PoC differs from this v1.0 download only in version/comments. All 333 detection signatures and SIDs are byte-for-byte identical; the file SHA-256 therefore differs from the tested sensor copy. Alert delivery to Stellar Cyber DP/UI remains unverified.
-
-**Known limits:** Added AD/DCERPC detections for DCSync, PetitPotam, PsExec and Kerberoasting were withheld until false positives can be distinguished from normal administration. An existing XSS signature can alert on benign HTML examples. Authorized penetration tests may also generate OAST DNS alerts. Encrypted HTTP content requires decryption or plaintext visibility.
-
-**v1.0 rules file SHA-256:** 5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96
-
-**Provenance and licenses:** [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) and [Theori AIPT Detections](https://github.com/theori-io/aipt-detections); license notices remain in the rule file.
+*11 of the 333 rules were individually verified for alerts on the real sensor.*
