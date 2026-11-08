@@ -50,7 +50,7 @@ The runner uses temporary files and does not send network packets, reload a sens
 | 105 nonempty filenames | 0 | 0 |
 | Wrong Content-Type with 105 fields | 0 | 0 |
 
-**Observed on modular / Suricata 8.0.1: 15/15 PASS** using a temporary 333-rule copy with exactly two changes. The wide-gap negative case is an explicit known detection gap, not a successful attack detection. Full runner evidence should be refreshed before shipping any package.
+**Observed on modular / Suricata 8.0.1: 15/15 PASS** using a temporary 333-rule copy with exactly two changes. The wide-gap negative case is an explicit known detection gap, not a successful attack detection. All 15 fixture SHA256 values, generated candidate signature integrity, and exact Suricata output were verified by the runner on modular.
 
 Additional spacing study on actual 100/105-field multipart fixtures: a 128-byte bound matched, whereas greedy gaps 160–1024 bytes did not under the existing PCRE budget. This does not prove the precise root cause or guarantee detection of all payload layouts. Process runtimes of approximately 0.5 seconds per test are not high-throughput benchmarks.
 
