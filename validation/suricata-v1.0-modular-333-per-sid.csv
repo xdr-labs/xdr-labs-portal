@@ -291,15 +291,15 @@ sid,protocol,category,signature,offline_auto_v1_alert,offline_auto_v2_alert,live
 9005024,tcp,Product exploit / malware signatures,ET MALWARE Metasploit Meterpreter stdapi_* Command Response,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,raw-tcp-v1,
 9005025,tcp,Product exploit / malware signatures,ET MALWARE Metasploit Meterpreter core_channel_* Command Response,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,raw-tcp-v1,
 9005026,http,Product exploit / malware signatures,ET SCAN NETWORK Outgoing Masscan detected,1,1,1,0,CONFIRMED_LIVE_SENSOR_ALERT,initial-live-333,
-9005027,smb,Product exploit / malware signatures,ET EXPLOIT Possible ETERNALBLUE MS17-010 Heap Spray,0,0,0,0,NOT_REPRODUCED,,Native SMB exploit-specific PCAP and 3-event threshold required
+9005027,smb,Product exploit / malware signatures,ET EXPLOIT Possible ETERNALBLUE MS17-010 Heap Spray,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,inert-smb1-live-9005027,
 9005028,tcp,Product exploit / malware signatures,ET EXPLOIT ETERNALBLUE Exploit M2 MS17-010,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,raw-tcp-v1-cross-alert,
-9005029,smb,Product exploit / malware signatures,ET EXPLOIT Possible ETERNALBLUE Probe MS17-010 (MSF style),0,0,0,0,NOT_REPRODUCED,,Native SMB exploit-specific PCAP required
+9005029,smb,Product exploit / malware signatures,ET EXPLOIT Possible ETERNALBLUE Probe MS17-010 (MSF style),0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,inert-smb1-live-9005029,
 9005030,http,Product exploit / malware signatures,ET SCAN Zmap User-Agent (Inbound),1,1,1,0,CONFIRMED_LIVE_SENSOR_ALERT,initial-live-333,
 9005031,http,Product exploit / malware signatures,ET MALWARE Cobalt Strike Beacon Activity (GET),0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,targeted-http-v4;targeted-http-v5,
 9005032,http,Product exploit / malware signatures,ET MALWARE Cobalt Strike Beacon Observed (MASB UA),0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,isolated-user-agent,
 9005033,http,Product exploit / malware signatures,ET MALWARE Havoc Framework CnC Request,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,targeted-http-v3;targeted-http-v4;targeted-http-v5,
 9005034,http,Product exploit / malware signatures,ET MALWARE Havoc Framework CnC Response,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,targeted-http-v3;targeted-http-v4;targeted-http-v5,
-9005035,dcerpc,Product exploit / malware signatures,ET INFO Suspected Impacket WMIExec Activity,0,0,0,0,NOT_REPRODUCED,,Native DCE/RPC WMIExec capture required
+9005035,dcerpc,Product exploit / malware signatures,ET INFO Suspected Impacket WMIExec Activity,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,inert-dcerpc-bind-live-9005035,
 9005036,http,Product exploit / malware signatures,ET MALWARE Havoc Framework Header in HTTP Response,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,targeted-http-v3;targeted-http-v4;targeted-http-v5,
 9005037,http,Product exploit / malware signatures,ET WEB_SPECIFIC_APPS Apache Struts2 uploadFileName Directory Traversal Attempt (CVE-2023-50164) M1,1,1,1,0,CONFIRMED_LIVE_SENSOR_ALERT,initial-live-333,
 9005038,http,Product exploit / malware signatures,ET WEB_SPECIFIC_APPS Apache Struts2 uploadFileName Directory Traversal Attempt (CVE-2023-50164) M2,0,0,0,0,CONFIRMED_LIVE_SENSOR_ALERT,targeted-http-v3;targeted-http-v4;targeted-http-v5,
