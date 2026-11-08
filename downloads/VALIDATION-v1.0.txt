@@ -1,26 +1,26 @@
-Suricata v0.9 Offline + Real Sensor PoC Evidence Summary
+Suricata v1.0 Offline + Real Sensor PoC Evidence Summary
 ============================================
 2026-11-08, dev-drcontrol Docker network-none / Suricata 8.0.8
-Rule SHA256: 8b902126044224089cd367a47c58c98290563f0816972272086fb79e8b1c77a6
+Rule SHA256: 5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96
 Count: 333 alert rules; unique SID 333; header all any any -> any any
 Syntax test: PASS with -T --init-errors-fatal
 
-Comparison: 19 PCAPs x v0.8 and v0.9 = 38/38 successful replays
+Comparison: 19 PCAPs x evaluation baseline and 333-rule candidate = 38/38 successful replays
 Official OISF Suricata Verify PCAPs included: 10
 Newly added SID synthetic positive checks: 11/11
 DNS boundary tests: 4 true OAST matched, 4 lookalikes not matched
 Wide negative matrix: 146 benign-intent HTTP/DNS sessions with 0 new alerts
-Old v0.8 synthetic regression: both variants produced the same 14 alerts
+Baseline synthetic regression: both variants produced the same 14 alerts
 Known inherited FP: SID 9001402 can match benign HTML documentation;
-this FP is unchanged from v0.8.
+this FP remains present in the final 333-rule set.
 Actual Stellar Cyber 7.0 Modular Sensor / Suricata 8.0.1, 2026-11-08:
-- On-sensor installed v0.9 SHA256 matched the published file
+- On-sensor tested 333 detection signatures and SIDs match v1.0 exactly; comments and file SHA256 changed
 - 18 real HTTP/DNS sessions transmitted: 11/11 new SIDs observed in eve.json
 - 7 negative-control sessions: no new custom rule alerts
 - Captured 110 packets on eth0 (zero capture kernel drops)
-- Identical captured PCAP replay: v0.8 = 0, v0.9 = 11 new-pattern alerts
+- Identical captured PCAP replay: baseline configuration = 0, 333-rule set = 11 new-pattern alerts
 - Five official OISF SMB/DCERPC/Kerberos PCAPs replayed on sensor
-- Existing ET SID 2034825 alerted on lookalike DNS; not new v0.9 rule
+- Existing ET SID 2034825 alerted on lookalike DNS; not a custom v1.0 rule
 - Existing ETPRO SIDs 2868495 and 2868498 failed to load because
   krb5 and nfs application protocol detection are disabled
 - No new custom-rule loading errors; built-in rules left unchanged
@@ -30,7 +30,9 @@ rate, encrypted HTTP payload coverage or real-world attack success.
 Differences from initial 334-rule PoC:
   - Removed redundant SID 9006023 (overlapped existing SID 9002221).
   - SID 9006065/66/67: stricter DNS suffix boundary and revision 2.
-  - All original v0.8 signature rules are unchanged.
+  - All 333 detection signature lines are unchanged in v1.0.
 
 The findings support a real-sensor-validated lab release, not a production
 detection-performance claim. Import requires a backup of current rules.
+
+Release integrity: v1.0 modifies version comments only; all 333 alert signature lines and SIDs are byte-for-byte identical to the live sensor-tested file. New v1.0 SHA256 shown above is therefore different from the earlier tested-file SHA256.
