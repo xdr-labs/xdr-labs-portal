@@ -7,6 +7,14 @@
     "bytes": 679,
     "sha256": "3e28df655cf5638a262da4492492ceed5ebeadd6662c941756802595468497aa"
   },
+  "nextjs-benign-proxy-http.pcap": {
+    "bytes": 747,
+    "sha256": "6cca560b059c6e06c3f0a86e4fcc57c996494ee7db036d4f64a3747fcfc26bb7"
+  },
+  "nextjs-benign-proxy-https.pcap": {
+    "bytes": 748,
+    "sha256": "802e5b6eb8df725f1995a903cb6de9bc08027fc63d1ee2af4d7b1efaec0fe093"
+  },
   "nextjs-no-key.pcap": {
     "bytes": 637,
     "sha256": "25620b99f3f4f128ee4e26d3ee5f9f81891b9a50fe7c11919c8a3cede6c9997d"
@@ -35,9 +43,17 @@
     "bytes": 678,
     "sha256": "175b0e0458c3dc424cc3bb098c08502242eb1926bccf04c45aae26e262ca9550"
   },
+  "php-empty100-wide-gap.pcap": {
+    "bytes": 21871,
+    "sha256": "4b560715c52248e16c9829bfd6788056ba70cf3c84e78518520cfae406f4c990"
+  },
   "php-empty100.pcap": {
     "bytes": 11744,
     "sha256": "6115f0038ba7a6b9422c59fa9f43873a1e8f4a5e70727f60a7597938b5cfcd23"
+  },
+  "php-empty105-wide-gap.pcap": {
+    "bytes": 22931,
+    "sha256": "6427d6bd1aaac9bc71e80012deaaf97aaf94fafabca8e611455c5f501e8e1606"
   },
   "php-empty105-widegap.pcap": {
     "bytes": 23639,

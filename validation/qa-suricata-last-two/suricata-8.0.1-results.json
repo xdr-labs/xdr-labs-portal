@@ -6,9 +6,11 @@
     9005017,
     9005055
   ],
-  "fixture_count": 20,
+  "fixture_count": 24,
   "mode": "offline-suricata",
-  "engine_validate_seconds": 0.438,
+  "release_ready": false,
+  "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+  "engine_validate_seconds": 0.446,
   "cases": [
     {
       "fixture": "nextjs-positive.pcap",
@@ -20,7 +22,8 @@
         1,
         0
       ],
-      "seconds": 0.517
+      "seconds": 0.5,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-origin-form.pcap",
@@ -32,7 +35,8 @@
         0,
         0
       ],
-      "seconds": 0.503
+      "seconds": 0.503,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-no-upgrade.pcap",
@@ -44,7 +48,8 @@
         0,
         0
       ],
-      "seconds": 0.512
+      "seconds": 0.491,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-no-key.pcap",
@@ -56,7 +61,8 @@
         0,
         0
       ],
-      "seconds": 0.509
+      "seconds": 0.616,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-abs-https.pcap",
@@ -68,7 +74,8 @@
         1,
         0
       ],
-      "seconds": 0.523
+      "seconds": 0.492,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-pct1-http.pcap",
@@ -80,7 +87,8 @@
         1,
         0
       ],
-      "seconds": 0.508
+      "seconds": 0.521,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-pct1-https.pcap",
@@ -92,7 +100,8 @@
         1,
         0
       ],
-      "seconds": 0.529
+      "seconds": 0.498,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-pct2-http.pcap",
@@ -104,7 +113,8 @@
         1,
         0
       ],
-      "seconds": 0.5
+      "seconds": 0.511,
+      "known_release_risk": null
     },
     {
       "fixture": "nextjs-abs-http-post-method.pcap",
@@ -116,7 +126,8 @@
         0,
         0
       ],
-      "seconds": 0.51
+      "seconds": 0.536,
+      "known_release_risk": null
     },
     {
       "fixture": "php-empty99.pcap",
@@ -128,7 +139,8 @@
         0,
         0
       ],
-      "seconds": 0.52
+      "seconds": 0.496,
+      "known_release_risk": null
     },
     {
       "fixture": "php-empty100.pcap",
@@ -140,7 +152,8 @@
         0,
         1
       ],
-      "seconds": 0.518
+      "seconds": 0.527,
+      "known_release_risk": null
     },
     {
       "fixture": "php-empty105.pcap",
@@ -152,7 +165,8 @@
         0,
         1
       ],
-      "seconds": 0.512
+      "seconds": 0.556,
+      "known_release_risk": null
     },
     {
       "fixture": "php-empty105-widegap.pcap",
@@ -164,7 +178,8 @@
         0,
         1
       ],
-      "seconds": 0.527
+      "seconds": 0.501,
+      "known_release_risk": null
     },
     {
       "fixture": "php-emptybody105.pcap",
@@ -176,7 +191,8 @@
         0,
         1
       ],
-      "seconds": 0.521
+      "seconds": 0.529,
+      "known_release_risk": null
     },
     {
       "fixture": "php-no-part-type105.pcap",
@@ -188,7 +204,8 @@
         0,
         1
       ],
-      "seconds": 0.504
+      "seconds": 0.496,
+      "known_release_risk": null
     },
     {
       "fixture": "php-variable-boundary105.pcap",
@@ -200,7 +217,8 @@
         0,
         1
       ],
-      "seconds": 0.497
+      "seconds": 0.525,
+      "known_release_risk": null
     },
     {
       "fixture": "php-lowercase-disposition105.pcap",
@@ -212,7 +230,8 @@
         0,
         1
       ],
-      "seconds": 0.504
+      "seconds": 0.505,
+      "known_release_risk": null
     },
     {
       "fixture": "php-multiline105.pcap",
@@ -224,7 +243,8 @@
         0,
         0
       ],
-      "seconds": 0.517
+      "seconds": 0.572,
+      "known_release_risk": "MULTIPART_MULTILINE_BODY_MISS"
     },
     {
       "fixture": "php-nonempty105.pcap",
@@ -236,7 +256,8 @@
         0,
         0
       ],
-      "seconds": 0.501
+      "seconds": 0.536,
+      "known_release_risk": null
     },
     {
       "fixture": "php-wrongtype105.pcap",
@@ -248,8 +269,102 @@
         0,
         0
       ],
-      "seconds": 0.516
+      "seconds": 0.529,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "nextjs-benign-proxy-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.537,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "nextjs-benign-proxy-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.495,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "php-empty100-wide-gap.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.514,
+      "known_release_risk": null
+    },
+    {
+      "fixture": "php-empty105-wide-gap.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.521,
+      "known_release_risk": null
     }
   ],
-  "result": "PASS"
+  "result": "PASS",
+  "risk_witnesses": [
+    {
+      "fixture": "php-multiline105.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.572,
+      "known_release_risk": "MULTIPART_MULTILINE_BODY_MISS"
+    },
+    {
+      "fixture": "nextjs-benign-proxy-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.537,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    },
+    {
+      "fixture": "nextjs-benign-proxy-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.495,
+      "known_release_risk": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT"
+    }
+  ]
 }

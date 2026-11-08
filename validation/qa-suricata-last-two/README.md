@@ -1,68 +1,59 @@
-# Suricata v1.0 — last two SID regression gate
+# Suricata v1.0 — final two SID isolated QA and release-risk gate
 
-These are **test-only** regression fixtures for Suricata 8.0.1. They are **not a replacement download** and must not be imported into a running sensor.
+These tests are offline-only and are not installable detection rules.
+Public v1.0 and the installed sensor retain all 333 original signatures;
+331/333 original live SID Alerts are verified. SID 9005017 and SID 9005055
+are the two remaining original unverified rules.
 
-## Scope
+## QA-only candidate changes
 
-The published v1.0 file retains **333 unchanged signatures**. `run_offline.py` verifies SHA-256, generates a temporary copy differing in only two SID rules, and checks actual Suricata syntax and offline PCAP behavior.
+- 9005017: use a raw absolute HTTP/HTTPS URI, GET method, corrected
+  percent-encoded-slash regex and existing WebSocket headers. Ordinary
+  benign-shaped HTTP/HTTPS WebSocket proxy requests ALSO trigger it.
+  This is a known non-specificity and false-positive risk witness.
+- 9005055: use a structured MIME Content-Disposition/empty filename,
+  bounded additional MIME header lines, a single-line body of up to
+  4096 bytes, and a subsequent part boundary, repeated 100 times.
+  The candidate detects compact and long-header 100/105-part requests,
+  empty bodies, omitted Content-Type, variable boundary and lowercase
+  Content-Disposition. VALID multipart with multiline file-part content
+  can still fail detection, confirmed with a 105-part fixture.
 
-- 9005017: inspect raw URI with an anchored http/https regex, support single/double percent-encoded slashes, and require GET method. Generic WebSocket proxy requests might alert without proving exploitation of vulnerable Next.js.
-- 9005055: retain the 100-or-more empty-filename condition but inspect a structured MIME Content-Disposition header, up to 8 extra header lines, a single-line body up to 4096 bytes, and a subsequent multipart boundary. This QA-only regex matches 105 wide-gap parts; valid multiline part bodies remain an explicit detection gap.
+The runner must always return release_ready=false and
+release_status=BLOCKED_BY_KNOWN_FP_AND_FN_RISKS. A passing regression
+case is not a successful original live sensor Alert.
 
-Both are review candidates only, not published or sensor-installed rules. Actual original sensor verification remains 331/333.
+## Run
 
-## Running the gate
+Static SHA256, 333-SID and fixture validation:
 
-Static integrity (works without Suricata):
+    python3 validation/qa-suricata-last-two/run_offline.py
 
-```
-python3 validation/qa-suricata-last-two/run_offline.py
-```
+Offline Suricata 8.0.1 engine validation (no packets sent):
 
-Offline engine verification (Suricata 8.0.1 required):
+    python3 validation/qa-suricata-last-two/run_offline.py --run --suricata /usr/bin/suricata --config /etc/suricata/suricata-aelladata.yaml --report /tmp/suricata-last-two-results.json
 
-```
-python3 validation/qa-suricata-last-two/run_offline.py --run \
-  --suricata /usr/bin/suricata \
-  --config /path/to/suricata.yaml \
-  --report /tmp/suricata-last-two-result.json
-```
+The QA test runner builds a temporary 333-signature copy, modifies only
+the 2 targeted SIDs, runs Suricata syntax validation, hashes 24 PCAP
+fixtures and checks the expected SID-specific EVE Alert counts.
 
-The runner uses temporary files and does not send network packets, reload a sensor, or modify distributed assets.
+## Test coverage and risk records
 
-## Expected SID alerts
+The combined 24-case suite has 9 Next.js URI/handshake positive and
+negative controls, 11 MIME compact/wide/99/100/105/headers/boundary/body
+cases, two benign WebSocket proxy positives that indicate a release-risk
+false positive, and two older wide-gap MIME fixtures that DO match with
+the newer structured-MIME candidate.
 
-| Test fixture | SID 9005017 | SID 9005055 |
-| --- | ---: | ---: |
-| Absolute URI with WebSocket headers | 1 | 0 |
-| Origin-form URI | 0 | 0 |
-| Missing Upgrade header | 0 | 0 |
-| Missing WebSocket key | 0 | 0 |
-| Absolute https:// URI | 1 | 0 |
-| Single-percent-encoded HTTP URI | 1 | 0 |
-| Single-percent-encoded HTTPS URI | 1 | 0 |
-| Double-percent-encoded HTTP URI | 1 | 0 |
-| WebSocket-like POST method | 0 | 0 |
-| 99 empty file fields | 0 | 0 |
-| 100 empty file fields | 0 | 1 |
-| 105 empty file fields | 0 | 1 |
-| 105 empty parts with long header gaps | 0 | 1 |
-| 105 nonempty filenames | 0 | 0 |
-| 105 parts, empty file body | 0 | 1 |
-| 105 parts, no per-part Content-Type | 0 | 1 |
-| 105 parts, variable MIME boundary | 0 | 1 |
-| 105 parts, lowercase Content-Disposition | 0 | 1 |
-| 105 parts, multiline body (known detection gap) | 0 | 0 |
-| Wrong Content-Type with 105 fields | 0 | 0 |
+The historical suricata-8.0.1-risk-assessment.json and
+suricata-8.0.1-stress100.json capture the earlier 128-byte-wildcard
+candidate's evasion and small benchmark results, NOT the updated
+structured-MIME candidate's performance. Preserve them as a past
+risk-finding record but never claim they evaluate the new regex.
 
-**Observed on modular / Suricata 8.0.1: 20/20 PASS** using a temporary 333-rule copy with exactly two changes. The multiline-body negative is an explicit known detection gap, not an attack detection. All 20 fixture SHA256 values and exact SID-specific offline engine output are verified by the pinned runner.
-
-A prior wide-gap wildcard PCRE failed under the stock engine limits. The structured MIME candidate matched both compact and wide-gap multipart samples, but still has a one-line body constraint, can miss unusual MIME variations, and is not production-performance- or false-positive-validated. Offline process startups of about 0.5 seconds each are not throughput benchmarks.
-
-**Before release:** assess false positives from legitimate WebSocket proxy requests and multipart forms, valid multiline file-part bodies, optional MIME variations, PCRE CPU under load, and independent owner approval for any new rule version and real sensor deployment. No public v1.0 or deployed rule was modified.
-
-## Expanded regression findings
-
-- Original 9005017: normalized URI loses the absolute-form URL scheme. The original repeated-slash regex also excludes single percent-encoded %2f but includes doubly encoded %252f. A QA-only raw-URI/GET/anchored-regex variant covers 6 positive / 5 negative HTTP cases.
-- Original 9005055: 100+ repeated multipart filename-empty controls failed with the original broad PCRE on valid MIME inputs. QA-only structured MIME header/body/boundary matching covers compact and wide-gap single-line cases, while documented multiline body cases still miss. Not a production-complete replacement.
-- Neither candidate was installed, imported, or distributed. Original live sensor remains 331/333; QA-only results cannot raise the verified-original count.
+No user-facing detection count, distributed ZIP/rules, live Suricata
+configuration or ETPRO signatures changed. Remaining work includes
+benign WebSocket proxy false-positive discrimination, multiline body
+coverage, real sustained PCRE throughput, and an independently
+approved release/deploy process. The current candidates are
+NOT release ready.
