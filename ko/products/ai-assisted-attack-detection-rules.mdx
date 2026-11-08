@@ -35,39 +35,27 @@ Stellar Cyber 7.0용 **Suricata 탐지 룰 333개 전체**를 다운로드할 �
 나머지 <strong>2개 룰(SID 9005017, 9005055)</strong>도 다운로드 파일과 운영 센서에 포함되어 있으나, 개별 실센서 Alert는 아직 확인되지 않았습니다.
 
 *통제된 테스트 트래픽에 대한 실제 센서 Alert 검증 결과입니다.*
-## Stellar Cyber 7.0에 탐지 룰 임포트
 
-1. 기존 사용자 정의 룰을 먼저 백업합니다. 같은 센서에 새 파일을 임포트하면 `custom_defined.rules` 전체가 교체되며 기존 룰에 추가되지 않습니다.
-2. `System → Data Source Management → Sensors → Sensors`로 이동합니다.
-3. `Manage → Import Security Rules`를 선택합니다.
-4. `Choose File`에서 다운로드한 `.rules` 파일을 선택합니다. ZIP을 받았다면 먼저 압축을 해제합니다.
-5. `SENSORS`에서 적용할 센서를 선택하고 `Upload and Deploy`를 클릭합니다.
-6. 센서에 할당된 프로필에서 `Feature Customization → IDS → Signature → Selected Rules`의 `custom_defined.rules` 사용 여부를 확인하고, 센서 IDS 피드백과 승인된 테스트 Alert로 적용 결과를 확인합니다.
+## Stellar Cyber 7.0 룰 임포트
 
-<strong>주의:</strong> 기존 사용자 정의 룰이 있다면 신규 333개 룰과 합쳐 중복 SID 및 문법을 검증한 *하나의 파일*로 임포트해야 합니다. 이 패키지는 `alert` 전용이므로 트래픽을 직접 차단하지 않습니다.
+1. 기존 커스텀 룰을 백업합니다. 임포트 시 `custom_defined.rules`가 <strong>전체 교체</strong>됩니다.
+2. `System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules`를 엽니다.
+3. 다운로드한 `.rules` 파일을 선택하고, 대상 센서를 지정한 다음 `Upload and Deploy`를 클릭합니다.
+4. 센서 프로필의 `IDS → Signature → Selected Rules`에서 `custom_defined.rules` 적용 여부를 확인합니다.
 
-## HOME_NET / EXTERNAL_NET을 설정해야 하는 이유
+## HOME_NET / EXTERNAL_NET 설정
 
-Stellar Cyber의 기본 제공 IDS 룰에는 다음과 같이 <strong>외부에서 내부로 향하는 트래픽을 지정한 룰이 많습니다.</strong>
+Stellar Cyber는 RFC 1918 사설 주소(`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`)를 기본적으로 <strong>Private IP</strong>로 분류하고, 그 외의 공인 주소는 <strong>Public IP</strong>로 분류합니다. 이는 IP 분류 기준이며, **IDS의 HOME_NET / EXTERNAL_NET 설정은 센서 프로필에서 별도로 확인해야 합니다.**
 
-```suricata
-alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Example inbound detection"; sid:1000001; rev:1;)
-```
+- <strong>HOME_NET:</strong> 보호 대상 네트워크. 사설 IP뿐 아니라 <strong>회사에서 사용 중인 공인 IP(웹서버·DMZ 등)도 추가</strong>하세요.
+- <strong>EXTERNAL_NET:</strong> 외부·상대 네트워크. 내부 보호 대역과 외부 범위를 실제 트래픽에 맞게 설정하세요.
 
-- `HOME_NET`: 보호하려는 내부 네트워크입니다. 예를 들어 실제 내부 대역인 `10.20.0.0/16`, `192.168.10.0/24` 등을 설정합니다.
-- `EXTERNAL_NET`: 외부 또는 상대 네트워크 주소 범위입니다. 위처럼 `$EXTERNAL_NET → $HOME_NET`을 사용하는 룰에서는 주소 범위가 잘못 설정되면 실제 공격 트래픽이 룰의 출발지·목적지 조건을 만족하지 않아 탐지되지 않을 수 있습니다.
-- 반대로 `$HOME_NET → $EXTERNAL_NET`을 사용하는 외부 통신 탐지 룰도 있으므로 방향을 정확히 이해해야 합니다.
+많은 기본 IDS 룰이 `$EXTERNAL_NET → $HOME_NET` 방향으로 동작합니다. 보호 대상 공인 IP가 HOME_NET에서 빠지면 <strong>해당 서버로 향하는 공격을 놓칠 수 있습니다.</strong>
 
-<strong>설정 방법:</strong> `System → Data Source Management → Sensors → Sensor Profiles`에서 Modular Sensor Profile을 열고 `Feature Customization → IDS → Networks`의 `Home Network`와 `External Network`를 환경에 맞게 설정합니다. `Specific`을 선택하면 직접 IP 대역을 지정할 수 있습니다. `Network Traffic`과 `IDS` 활성화 여부, 해당 프로필의 센서 할당 여부도 확인하세요.
+<strong>설정 위치:</strong> `System → Data Source Management → Sensors → Sensor Profiles → Feature Customization → IDS → Networks`
 
-### 이번 333개 룰은 무엇이 다른가요?
+## 이번 333개 룰과의 차이
 
-이번 패키지의 <strong>333개 전부</strong>는 아래와 같은 `any any → any any` 주소 조건을 사용하며 `$HOME_NET` 또는 `$EXTERNAL_NET` 변수를 직접 참조하지 않습니다.
+이번 333개 룰은 모두 `any any → any any` 주소 조건을 사용하므로 <strong>HOME_NET / EXTERNAL_NET 주소 설정과 관계없이</strong> 공격 패턴을 검사합니다. 단, 센서의 트래픽 수신·IDS 활성화와 개별 룰의 프로토콜·`flow`·패턴 조건은 필요합니다.
 
-```suricata
-alert http any any -> any any (msg:"Example web attack pattern"; sid:1000002; rev:1;)
-```
-
-따라서 <strong>이 333개 룰의 주소 조건은 HOME_NET / EXTERNAL_NET 설정값에 의존하지 않습니다.</strong> 내부·외부 IP 대역과 무관하게 룰에서 정한 공격 패턴을 검사합니다. 단, 프로토콜·`flow`·페이로드 조건은 여전히 적용됩니다. 트래픽 미러링이 없거나 IDS가 비활성화되어 있으면 검사할 수 없으며, HOME/EXTERNAL 설정은 기본 제공 IDS 룰 및 센서 감시 범위를 위해 계속 정확하게 지정해야 합니다.
-
-공식 문서: [Stellar Cyber — Import Security Rules](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [Modular Sensor Profile — IDS Networks](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-Profile-Modular-Config.htm). 문서 열람에는 고객 로그인이 필요할 수 있습니다.
+공식 문서: [룰 임포트](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [IDS Networks](https://docs.stellarcyber.ai/7.0.xs/Configure/Sensors/Sensor-Profile-Modular-Config.htm) · [Private IP 분류](https://docs.stellarcyber.ai/7.0.x/Configure/Data-Enrichment.htm)

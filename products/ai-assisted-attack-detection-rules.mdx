@@ -35,39 +35,27 @@ On a <strong>Stellar Cyber 7.0 Modular Sensor</strong>, <strong>331 of the 333 r
 The remaining **2 signatures (SID 9005017 and 9005055)** are included in the download and operating sensor but do not yet have individually verified live-sensor alerts.
 
 *Results reflect controlled test traffic and observed sensor alerts.*
+
 ## Import rules into Stellar Cyber 7.0
 
-1. Back up existing custom rules. Importing a new file <strong>replaces</strong> the entire `custom_defined.rules` set on selected sensors rather than appending signatures.
-2. Go to `System → Data Source Management → Sensors → Sensors`.
-3. Select `Manage → Import Security Rules`.
-4. Use `Choose File` to select the downloaded `.rules` file. Extract the ZIP first if needed.
-5. Select target devices under `SENSORS` and click `Upload and Deploy`.
-6. Check `Feature Customization → IDS → Signature → Selected Rules` in the assigned sensor profile for `custom_defined.rules`, and verify deployment feedback and alerts with authorized traffic.
+1. Back up existing custom rules: an import <strong>replaces</strong> the full `custom_defined.rules` file.
+2. Open `System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules`.
+3. Select the downloaded `.rules` file, choose the target sensors, and click `Upload and Deploy`.
+4. Verify `custom_defined.rules` under the assigned sensor profile's `IDS → Signature → Selected Rules`.
 
-<strong>Important:</strong> To preserve existing signatures, combine them with these 333 rules into a syntax-checked file with unique SIDs before importing. These `alert` rules do not block traffic.
+## Configure HOME_NET and EXTERNAL_NET
 
-## Why HOME_NET and EXTERNAL_NET matter
+Stellar Cyber automatically classifies RFC 1918 ranges (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`) as <strong>private</strong>, and other public addresses as <strong>public</strong>. This IP classification is **separate from the IDS HOME_NET / EXTERNAL_NET settings**; check the assigned sensor profile.
 
-Many built-in Stellar Cyber IDS signatures use <strong>external-to-internal network direction</strong> in their rule headers, for example:
+- <strong>HOME_NET:</strong> Protected networks. <strong>Add public IPs owned by your organization</strong> (such as public web servers and DMZ systems), not just private ranges.
+- <strong>EXTERNAL_NET:</strong> External/peer addresses. Confirm that its range matches the traffic you need to inspect.
 
-```suricata
-alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Example inbound detection"; sid:1000001; rev:1;)
-```
+Many built-in IDS rules use `$EXTERNAL_NET → $HOME_NET`. If a protected public IP is omitted from HOME_NET, <strong>inbound attacks against that address may not match</strong> those signatures.
 
-- `HOME_NET` identifies protected internal network ranges, e.g., `10.20.0.0/16` and `192.168.10.0/24`.
-- `EXTERNAL_NET` identifies external or counterpart networks. Incorrect settings can cause built-in signatures using `$EXTERNAL_NET → $HOME_NET` to miss actual attacks because the traffic does not match the source/destination IP conditions.
-- Some signatures instead use `$HOME_NET → $EXTERNAL_NET` for outbound traffic; their direction matters, too.
+<strong>Configuration path:</strong> `System → Data Source Management → Sensors → Sensor Profiles → Feature Customization → IDS → Networks`
 
-<strong>Configuration:</strong> Under `System → Data Source Management → Sensors → Sensor Profiles`, edit the assigned Modular Sensor Profile and set `Home Network` and `External Network` under `Feature Customization → IDS → Networks`. Choose `Specific` to enter actual IP ranges. Verify that `Network Traffic` and `IDS` are enabled and the profile is assigned to the desired sensors.
+## How these 333 rules differ
 
-### Why this 333-rule bundle is different
+All 333 signatures use `any any → any any` address conditions, so <strong>their address matching is independent of HOME_NET / EXTERNAL_NET</strong>. The sensor still needs traffic visibility and IDS enabled, and each rule's protocol, `flow`, and content conditions still apply.
 
-<strong>All 333 signatures</strong> use `any any → any any` address headers, rather than referencing `$HOME_NET` or `$EXTERNAL_NET`:
-
-```suricata
-alert http any any -> any any (msg:"Example web attack pattern"; sid:1000002; rev:1;)
-```
-
-<strong>These 333 rules' address conditions do not depend on HOME_NET / EXTERNAL_NET values.</strong> They match attack patterns without restricting addresses to particular internal or external ranges. Protocol, `flow`, and content conditions still apply. The sensor must receive traffic and have IDS enabled; accurate HOME/EXTERNAL values remain important for built-in signatures and the sensor's IDS monitoring scope.
-
-Official documents: [Stellar Cyber — Import Security Rules](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [Modular Sensor Profile — IDS Networks](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-Profile-Modular-Config.htm). Customer sign-in may be required.
+Official docs: [Rule import](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [IDS Networks](https://docs.stellarcyber.ai/7.0.xs/Configure/Sensors/Sensor-Profile-Modular-Config.htm) · [Private IP classification](https://docs.stellarcyber.ai/7.0.x/Configure/Data-Enrichment.htm)
