@@ -117,6 +117,16 @@
       "source": "/ko/products/openxdr-kvm-installer",
       "destination": "https://kvm.xdr.ooo/ko",
       "permanent": true
+    },
+    {
+      "source": "/downloads/local-web-attack-ai-v0.8-full.rules",
+      "destination": "https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-full.rules",
+      "permanent": false
+    },
+    {
+      "source": "/downloads/local-web-attack-ai-v0.8-download.zip",
+      "destination": "https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-download.zip",
+      "permanent": false
     }
   ]
 }
