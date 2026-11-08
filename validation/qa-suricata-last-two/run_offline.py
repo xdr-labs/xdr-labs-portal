@@ -25,9 +25,17 @@ EXPECTED = {
     "nextjs-origin-form.pcap": (0, 0),
     "nextjs-no-upgrade.pcap": (0, 0),
     "nextjs-no-key.pcap": (0, 0),
+    "nextjs-abs-https.pcap": (1, 0),
+    "nextjs-pct1-http.pcap": (1, 0),
+    "nextjs-pct1-https.pcap": (1, 0),
+    "nextjs-pct2-http.pcap": (1, 0),
+    "nextjs-abs-http-post-method.pcap": (0, 0),
     "php-empty99.pcap": (0, 0),
     "php-empty100.pcap": (0, 1),
     "php-empty105.pcap": (0, 1),
+    # Explicit recall-limitation fixture: 105 genuine multipart fields but
+    # the distance between filename markers exceeds the 128-byte QA bound.
+    "php-empty105-widegap.pcap": (0, 0),
     "php-nonempty105.pcap": (0, 0),
     "php-wrongtype105.pcap": (0, 0),
 }
@@ -57,9 +65,13 @@ def validate_and_build() -> tuple[str, dict]:
     for line in original_lines:
         new = line
         if line.startswith("alert ") and re.search(r"\bsid:9005017;", line):
-            if line.count("http.uri;") != 1:
+            previous = re.search(r'http\.uri; content:"http"; startswith; pcre:"/[^"]+/R";', line)
+            if previous is None:
                 raise ValueError("Unexpected 9005017 original syntax")
-            new = line.replace("http.uri;", "http.uri.raw;", 1)
+            # QA-only: use literal raw URI, fix omitted optional percent-encoding
+            # before slash, and restrict the WebSocket handshake to GET.
+            replacement = r'http.method; content:"GET"; startswith; http.uri.raw; pcre:"/^https?(?:\x3a|\x25(?:25)?3[aA])(?:\x2f|\x25(?:25)?2[fF]){2}/";'
+            new = line[:previous.start()] + replacement + line[previous.end():]
             modified.append(9005017)
         if line.startswith("alert ") and re.search(r"\bsid:9005055;", line):
             if line.count(".{0,4096}){100,}") != 1:
