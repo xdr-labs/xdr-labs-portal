@@ -1,43 +1,27 @@
-Suricata v1.0 Offline + Real Sensor PoC Evidence Summary
-============================================
-2026-11-08, dev-drcontrol Docker network-none / Suricata 8.0.8
-Rule SHA256: 5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96
-Count: 333 alert rules; unique SID 333; header all any any -> any any
-Syntax test: PASS with -T --init-errors-fatal
+Suricata v1.0 — Distribution and Sensor Verification
+===================================================
+Updated: 2026-11-09
 
-Comparison: 19 PCAPs x evaluation baseline and 333-rule candidate = 38/38 successful replays
-Official OISF Suricata Verify PCAPs included: 10
-Newly added SID synthetic positive checks: 11/11
-DNS boundary tests: 4 true OAST matched, 4 lookalikes not matched
-Wide negative matrix: 146 benign-intent HTTP/DNS sessions with 0 new alerts
-Baseline synthetic regression: both variants produced the same 14 alerts
-Known inherited FP: SID 9001402 can match benign HTML documentation;
-this FP remains present in the final 333-rule set.
-Actual Stellar Cyber 7.0 Modular Sensor / Suricata 8.0.1, 2026-11-08:
-- On-sensor tested 333 detection signatures and SIDs match v1.0 exactly; comments and file SHA256 changed
-- Initial 18 HTTP/DNS sessions: 11/11 new SIDs observed in eve.json
-- Expanded all-SID lab testing: 315/333 distinct SIDs generated actual sensor alerts
-- 18 not reproduced: 15 HTTP, 2 SMB, 1 DCE/RPC (not confirmed defective)
-- Additional tests: synthetic HTTP and raw TCP stimuli, with exact SID attribution
-- 36 benign 404 responses triggered the threshold-based HTTP enumeration signature
-- Controlled test-reproduction coverage is not a production attack detection rate
-- 7 negative-control sessions: no new custom rule alerts
-- Captured 110 packets on eth0 (zero capture kernel drops)
-- Identical captured PCAP replay: baseline configuration = 0, 333-rule set = 11 new-pattern alerts
-- Five official OISF SMB/DCERPC/Kerberos PCAPs replayed on sensor
-- Existing ET SID 2034825 alerted on lookalike DNS; not a custom v1.0 rule
-- Existing ETPRO SIDs 2868495 and 2868498 failed to load because
-  krb5 and nfs application protocol detection are disabled
-- No new custom-rule loading errors; built-in rules left unchanged
-NOT TESTED: Stellar Cyber DP/UI alert delivery, production false-positive
-rate, encrypted HTTP payload coverage or real-world attack success.
+Downloaded signature file:
+  local-web-attack-ai-v1.0-333.rules
+SHA-256:
+  5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96
 
-Differences from initial 334-rule PoC:
-  - Removed redundant SID 9006023 (overlapped existing SID 9002221).
-  - SID 9006065/66/67: stricter DNS suffix boundary and revision 2.
-  - All 333 detection signature lines are unchanged in v1.0.
+333 unique alert SIDs. Both SID 9005017 and SID 9005055 included.
+All 333 signature lines are byte-for-byte identical to the installed
+Stellar Cyber 7.0 Modular Sensor custom-defined signature lines.
 
-The findings support a real-sensor-validated lab release, not a production
-detection-performance claim. Import requires a backup of current rules.
+Actual sensor (Suricata 8.0.1):
+  331/333 unique original SIDs produced individually attributed alerts.
+  2/333 (9005017, 9005055) are installed but unconfirmed by live alerts.
+  These are controlled lab test results, NOT live attack detection rates.
+  DP/UI alert delivery and production false-positive rates were not verified.
 
-Release integrity: v1.0 modifies version comments only; all 333 alert signature lines and SIDs are byte-for-byte identical to the live sensor-tested file. New v1.0 SHA256 shown above is therefore different from the earlier tested-file SHA256.
+The original unmodified v1.0 signature rules are distributed. Temporary
+QA-only variants for the last two SIDs are not included because their
+false-positive/false-negative release criteria were not met.
+
+The import may replace existing custom_defined.rules on another sensor.
+Back up current rules, review default ET/IDS overlap, and validate in a
+test environment before use. The operating sensor already runs all 333
+signature definitions; do not perform a redundant import/restart there.
