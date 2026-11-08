@@ -64,7 +64,8 @@
               "products/stellar-data-exporter",
               "products/stellar-data-exporter-guide",
               "products/xdr-lab-appliance",
-              "products/parser-studio"
+              "products/parser-studio",
+              "products/ai-assisted-attack-detection-rules"
             ],
             "icon": "box"
           }
@@ -91,7 +92,8 @@
               "ko/products/stellar-data-exporter",
               "ko/products/stellar-data-exporter-guide",
               "ko/products/xdr-lab-appliance",
-              "ko/products/parser-studio"
+              "ko/products/parser-studio",
+              "ko/products/ai-assisted-attack-detection-rules"
             ],
             "icon": "box"
           }

@@ -1,0 +1,51 @@
+---
+title: "AI 지원 공격 탐지 룰"
+sidebarTitle: "AI 지원 공격 탐지 룰"
+description: "Download a curated Suricata 8-compatible rule pack for AI-assisted red-team tools, common web attacks, and selected C2 and exploit patterns."
+---
+
+
+**AI-Assisted Attack Detection Rules** is a downloadable Suricata signature pack designed for evaluating web attacks, AI-assisted penetration-testing tools, and selected red-team activity in Stellar Cyber 7.0 test environments.
+
+The pack contains **322 alert-only rules (v0.8)**. It uses `any any -> any any` headers, without requiring `HOME_NET` or `EXTERNAL_NET`. Request/response flow constraints remain in place where applicable.
+
+<CardGroup cols={2}>
+  <Card title="Download rules (.rules)" icon="download" href="/downloads/local-web-attack-ai-v0.8-full.rules">
+    Direct download of the complete 322-rule Suricata file.
+  </Card>
+  <Card title="Download ZIP" icon="file-archive" href="/downloads/local-web-attack-ai-v0.8-download.zip">
+    Contains the same rule file, checksum, and a short usage guide.
+  </Card>
+</CardGroup>
+
+## What it detects
+
+- Common web attack patterns: SQL injection, command injection, path traversal, XSS, webshell activity, and executable uploads.
+- Identifiable AI-assisted testing tool and scanner fingerprints, including ARTEX, CyberStrikeAI, HexStrike-AI, Nuclei, sqlmap, and other tools.
+- Selected C2 and red-team network signatures, including Cobalt Strike, Havoc, and Meterpreter.
+- Selected public ET Open exploit signatures for products and frameworks including PHP, Tomcat, Next.js, Fortinet, Citrix, Cisco ASA/FTD, Confluence, and Apache Struts2.
+
+<Note>
+  “AI-assisted” describes attack tools and patterns that can be identified by static network signatures. **This rule pack does not perform AI inference.** Tool User-Agents can be changed or spoofed.
+</Note>
+
+## Verification and safe use
+
+| Item | Result |
+| --- | --- |
+| Release | v0.8 · November 8, 2026 |
+| Included signatures | 322 |
+| Suricata 8.0.8 signature loading | PASS |
+| Synthetic attack PCAP scenarios | 12/12 detected |
+| Synthetic benign PCAP scenarios | 7/7 without alert |
+| Stellar Cyber sensor import and production E2E | Not yet verified |
+
+<Warning>
+  Back up any existing custom-defined rules before importing: an import may replace the existing custom rule file. First confirm the sensor's supported Suricata keywords and active built-in ET rules to avoid duplicate alerts. Test in a non-production sensor before use.
+</Warning>
+
+Most HTTP payload signatures require visible **plaintext or decrypted HTTP**. This pack supplements—not replaces—the sensor's built-in IDS/NDR detections. The small synthetic PCAP test set does not establish a production detection rate or false-positive rate.
+
+**Integrity:** SHA-256 (`.rules`): `056c70389580c69431351dc287352e6f6836969aca8e2eba47ed6b30f19f6dbb`
+
+**Provenance:** Selected rules are derived from [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) and [Theori AIPT Detections](https://github.com/theori-io/aipt-detections) alongside retained local web signatures. Source attribution and license notices are included in the rule file.
