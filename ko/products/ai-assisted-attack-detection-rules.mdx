@@ -1,55 +1,49 @@
 ---
 title: "AI 지원 공격 탐지 룰"
 sidebarTitle: "AI 지원 공격 탐지 룰"
-description: "Stellar Cyber 7.0용 Suricata 커스텀 룰: AI 기반 모의해킹 도구, 기본 웹 공격, 주요 Red Team 및 C2 패턴 탐지"
+description: "Stellar Cyber 7.0 테스트용 Suricata 탐지 룰 v0.9: 웹 공격, AI 지원 공격 도구 지문, OAST DNS"
 ---
 
-
-**AI 지원 공격 탐지 룰**은 Stellar Cyber 7.0 테스트 환경에서 웹 공격과 AI 기반 모의해킹·레드팀 도구의 흔적을 탐지하기 위한 Suricata 룰 모음입니다.
-
-**v0.8 · 총 322개 룰**이며, 모두 경고(`alert`) 방식입니다. 네트워크 주소 조건은 `any any -> any any`로 통일하여 `HOME_NET` 또는 `EXTERNAL_NET` 설정 없이 사용할 수 있습니다. HTTP 요청·응답 방향 조건은 유지했습니다.
+**AI 지원 공격 탐지 룰**은 웹 공격과 AI 지원 모의해킹·Red Team 도구의 네트워크 흔적을 탐지하기 위한 Suricata 커스텀 룰 모음입니다. **v0.9는 333개 룰(기존 v0.8 322개 + 신규 11개)**로 구성됩니다.
 
 <CardGroup cols={2}>
-  <Card title="룰 파일 다운로드 (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-full.rules">
-    Suricata Import용 최종 룰 322개를 직접 다운로드합니다.
+  <Card title="v0.9 룰 다운로드 (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.9-validated-333.rules">
+    Suricata Import용 전체 333개 룰 파일.
   </Card>
-  <Card title="ZIP 다운로드" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-download.zip">
-    동일한 룰 파일과 해시값, 간단한 적용 안내를 함께 제공합니다.
+  <Card title="v0.9 ZIP 다운로드" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.9-validated-333.zip">
+    룰 파일, SHA-256 및 한국어 적용 안내와 테스트 결과 포함.
   </Card>
 </CardGroup>
 
 ## 탐지 범위
 
-- **기본 웹 공격:** SQL Injection, 명령어 삽입, 경로 탐색, XSS, 웹셸 사용, PHP/JSP/ASPX 실행 파일 업로드
-- **AI 기반 모의해킹 및 스캐너:** ARTEX, CyberStrikeAI, HexStrike-AI, Nuclei, sqlmap 등 식별 가능한 도구 지문
-- **Red Team·C2:** Cobalt Strike, Havoc, Meterpreter 등 공개된 주요 패턴
-- **최근 취약점 공격:** PHP, Tomcat, Next.js, Fortinet, Citrix, Cisco ASA/FTD, Confluence, Struts2 등 선별된 공개 ET Open 규칙
+- **기본 웹 공격:** SQL Injection, Command Injection, Path Traversal, XSS, 웹셸, 실행 파일 업로드
+- **AI 지원 모의해킹·Red Team 도구:** ARTEX, CyberStrikeAI, HexStrike-AI, Cobalt Strike, Havoc 등의 일부 식별 가능한 특징
+- **v0.9 신규 11개:** /dev/tcp 리버스셸 문자열, 인코딩된 명령 구분자, AntSword·China Chopper 지문, Interactsh·Burp Collaborator OAST DNS 조회
 
-<Note>
-  여기서 **AI 지원 공격 탐지**란 AI 기반 공격 도구의 네트워크 특징을 시그니처로 탐지한다는 의미입니다. **룰 자체가 AI 모델을 실행하거나 AI로 공격을 판정하는 것은 아닙니다.** User-Agent 등의 지문은 공격자가 변경할 수 있습니다.
-</Note>
+모든 룰은 alert 전용이고 주소·포트 조건은 any any → any any입니다. **룰 자체에 AI 모델이 포함된 것은 아닙니다.**
 
 ## 검증 현황
 
 | 항목 | 결과 |
 | --- | --- |
-| 버전 | v0.8 · 2026년 11월 8일 |
-| 통합 룰 | 322개 |
-| Suricata 8.0.8 구문·로딩 검사 | PASS |
-| 합성 공격 PCAP | 12/12 탐지 |
-| 합성 정상 PCAP | 7/7 무경고 |
-| Stellar Cyber 실제 센서 Import / 운영망 E2E | 미검증 |
+| 버전 | v0.9 · 333개 · 2026년 11월 8일 |
+| Suricata 8.0.8 문법·로딩 | PASS |
+| 19종 PCAP × 2룰셋 회귀 | **38/38 정상 실행** |
+| 신규 SID 합성 탐지 | **11/11 확인** |
+| OAST 정상 도메인 / 유사 도메인 구분 | 4/4 탐지 · 4/4 무경고 |
+| 추가 정상 의도 146세션 | v0.8 대비 신규 경고 0건 |
+| 기존 탐지 회귀 | 시험한 범위에서 없음 |
+| 실제 Stellar Cyber 7.0 Sensor Import / 운영망 E2E | **미검증** |
 
 <Warning>
-  Import 전 기존 커스텀 룰을 반드시 백업하세요. 전체 `custom_defined.rules`가 교체될 수 있습니다. Stellar Cyber 기본 ET 룰과 중복될 수 있으므로 활성 룰을 확인하고 **테스트 센서에서 먼저 적용**하세요.
+  **LAB 검증본으로, 운영환경 탐지 성능이 보장된 릴리스는 아닙니다.** Import 전 기존 custom_defined.rules를 반드시 백업하세요. 실제 센서의 Suricata 지원 버전, 활성 기본 ET 룰과의 중복, 최종 Alert 생성을 테스트 센서에서 확인해야 합니다.
 </Warning>
 
-HTTPS 복호화나 평문 HTTP 가시성이 없으면 URI, 헤더, 본문을 검사하는 상당수 규칙이 동작하지 않습니다. 기존 IDS/NDR 탐지를 보완하는 용도이며, 제한된 합성 PCAP 검증 결과가 실제 운영망 탐지율이나 오탐률을 의미하지는 않습니다.
+**검증 한계:** AD 공격(DCSync, PetitPotam, PsExec, Kerberoasting) 신규 룰은 정상 관리 트래픽과 구별하는 검증이 부족해 이번 버전에서 제외했습니다. 기존 v0.8의 XSS 룰은 정상 HTML 예시에도 경고할 수 있으며, OAST DNS는 승인된 모의해킹에서도 나타납니다. HTTPS 페이로드 검사는 평문 트래픽 또는 외부 복호화가 필요합니다.
 
-**파일 무결성:** `.rules` SHA-256
+**v0.9 SHA-256:** 8b902126044224089cd367a47c58c98290563f0816972272086fb79e8b1c77a6
 
-```text
-056c70389580c69431351dc287352e6f6836969aca8e2eba47ed6b30f19f6dbb
-```
+**이전 버전:** [v0.8 룰(322개)](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-full.rules) · [v0.8 ZIP](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-download.zip)
 
-**공개 룰 출처:** [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz), [Theori AIPT Detections](https://github.com/theori-io/aipt-detections). 원본 출처와 라이선스 고지는 룰 파일에 포함되어 있습니다.
+**출처·라이선스:** [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) 및 [Theori AIPT Detections](https://github.com/theori-io/aipt-detections). 출처·라이선스 고지는 룰 파일에 포함돼 있습니다.

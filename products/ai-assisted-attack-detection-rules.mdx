@@ -1,51 +1,49 @@
 ---
 title: "AI 지원 공격 탐지 룰"
 sidebarTitle: "AI 지원 공격 탐지 룰"
-description: "Download a curated Suricata 8-compatible rule pack for AI-assisted red-team tools, common web attacks, and selected C2 and exploit patterns."
+description: "Stellar Cyber 7.0 lab-tested Suricata rules v0.9: web attacks, AI-assisted red-team fingerprints and OAST DNS"
 ---
 
-
-**AI-Assisted Attack Detection Rules** is a downloadable Suricata signature pack designed for evaluating web attacks, AI-assisted penetration-testing tools, and selected red-team activity in Stellar Cyber 7.0 test environments.
-
-The pack contains **322 alert-only rules (v0.8)**. It uses `any any -> any any` headers, without requiring `HOME_NET` or `EXTERNAL_NET`. Request/response flow constraints remain in place where applicable.
+**AI-Assisted Attack Detection Rules** is a curated Suricata signature pack for web attacks and identifiable red-team tool activity in Stellar Cyber 7.0 test environments. **v0.9 contains 333 rules**, retaining all 322 v0.8 signatures and adding 11 offline-tested signatures.
 
 <CardGroup cols={2}>
-  <Card title="Download rules (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-full.rules">
-    Direct download of the complete 322-rule Suricata file.
+  <Card title="Download v0.9 rules (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.9-validated-333.rules">
+    Complete alert-only Suricata ruleset, 333 signatures.
   </Card>
-  <Card title="Download ZIP" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-download.zip">
-    Contains the same rule file, checksum, and a short usage guide.
+  <Card title="Download v0.9 ZIP" icon="file-archive" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.9-validated-333.zip">
+    Rules, SHA-256 integrity record, Korean usage notes and test summary.
   </Card>
 </CardGroup>
 
-## What it detects
+## Detection coverage
 
-- Common web attack patterns: SQL injection, command injection, path traversal, XSS, webshell activity, and executable uploads.
-- Identifiable AI-assisted testing tool and scanner fingerprints, including ARTEX, CyberStrikeAI, HexStrike-AI, Nuclei, sqlmap, and other tools.
-- Selected C2 and red-team network signatures, including Cobalt Strike, Havoc, and Meterpreter.
-- Selected public ET Open exploit signatures for products and frameworks including PHP, Tomcat, Next.js, Fortinet, Citrix, Cisco ASA/FTD, Confluence, and Apache Struts2.
+- **Common web attacks:** SQL injection, command injection, path traversal, XSS, webshell activity and executable uploads.
+- **Selected AI-assisted and red-team tool indicators:** ARTEX, CyberStrikeAI, HexStrike-AI, Cobalt Strike, Havoc and others.
+- **11 new v0.9 signatures:** /dev/tcp reverse shell indicators, encoded command separators, AntSword/China Chopper patterns, and Interactsh/Burp Collaborator OAST DNS lookups.
 
-<Note>
-  “AI-assisted” describes attack tools and patterns that can be identified by static network signatures. **This rule pack does not perform AI inference.** Tool User-Agents can be changed or spoofed.
-</Note>
+All signatures are alert-only and use any any → any any network/port headers. **They do not run an AI model.** Tool-specific fingerprints can be modified or spoofed.
 
-## Verification and safe use
+## Lab verification
 
-| Item | Result |
+| Check | Result |
 | --- | --- |
-| Release | v0.8 · November 8, 2026 |
-| Included signatures | 322 |
-| Suricata 8.0.8 signature loading | PASS |
-| Synthetic attack PCAP scenarios | 12/12 detected |
-| Synthetic benign PCAP scenarios | 7/7 without alert |
-| Stellar Cyber sensor import and production E2E | Not yet verified |
+| Version | v0.9 · 333 rules · November 8, 2026 |
+| Suricata 8.0.8 syntax/load | PASS |
+| 19 fixtures × two rule sets | **38/38 successful PCAP replays** |
+| New SID positive synthetic checks | **11/11 observed** |
+| OAST DNS valid / lookalike controls | 4/4 detected · 4/4 quiet |
+| Additional 146 benign-intent sessions | Zero new alerts versus v0.8 |
+| Existing detection regression | No losses in tested fixtures |
+| Actual Stellar Cyber sensor import / operational E2E | **Not verified** |
 
 <Warning>
-  Back up any existing custom-defined rules before importing: an import may replace the existing custom rule file. First confirm the sensor's supported Suricata keywords and active built-in ET rules to avoid duplicate alerts. Test in a non-production sensor before use.
+  **Lab-validated candidate, not a production-certified release.** Back up existing custom_defined.rules before import because imports may overwrite the file. Check the actual sensor Suricata version, built-in IDS/ET rule overlap, and Stellar alert generation on a non-production sensor.
 </Warning>
 
-Most HTTP payload signatures require visible **plaintext or decrypted HTTP**. This pack supplements—not replaces—the sensor's built-in IDS/NDR detections. The small synthetic PCAP test set does not establish a production detection rate or false-positive rate.
+**Known limits:** Added AD/DCERPC detections for DCSync, PetitPotam, PsExec and Kerberoasting were withheld until false positives can be distinguished from normal administration. A legacy v0.8 XSS rule can alert on benign HTML examples. Authorized penetration tests may also generate OAST DNS alerts. Encrypted HTTP content requires decryption or plaintext visibility.
 
-**Integrity:** SHA-256 (`.rules`): `056c70389580c69431351dc287352e6f6836969aca8e2eba47ed6b30f19f6dbb`
+**v0.9 SHA-256:** 8b902126044224089cd367a47c58c98290563f0816972272086fb79e8b1c77a6
 
-**Provenance:** Selected rules are derived from [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) and [Theori AIPT Detections](https://github.com/theori-io/aipt-detections) alongside retained local web signatures. Source attribution and license notices are included in the rule file.
+**Previous version:** [v0.8 (322 rules)](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-full.rules) · [v0.8 ZIP](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v0.8-download.zip)
+
+**Provenance and licenses:** [ET Open](https://rules.emergingthreats.net/open/suricata-8.0/emerging.rules.tar.gz) and [Theori AIPT Detections](https://github.com/theori-io/aipt-detections); license notices remain in the rule file.

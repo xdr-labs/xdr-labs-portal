@@ -1,0 +1,25 @@
+Suricata v0.9 Offline PoC Evidence Summary
+============================================
+2026-11-08, dev-drcontrol Docker network-none / Suricata 8.0.8
+Rule SHA256: 8b902126044224089cd367a47c58c98290563f0816972272086fb79e8b1c77a6
+Count: 333 alert rules; unique SID 333; header all any any -> any any
+Syntax test: PASS with -T --init-errors-fatal
+
+Comparison: 19 PCAPs x v0.8 and v0.9 = 38/38 successful replays
+Official OISF Suricata Verify PCAPs included: 10
+Newly added SID synthetic positive checks: 11/11
+DNS boundary tests: 4 true OAST matched, 4 lookalikes not matched
+Wide negative matrix: 146 benign-intent HTTP/DNS sessions with 0 new alerts
+Old v0.8 synthetic regression: both variants produced the same 14 alerts
+Known inherited FP: SID 9001402 can match benign HTML documentation;
+this FP is unchanged from v0.8.
+Stellar Cyber sensor import, active built-in SID comparison, production
+latency/false-positive rate, encrypted HTTP coverage: NOT TESTED.
+
+Differences from initial 334-rule PoC:
+  - Removed redundant SID 9006023 (overlapped existing SID 9002221).
+  - SID 9006065/66/67: stricter DNS suffix boundary and revision 2.
+  - All original v0.8 signature rules are unchanged.
+
+The findings support a lab-only downloadable release, not a production
+detection-performance claim. Import requires a backup of current rules.
