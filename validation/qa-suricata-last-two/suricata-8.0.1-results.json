@@ -1,0 +1,123 @@
+{
+  "baseline_sha256": "5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96",
+  "candidate_sha256": "5954bf07b148e07b95045cf6459228ab4d7c76ccfc1d2b164d9bff8faf6d3e13",
+  "signature_count": 333,
+  "changed_sids": [
+    9005017,
+    9005055
+  ],
+  "fixture_count": 9,
+  "mode": "offline-suricata",
+  "engine_validate_seconds": 0.427,
+  "cases": [
+    {
+      "fixture": "nextjs-positive.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.543
+    },
+    {
+      "fixture": "nextjs-origin-form.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.521
+    },
+    {
+      "fixture": "nextjs-no-upgrade.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.528
+    },
+    {
+      "fixture": "nextjs-no-key.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.526
+    },
+    {
+      "fixture": "php-empty99.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.527
+    },
+    {
+      "fixture": "php-empty100.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.524
+    },
+    {
+      "fixture": "php-empty105.pcap",
+      "expected": [
+        0,
+        1
+      ],
+      "observed": [
+        0,
+        1
+      ],
+      "seconds": 0.545
+    },
+    {
+      "fixture": "php-nonempty105.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.504
+    },
+    {
+      "fixture": "php-wrongtype105.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.525
+    }
+  ],
+  "result": "PASS"
+}

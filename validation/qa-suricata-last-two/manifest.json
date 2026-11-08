@@ -1,0 +1,38 @@
+{
+  "nextjs-positive.pcap": {
+    "sha256": "175b0e0458c3dc424cc3bb098c08502242eb1926bccf04c45aae26e262ca9550",
+    "bytes": 678
+  },
+  "nextjs-origin-form.pcap": {
+    "sha256": "bd3702a57f3d84f21da534d7238c83909709ac6d4ee5ad991507f664a925d8d7",
+    "bytes": 656
+  },
+  "nextjs-no-upgrade.pcap": {
+    "sha256": "277be6156b3e894a4c83b829d99f0c0c9765b70173b51956f7d438338c5301cd",
+    "bytes": 631
+  },
+  "nextjs-no-key.pcap": {
+    "sha256": "25620b99f3f4f128ee4e26d3ee5f9f81891b9a50fe7c11919c8a3cede6c9997d",
+    "bytes": 637
+  },
+  "php-empty99.pcap": {
+    "sha256": "089f2a91a8f159bf42e5c16bde4b0eb1361229d8bc0cb3f45d1d73c8fbda048a",
+    "bytes": 11633
+  },
+  "php-empty100.pcap": {
+    "sha256": "6115f0038ba7a6b9422c59fa9f43873a1e8f4a5e70727f60a7597938b5cfcd23",
+    "bytes": 11744
+  },
+  "php-empty105.pcap": {
+    "sha256": "12444d404fd4812356eb468be8bc174b898ba22c538787792b0319379994adbf",
+    "bytes": 12299
+  },
+  "php-nonempty105.pcap": {
+    "sha256": "3cbf33a65da8cd620fbc1ab4409310b7af9283d326a4dc73b7b0d45d0ec8478c",
+    "bytes": 13349
+  },
+  "php-wrongtype105.pcap": {
+    "sha256": "97063ac87d0f9c4cba301d6b319bf9f07ac3d55594cc1ddbf5ae6b888d7723b3",
+    "bytes": 12277
+  }
+}
