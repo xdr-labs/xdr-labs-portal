@@ -120,12 +120,12 @@
     },
     {
       "source": "/downloads/local-web-attack-ai-v1.0-333.rules",
-      "destination": "https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.rules",
+      "destination": "https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.rules",
       "permanent": false
     },
     {
       "source": "/downloads/local-web-attack-ai-v1.0-333.zip",
-      "destination": "https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.0-333.zip",
+      "destination": "https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.zip",
       "permanent": false
     }
   ]
