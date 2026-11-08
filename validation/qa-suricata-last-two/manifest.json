@@ -51,9 +51,29 @@
     "bytes": 11633,
     "sha256": "089f2a91a8f159bf42e5c16bde4b0eb1361229d8bc0cb3f45d1d73c8fbda048a"
   },
+  "php-emptybody105.pcap": {
+    "bytes": 12194,
+    "sha256": "e99d1d554e8ec2c8bb53ee53f07ed6d139edaf91e99ad180cc1d9fe044be6ec6"
+  },
+  "php-lowercase-disposition105.pcap": {
+    "bytes": 12299,
+    "sha256": "eb2d1a5abc546cc168453d45af4017c268b81bc35cbc3ea6dd14336db0232a20"
+  },
+  "php-multiline105.pcap": {
+    "bytes": 13454,
+    "sha256": "cc2ecc5a23a4790afe41d4caa154dc23a0d446dbd2af3ff7f113a7a247e4b5e7"
+  },
+  "php-no-part-type105.pcap": {
+    "bytes": 8098,
+    "sha256": "01c13b5575b8ee9e305c63b903f26215445d84a3727560a2df3ae68197dd66d9"
+  },
   "php-nonempty105.pcap": {
     "bytes": 13349,
     "sha256": "3cbf33a65da8cd620fbc1ab4409310b7af9283d326a4dc73b7b0d45d0ec8478c"
+  },
+  "php-variable-boundary105.pcap": {
+    "bytes": 14546,
+    "sha256": "6d3ccfea0f86ba323936eaa79a0366f6d915a888735a0a605f0a716b3b3bb83d"
   },
   "php-wrongtype105.pcap": {
     "bytes": 12277,

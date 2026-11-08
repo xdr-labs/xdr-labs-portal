@@ -33,9 +33,13 @@ EXPECTED = {
     "php-empty99.pcap": (0, 0),
     "php-empty100.pcap": (0, 1),
     "php-empty105.pcap": (0, 1),
-    # Explicit recall-limitation fixture: 105 genuine multipart fields but
-    # the distance between filename markers exceeds the 128-byte QA bound.
-    "php-empty105-widegap.pcap": (0, 0),
+    "php-empty105-widegap.pcap": (0, 1),
+    "php-emptybody105.pcap": (0, 1),
+    "php-no-part-type105.pcap": (0, 1),
+    "php-variable-boundary105.pcap": (0, 1),
+    "php-lowercase-disposition105.pcap": (0, 1),
+    # Known limit: multipart part contents split across multiple lines.
+    "php-multiline105.pcap": (0, 0),
     "php-nonempty105.pcap": (0, 0),
     "php-wrongtype105.pcap": (0, 0),
 }
@@ -76,7 +80,14 @@ def validate_and_build() -> tuple[str, dict]:
         if line.startswith("alert ") and re.search(r"\bsid:9005055;", line):
             if line.count(".{0,4096}){100,}") != 1:
                 raise ValueError("Unexpected 9005055 original syntax")
-            new = line.replace(".{0,4096}){100,}", ".{0,128}){100,}", 1)
+            previous = re.search(r'pcre:"/[^"]+/[a-zA-Z]*";', line)
+            if previous is None:
+                raise ValueError("Unexpected 9005055 PCRE signature")
+            # QA only: count 100 MIME parts with empty filename fields,
+            # bounded header lines and single-line body content. The
+            # implementation does NOT cover multiline bodies.
+            replacement = r'pcre:"/(?:Content-Disposition:[^\r\n]*filename=\x22\x22\r\n(?:[^\r\n]+\r\n){0,8}\r\n[^\r\n]{0,4096}\r\n--[^\r\n]+\r\n){100}/i";'
+            new = line[:previous.start()] + replacement + line[previous.end():]
             modified.append(9005055)
         candidate.append(new)
     if sorted(modified) != list(SIDS):
