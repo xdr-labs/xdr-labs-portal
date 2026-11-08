@@ -1,0 +1,1 @@
+5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96  local-web-attack-ai-v1.0-333.rules
