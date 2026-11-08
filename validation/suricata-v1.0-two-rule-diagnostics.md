@@ -70,3 +70,29 @@ claims for this later structured MIME implementation.
 Neither test candidate is ready for general distribution or live import.
 **331/333 original real sensor Alerts** remains the supported public metric;
 no QA-only candidate Alert is included.
+
+## QA security-gate hardening and structured-rule measurement
+
+The QA test runner now evaluates **behavioral-regression success
+separately** from safe release acceptance, with required benign proxy
+and valid multiline-form witnesses. On modular / Suricata 8.0.1:
+24/24 expected offline rule matches PASS, **security acceptance BLOCKED**
+with two potential false-positive proxy alerts and one multipart
+false-negative witness (see
+validation/qa-suricata-last-two/suricata-8.0.1-security-acceptance.json).
+The Python stdlib policy contract has 5 passing unit tests.
+
+For the same inert 100-session compact multipart PCAP, the original SID
+9005055 generated zero alerts while the structured-MIME QA candidate
+generated 100. CPU user was 0.70s/0.69s and RSS 88776/89388 KB for
+original/candidate respectively, in a single isolated replay. See
+validation/qa-suricata-last-two/suricata-8.0.1-structured-stress100.json.
+These figures do **not** establish sensor throughput or deployed safety.
+
+The operating sensor uses Suricata 8.0.1; OISF identifies its separate
+HTTP Content-Disposition parsing DoS vulnerability CVE-2026-45759 as
+patched in 8.0.5:
+https://github.com/OISF/suricata/security/advisories/GHSA-cfq5-g2v5-6652
+A runtime upgrade would require separate maintenance authorization;
+none was attempted during QA. Original v1.0 release and 331/333 live
+sensor validation remain unchanged.

@@ -54,6 +54,43 @@ RISK_CASES = {
     "php-multiline105.pcap": "MULTIPART_MULTILINE_BODY_MISS",
 }
 SIDS = (9005017, 9005055)
+# Detection expectation for a SAFE deployment, not the current
+# candidate's known behavior. This keeps regression matching distinct
+# from false-positive/false-negative security acceptance.
+ACCEPTABLE_RISK_OUTCOMES = {
+    "nextjs-benign-proxy-http.pcap": (0, 0),
+    "nextjs-benign-proxy-https.pcap": (0, 0),
+    "php-multiline105.pcap": (0, 1),
+}
+
+
+def assess_security_acceptance(cases: list[dict]) -> dict:
+    """Fail closed if a benign proxy alerts or a valid multipart form misses."""
+    if set(RISK_CASES) != set(ACCEPTABLE_RISK_OUTCOMES):
+        raise ValueError("Release-risk witness configuration is incomplete")
+    observed_by_name = {case["fixture"]: case for case in cases}
+    if len(observed_by_name) != len(cases):
+        raise ValueError("Duplicate case identifiers in observed results")
+    if not set(ACCEPTABLE_RISK_OUTCOMES).issubset(observed_by_name):
+        raise ValueError("Missing release-risk witness results")
+    failures = []
+    for name, safe in ACCEPTABLE_RISK_OUTCOMES.items():
+        observed = tuple(observed_by_name[name]["observed"])
+        if observed != safe:
+            failures.append({
+                "fixture": name,
+                "risk": RISK_CASES[name],
+                "observed": list(observed),
+                "safe_expected": list(safe),
+            })
+    return {
+        "status": "BLOCKED" if failures else "REQUIRES_MANUAL_REVIEW",
+        "release_ready": False,
+        "risk_witness_count": len(ACCEPTABLE_RISK_OUTCOMES),
+        "security_failures": failures,
+        "security_failure_count": len(failures),
+        "note": "Correct offline SID replay is not a production false-positive/recall acceptance.",
+    }
 
 
 def sha(data: bytes) -> str:
@@ -67,6 +104,10 @@ def validate_and_build() -> tuple[str, dict]:
     manifest = json.loads((THIS_DIR / "manifest.json").read_text())
     if set(manifest) != set(EXPECTED):
         raise ValueError("Fixture names and manifest do not match the test contract")
+    if set(RISK_CASES) != set(ACCEPTABLE_RISK_OUTCOMES):
+        raise ValueError("Release-risk witness configuration mismatch")
+    if not set(RISK_CASES).issubset(EXPECTED):
+        raise ValueError("Missing release-risk witness fixtures")
     for name in EXPECTED:
         pcap = (THIS_DIR / name).read_bytes()
         if sha(pcap) != manifest[name]["sha256"]:
@@ -139,6 +180,11 @@ def main() -> None:
         "mode": "static-integrity-only",
         "release_ready": False,
         "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+        "security_acceptance": {
+            "status": "UNASSESSED_STATIC_ONLY",
+            "release_ready": False,
+            "risk_witness_count": len(ACCEPTABLE_RISK_OUTCOMES),
+        },
     })
     if args.run:
         if not args.config:
@@ -183,6 +229,8 @@ def main() -> None:
                 "risk_witnesses": [
                     x for x in actual if x["known_release_risk"] is not None
                 ],
+                "behavioral_regression": "PASS",
+                "security_acceptance": assess_security_acceptance(actual),
             })
     if args.report:
         Path(args.report).write_text(json.dumps(report, indent=2) + "\n")
