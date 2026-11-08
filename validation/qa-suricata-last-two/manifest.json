@@ -34,5 +34,21 @@
   "php-wrongtype105.pcap": {
     "sha256": "97063ac87d0f9c4cba301d6b319bf9f07ac3d55594cc1ddbf5ae6b888d7723b3",
     "bytes": 12277
+  },
+  "nextjs-benign-proxy-http.pcap": {
+    "sha256": "6cca560b059c6e06c3f0a86e4fcc57c996494ee7db036d4f64a3747fcfc26bb7",
+    "bytes": 747
+  },
+  "nextjs-benign-proxy-https.pcap": {
+    "sha256": "802e5b6eb8df725f1995a903cb6de9bc08027fc63d1ee2af4d7b1efaec0fe093",
+    "bytes": 748
+  },
+  "php-empty100-wide-gap.pcap": {
+    "sha256": "4b560715c52248e16c9829bfd6788056ba70cf3c84e78518520cfae406f4c990",
+    "bytes": 21871
+  },
+  "php-empty105-wide-gap.pcap": {
+    "sha256": "6427d6bd1aaac9bc71e80012deaaf97aaf94fafabca8e611455c5f501e8e1606",
+    "bytes": 22931
   }
 }
