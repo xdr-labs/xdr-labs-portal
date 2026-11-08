@@ -6,7 +6,7 @@ Suricata signature bundle for Stellar Cyber 7.0 lab evaluation.
 Release contents
 - 333 alert-only Suricata rules, including 11 newly confirmed sensor detections
 - Network/port header: any any -> any any
-- All 333 signatures included in v1.0 were verified on a controlled Stellar Cyber 7.0 Modular Sensor (Suricata 8.0.1); only release comments changed.
+- All 333 signatures loaded; 315 individually triggered test alerts on a controlled Stellar Cyber 7.0 Modular Sensor (Suricata 8.0.1).
 
 Rules filename: local-web-attack-ai-v1.0-333.rules
 Rules SHA-256:
@@ -20,7 +20,10 @@ Verification performed
 - Additional 146 benign-intent HTTP/DNS sessions: no new alerts over baseline rules
 - Included 10 official OISF Suricata-Verify SMB/DCERPC/Kerberos PCAPs
 - Existing XSS signature can alert on benign HTML; this is unchanged
-- Live sensor HTTP/DNS: 18 test sessions, all 11 new SIDs observed in eve.json
+- Initial live HTTP/DNS run: all 11 newly added SIDs observed in eve.json
+- Expanded per-SID live sensor testing: 315 of 333 signatures triggered alerts
+- 18 not yet reproduced: 15 HTTP, 2 SMB, 1 DCE/RPC
+- These are controlled test-pattern matches, not production attack detection rates
 - Seven negative-control sessions produced zero new custom-rule alerts
 - Captured on eth0: 110 packets, zero kernel capture drops
 - Replay of identical captured PCAP: baseline configuration = 0, 333-rule set = 11 new-pattern alerts

@@ -15,7 +15,12 @@ Known inherited FP: SID 9001402 can match benign HTML documentation;
 this FP remains present in the final 333-rule set.
 Actual Stellar Cyber 7.0 Modular Sensor / Suricata 8.0.1, 2026-11-08:
 - On-sensor tested 333 detection signatures and SIDs match v1.0 exactly; comments and file SHA256 changed
-- 18 real HTTP/DNS sessions transmitted: 11/11 new SIDs observed in eve.json
+- Initial 18 HTTP/DNS sessions: 11/11 new SIDs observed in eve.json
+- Expanded all-SID lab testing: 315/333 distinct SIDs generated actual sensor alerts
+- 18 not reproduced: 15 HTTP, 2 SMB, 1 DCE/RPC (not confirmed defective)
+- Additional tests: synthetic HTTP and raw TCP stimuli, with exact SID attribution
+- 36 benign 404 responses triggered the threshold-based HTTP enumeration signature
+- Controlled test-reproduction coverage is not a production attack detection rate
 - 7 negative-control sessions: no new custom rule alerts
 - Captured 110 packets on eth0 (zero capture kernel drops)
 - Identical captured PCAP replay: baseline configuration = 0, 333-rule set = 11 new-pattern alerts
