@@ -1,7 +1,7 @@
 ---
 title: "AI 지원 공격 탐지 룰"
 sidebarTitle: "AI 지원 공격 탐지 룰"
-description: "Stellar Cyber 7.0용 Suricata 탐지 룰 v1.0 — 총 333개, 실제 센서에서 신규 룰 11개 탐지 확인"
+description: "Stellar Cyber 7.0용 Suricata 탐지 룰 v1.0 — 총 333개, 실제 센서에서 315개 룰의 개별 Alert 확인"
 ---
 
 Stellar Cyber 7.0용 **Suricata 탐지 룰 333개**를 제공합니다. 웹 공격, 취약점 악용, AI 지원 모의해킹 및 Red Team 도구의 네트워크 패턴을 탐지합니다.
@@ -30,10 +30,8 @@ Stellar Cyber 7.0용 **Suricata 탐지 룰 333개**를 제공합니다. 웹 공�
 
 ## 실제 센서 테스트
 
-**Stellar Cyber 7.0 Modular Sensor(Suricata 8.0.1)**에서 신규 룰 **11개 모두 Alert 탐지 성공**했습니다.
+**Stellar Cyber 7.0 Modular Sensor(Suricata 8.0.1)**에서 전체 333개 중 **315개 룰**의 개별 Alert를 확인했습니다.
 
-- HTTP 명령 실행·웹셸 탐지: **7개**
-- OAST DNS 탐지: **4개**
-- 정상·유사 도메인 대조군 7개: **신규 룰 경고 0건**
+나머지 **18개 룰**은 복합 공격 패턴 및 프로토콜 조건에 대한 추가 검증이 필요합니다.
 
-*전체 333개 중 11개 룰의 실제 센서 Alert를 확인했습니다.*
+*통제된 테스트 트래픽에 대한 실제 센서 Alert 검증 결과입니다.*
