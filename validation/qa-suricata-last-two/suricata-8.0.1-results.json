@@ -1,14 +1,14 @@
 {
   "baseline_sha256": "5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96",
-  "candidate_sha256": "5954bf07b148e07b95045cf6459228ab4d7c76ccfc1d2b164d9bff8faf6d3e13",
+  "candidate_sha256": "9e45de9eb2c797537190714928b8d5eb54c74bb5d9c643e460184a51a4fb23fd",
   "signature_count": 333,
   "changed_sids": [
     9005017,
     9005055
   ],
-  "fixture_count": 9,
+  "fixture_count": 15,
   "mode": "offline-suricata",
-  "engine_validate_seconds": 0.427,
+  "engine_validate_seconds": 0.434,
   "cases": [
     {
       "fixture": "nextjs-positive.pcap",
@@ -20,7 +20,7 @@
         1,
         0
       ],
-      "seconds": 0.543
+      "seconds": 0.51
     },
     {
       "fixture": "nextjs-origin-form.pcap",
@@ -32,7 +32,7 @@
         0,
         0
       ],
-      "seconds": 0.521
+      "seconds": 0.509
     },
     {
       "fixture": "nextjs-no-upgrade.pcap",
@@ -44,7 +44,7 @@
         0,
         0
       ],
-      "seconds": 0.528
+      "seconds": 0.526
     },
     {
       "fixture": "nextjs-no-key.pcap",
@@ -56,7 +56,67 @@
         0,
         0
       ],
-      "seconds": 0.526
+      "seconds": 0.507
+    },
+    {
+      "fixture": "nextjs-abs-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.524
+    },
+    {
+      "fixture": "nextjs-pct1-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.512
+    },
+    {
+      "fixture": "nextjs-pct1-https.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.516
+    },
+    {
+      "fixture": "nextjs-pct2-http.pcap",
+      "expected": [
+        1,
+        0
+      ],
+      "observed": [
+        1,
+        0
+      ],
+      "seconds": 0.503
+    },
+    {
+      "fixture": "nextjs-abs-http-post-method.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.507
     },
     {
       "fixture": "php-empty99.pcap",
@@ -68,7 +128,7 @@
         0,
         0
       ],
-      "seconds": 0.527
+      "seconds": 0.516
     },
     {
       "fixture": "php-empty100.pcap",
@@ -80,7 +140,7 @@
         0,
         1
       ],
-      "seconds": 0.524
+      "seconds": 0.539
     },
     {
       "fixture": "php-empty105.pcap",
@@ -92,7 +152,19 @@
         0,
         1
       ],
-      "seconds": 0.545
+      "seconds": 0.522
+    },
+    {
+      "fixture": "php-empty105-widegap.pcap",
+      "expected": [
+        0,
+        0
+      ],
+      "observed": [
+        0,
+        0
+      ],
+      "seconds": 0.507
     },
     {
       "fixture": "php-nonempty105.pcap",
@@ -104,7 +176,7 @@
         0,
         0
       ],
-      "seconds": 0.504
+      "seconds": 0.503
     },
     {
       "fixture": "php-wrongtype105.pcap",
@@ -116,7 +188,7 @@
         0,
         0
       ],
-      "seconds": 0.525
+      "seconds": 0.496
     }
   ],
   "result": "PASS"
