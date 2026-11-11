@@ -1,76 +1,116 @@
-# Suricata v1.0 — last two SID regression gate
+# Suricata v1.0 — final two SID isolated QA and release-risk gate
 
-These are **test-only** regression fixtures for Suricata 8.0.1. They are **not a replacement download** and must not be imported into a running sensor.
+These tests are offline-only and are not installable detection rules.
+Public v1.0 and the installed sensor retain all 333 original signatures;
+331/333 original live SID Alerts are verified. SID 9005017 and SID 9005055
+are the two remaining original unverified rules.
 
-## Scope
+## QA-only candidate changes
 
-The published v1.0 file retains **333 unchanged signatures**. `run_offline.py` verifies SHA-256, generates a temporary copy differing in only two SID rules, and checks actual Suricata syntax and offline PCAP behavior.
+- 9005017: use a raw absolute HTTP/HTTPS URI, GET method, corrected
+  percent-encoded-slash regex and existing WebSocket headers. Ordinary
+  benign-shaped HTTP/HTTPS WebSocket proxy requests ALSO trigger it.
+  This is a known non-specificity and false-positive risk witness.
+- 9005055: use a structured MIME Content-Disposition/empty filename,
+  bounded additional MIME header lines, a single-line body of up to
+  4096 bytes, and a subsequent part boundary, repeated 100 times.
+  The candidate detects compact and long-header 100/105-part requests,
+  empty bodies, omitted Content-Type, variable boundary and lowercase
+  Content-Disposition. VALID multipart with multiline file-part content
+  can still fail detection, confirmed with a 105-part fixture.
 
-- `9005017`: change `http.uri` to `http.uri.raw`. Normalized URIs omit the scheme and host of absolute-form URIs by default. A generic WebSocket proxy request could generate an alert without proving exploitation of a vulnerable Next.js host.
-- `9005055`: retain the 100-or-more empty-filename condition but reduce the PCRE gap from 4096 to **128 bytes**. This detects compact multipart fields with the stock sensor PCRE limits, but can miss variants with wider spacing. This is a bounded detection tradeoff, not complete equivalence.
+The runner must always return release_ready=false and
+release_status=BLOCKED_BY_KNOWN_FP_AND_FN_RISKS. A passing regression
+case is not a successful original live sensor Alert.
 
-Both are review candidates only, not published or sensor-installed rules. Actual sensor verification remains **331/333**.
+## Run
 
-## Running the gate
+Static SHA256, 333-SID and fixture validation:
 
-Static integrity (works without Suricata):
+    python3 validation/qa-suricata-last-two/run_offline.py
 
-```
-python3 validation/qa-suricata-last-two/run_offline.py
-```
+Offline Suricata 8.0.1 engine validation (no packets sent):
 
-Offline engine verification (Suricata 8.0.1 required):
+    python3 validation/qa-suricata-last-two/run_offline.py --run --suricata /usr/bin/suricata --config /etc/suricata/suricata-aelladata.yaml --report /tmp/suricata-last-two-results.json
 
-```
-python3 validation/qa-suricata-last-two/run_offline.py --run \
-  --suricata /usr/bin/suricata \
-  --config /path/to/suricata.yaml \
-  --report /tmp/suricata-last-two-result.json
-```
+The QA test runner builds a temporary 333-signature copy, modifies only
+the 2 targeted SIDs, runs Suricata syntax validation, hashes 24 PCAP
+fixtures and checks the expected SID-specific EVE Alert counts.
 
-The runner uses temporary files and does not send network packets, reload a sensor, or modify distributed assets.
+## Test coverage and risk records
 
-## Expected SID alerts
+The combined 24-case suite has 9 Next.js URI/handshake positive and
+negative controls, 11 MIME compact/wide/99/100/105/headers/boundary/body
+cases, two benign WebSocket proxy positives that indicate a release-risk
+false positive, and two older wide-gap MIME fixtures that DO match with
+the newer structured-MIME candidate.
 
-| Test fixture | SID 9005017 | SID 9005055 |
-| --- | ---: | ---: |
-| Absolute URI with WebSocket headers | 1 | 0 |
-| Origin-form URI | 0 | 0 |
-| Missing Upgrade header | 0 | 0 |
-| Missing WebSocket key | 0 | 0 |
-| 99 empty file fields | 0 | 0 |
-| 100 empty file fields | 0 | 1 |
-| 105 empty file fields | 0 | 1 |
-| 105 nonempty filenames | 0 | 0 |
-| Wrong Content-Type with 105 fields | 0 | 0 |
+The historical suricata-8.0.1-risk-assessment.json and
+suricata-8.0.1-stress100.json capture the earlier 128-byte-wildcard
+candidate's evasion and small benchmark results, NOT the updated
+structured-MIME candidate's performance. Preserve them as a past
+risk-finding record but never claim they evaluate the new regex.
 
-**Initial targeted cases: 9/9 PASS. Extended release-risk checks: 13/13 PASS for expected observations; release readiness is BLOCKED.** Exactly two test-only signatures changed; all 333 SIDs retained and Suricata syntax check passed. Results are preserved in `suricata-8.0.1-results.json` and fixtures are SHA-256 checked against `manifest.json`.
+No user-facing detection count, distributed ZIP/rules, live Suricata
+configuration or ETPRO signatures changed. Remaining work includes
+benign WebSocket proxy false-positive discrimination, multiline body
+coverage, real sustained PCRE throughput, and an independently
+approved release/deploy process. The current candidates are
+NOT release ready.
+\n## Security acceptance is separate from replay success
 
-Additional spacing study on actual 100/105-field multipart fixtures: a 128-byte bound matched, whereas greedy gaps 160–1024 bytes did not under the existing PCRE budget. This does not prove the precise root cause or guarantee detection of all payload layouts. Process runtimes of approximately 0.5 seconds per test are not high-throughput benchmarks.
+The fixture comparison may report 24/24 behavioral regression PASS while
+security acceptance remains **BLOCKED**. The runner computes
+security_acceptance.status and security_failure_count directly from three
+must-fix witnesses: benign HTTP/HTTPS WebSocket proxy Alerts (two false-
+positive risks), and the valid 105-part multiline-body multipart miss
+(one false-negative risk). The expected *safe* outcomes are tracked
+separately from currently observed behavior. The status can at best advance
+to REQUIRES_MANUAL_REVIEW in QA; it can never grant production release.
 
-**Before release:** assess possible false positives from legitimate WebSocket proxies, multipart fields wider than 128 bytes, PCRE CPU impact under load, and then perform an independently authorized rule release and live sensor Alert verification. No public v1.0 or deployed rule was modified.
+Run the stdlib policy unit tests without a sensor:
 
-## Confirmed release-risk witness cases (13/13 tests)
+    PYTHONDONTWRITEBYTECODE=1 python3 validation/qa-suricata-last-two/test_security_acceptance.py
 
-These four inert PCAPs are not success conditions for a safe release. They deliberately record known limitations of the two temporary detection candidates.
+Full Suricata replay is still required for observed results. This prevents
+a misleading 24/24 regression green check from implying that either
+candidate is production-ready.
 
-| Test fixture | Candidate 9005017 Alert | Candidate 9005055 Alert | Interpretation |
-| --- | ---: | ---: | --- |
-| Normal-shaped absolute HTTP WebSocket proxy request | 1 | 0 | Non-specific proxy traffic can trigger the SSRF signature |
-| Normal-shaped absolute HTTPS WebSocket proxy request | 1 | 0 | Same non-specificity with HTTPS target |
-| 100 empty multipart fields with extra valid MIME headers | 0 | 0 | **Miss** despite reaching the threshold |
-| 105 empty multipart fields with extra valid MIME headers | 0 | 0 | **Miss** despite exceeding the threshold |
+## Sensor software version
 
-The full engine result sets `release_ready: false` and `release_status: BLOCKED_BY_KNOWN_FP_AND_FN_RISKS` in `suricata-8.0.1-risk-assessment.json`.
+The controlled test sensor runs Suricata 8.0.1. OISF advisory
+GHSA-cfq5-g2v5-6652 / CVE-2026-45759 identifies an unrelated
+HTTP Content-Disposition CPU denial-of-service affecting Suricata
+versions below 8.0.5 (patched in 8.0.5). Any sensor upgrade is
+a separate authorized maintenance task; this QA does not modify it.
+Source: https://github.com/OISF/suricata/security/advisories/GHSA-cfq5-g2v5-6652
 
-These benign proxy fixtures use ordinary WebSocket upgrade syntax for documentation-only hosts, not evidence of a vulnerable Next.js deployment. They demonstrate a lack of specificity, not a production false-positive rate. Extra MIME headers increase spacing beyond 128 bytes; the multipart syntax remains valid.
+## Current QA security verdict and limited structured-rule resource comparison
 
-Source context: [Next.js advisory](https://github.com/advisories/GHSA-c4j6-fc7j-m34r) and [PHP2Shell bulletin](https://access.redhat.com/security/vulnerabilities/RHSB-2026-013).
+On modular, Suricata 8.0.1, the exact 24-case engine runner produced
+**behavioral_regression=PASS (24/24)** but
+**security_acceptance.status=BLOCKED (3 security failures)**.
+The three observed release blockers were two benign-shaped WebSocket
+proxy Alerts and one valid 105-part multiline multipart request that
+failed to trigger the PHP candidate. See
+suricata-8.0.1-security-acceptance.json for the exact observed/safe
+comparison and hashes.
 
-## Limited resource replay
+A single isolated 100-session compact multipart PCAP replay produced
+0 original PHP SID alerts and 100 QA-only structured-MIME PHP SID alerts.
+Original vs candidate: CPU user 0.70s vs 0.69s, elapsed 0.65s vs 0.65s,
+peak RSS 88776 KB vs 89388 KB. See
+suricata-8.0.1-structured-stress100.json (sha256
+8e9a5da64359399f6ba750d85c8421b453142f368f2d211fc3d7cb7c750c00db).
+These single-process measurements include startup overhead and are
+**not sustained throughput, a load safety certification, or evidence of
+real-world attack detection accuracy**.
 
-`generate_risk_fixtures.py --stress 100 --output-dir /tmp/qa-risk` creates 100 distinct compact multipart sessions without any network sends. In one isolated Suricata 8.0.1 replay using the full 333-rule pack, the original PHP SID alerted 0 times and the bounded candidate alerted 100 times. CPU user time was 0.67 s (original) and 0.70 s (candidate); peak resident memory ~88 MB. See `suricata-8.0.1-stress100.json`.
-
-The recorded CPU includes Suricata startup and cannot demonstrate sustained traffic throughput. Additional performance and evasion testing would be required before release.
-
-**Release conclusion:** Neither candidate is release-approved. Public v1.0 and the live sensor remain at 331/333 confirmed original SID alerts, unchanged.
+The official Next.js advisory
+https://github.com/vercel/next.js/security/advisories/GHSA-c4j6-fc7j-m34r
+limits CVE-2026-44578 to affected self-hosted Node.js server versions;
+a WebSocket URI and header match alone cannot establish this exposure.
+The official PHP advisory and AWS response guidance likewise describe
+multiple memory-exhaustion paths, not just empty-filename multipart parts:
+https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w
+https://aws.amazon.com/blogs/security/using-aws-waf-to-apply-mitigations-for-php2shell-rce-vulnerabilities-cve-2026-109618-and-cve-2026-109619/

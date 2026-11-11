@@ -24,25 +24,73 @@ EXPECTED = {
     "nextjs-origin-form.pcap": (0, 0),
     "nextjs-no-upgrade.pcap": (0, 0),
     "nextjs-no-key.pcap": (0, 0),
+    "nextjs-abs-https.pcap": (1, 0),
+    "nextjs-pct1-http.pcap": (1, 0),
+    "nextjs-pct1-https.pcap": (1, 0),
+    "nextjs-pct2-http.pcap": (1, 0),
+    "nextjs-abs-http-post-method.pcap": (0, 0),
     "php-empty99.pcap": (0, 0),
     "php-empty100.pcap": (0, 1),
     "php-empty105.pcap": (0, 1),
+    "php-empty105-widegap.pcap": (0, 1),
+    "php-emptybody105.pcap": (0, 1),
+    "php-no-part-type105.pcap": (0, 1),
+    "php-variable-boundary105.pcap": (0, 1),
+    "php-lowercase-disposition105.pcap": (0, 1),
+    # Known limit: multipart part contents split across multiple lines.
+    "php-multiline105.pcap": (0, 0),
     "php-nonempty105.pcap": (0, 0),
     "php-wrongtype105.pcap": (0, 0),
     # Known limitations of these candidates, expected as-is to avoid
     # confusing a matching regression test with permission to release.
     "nextjs-benign-proxy-http.pcap": (1, 0),
     "nextjs-benign-proxy-https.pcap": (1, 0),
-    "php-empty100-wide-gap.pcap": (0, 0),
-    "php-empty105-wide-gap.pcap": (0, 0),
+    "php-empty100-wide-gap.pcap": (0, 1),
+    "php-empty105-wide-gap.pcap": (0, 1),
 }
 RISK_CASES = {
     "nextjs-benign-proxy-http.pcap": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT",
     "nextjs-benign-proxy-https.pcap": "NON_SPECIFIC_WEBSOCKET_PROXY_ALERT",
-    "php-empty100-wide-gap.pcap": "MULTIPART_WIDE_GAP_MISS",
-    "php-empty105-wide-gap.pcap": "MULTIPART_WIDE_GAP_MISS",
+    "php-multiline105.pcap": "MULTIPART_MULTILINE_BODY_MISS",
 }
 SIDS = (9005017, 9005055)
+# Detection expectation for a SAFE deployment, not the current
+# candidate's known behavior. This keeps regression matching distinct
+# from false-positive/false-negative security acceptance.
+ACCEPTABLE_RISK_OUTCOMES = {
+    "nextjs-benign-proxy-http.pcap": (0, 0),
+    "nextjs-benign-proxy-https.pcap": (0, 0),
+    "php-multiline105.pcap": (0, 1),
+}
+
+
+def assess_security_acceptance(cases: list[dict]) -> dict:
+    """Fail closed if a benign proxy alerts or a valid multipart form misses."""
+    if set(RISK_CASES) != set(ACCEPTABLE_RISK_OUTCOMES):
+        raise ValueError("Release-risk witness configuration is incomplete")
+    observed_by_name = {case["fixture"]: case for case in cases}
+    if len(observed_by_name) != len(cases):
+        raise ValueError("Duplicate case identifiers in observed results")
+    if not set(ACCEPTABLE_RISK_OUTCOMES).issubset(observed_by_name):
+        raise ValueError("Missing release-risk witness results")
+    failures = []
+    for name, safe in ACCEPTABLE_RISK_OUTCOMES.items():
+        observed = tuple(observed_by_name[name]["observed"])
+        if observed != safe:
+            failures.append({
+                "fixture": name,
+                "risk": RISK_CASES[name],
+                "observed": list(observed),
+                "safe_expected": list(safe),
+            })
+    return {
+        "status": "BLOCKED" if failures else "REQUIRES_MANUAL_REVIEW",
+        "release_ready": False,
+        "risk_witness_count": len(ACCEPTABLE_RISK_OUTCOMES),
+        "security_failures": failures,
+        "security_failure_count": len(failures),
+        "note": "Correct offline SID replay is not a production false-positive/recall acceptance.",
+    }
 
 
 def sha(data: bytes) -> str:
@@ -56,6 +104,10 @@ def validate_and_build() -> tuple[str, dict]:
     manifest = json.loads((THIS_DIR / "manifest.json").read_text())
     if set(manifest) != set(EXPECTED):
         raise ValueError("Fixture names and manifest do not match the test contract")
+    if set(RISK_CASES) != set(ACCEPTABLE_RISK_OUTCOMES):
+        raise ValueError("Release-risk witness configuration mismatch")
+    if not set(RISK_CASES).issubset(EXPECTED):
+        raise ValueError("Missing release-risk witness fixtures")
     for name in EXPECTED:
         pcap = (THIS_DIR / name).read_bytes()
         if sha(pcap) != manifest[name]["sha256"]:
@@ -68,14 +120,25 @@ def validate_and_build() -> tuple[str, dict]:
     for line in original_lines:
         new = line
         if line.startswith("alert ") and re.search(r"\bsid:9005017;", line):
-            if line.count("http.uri;") != 1:
+            previous = re.search(r'http\.uri; content:"http"; startswith; pcre:"/[^"]+/R";', line)
+            if previous is None:
                 raise ValueError("Unexpected 9005017 original syntax")
-            new = line.replace("http.uri;", "http.uri.raw;", 1)
+            # QA-only: use literal raw URI, fix omitted optional percent-encoding
+            # before slash, and restrict the WebSocket handshake to GET.
+            replacement = r'http.method; content:"GET"; startswith; http.uri.raw; pcre:"/^https?(?:\x3a|\x25(?:25)?3[aA])(?:\x2f|\x25(?:25)?2[fF]){2}/";'
+            new = line[:previous.start()] + replacement + line[previous.end():]
             modified.append(9005017)
         if line.startswith("alert ") and re.search(r"\bsid:9005055;", line):
             if line.count(".{0,4096}){100,}") != 1:
                 raise ValueError("Unexpected 9005055 original syntax")
-            new = line.replace(".{0,4096}){100,}", ".{0,128}){100,}", 1)
+            previous = re.search(r'pcre:"/[^"]+/[a-zA-Z]*";', line)
+            if previous is None:
+                raise ValueError("Unexpected 9005055 PCRE signature")
+            # QA only: count 100 MIME parts with empty filename fields,
+            # bounded header lines and single-line body content. The
+            # implementation does NOT cover multiline bodies.
+            replacement = r'pcre:"/(?:Content-Disposition:[^\r\n]*filename=\x22\x22\r\n(?:[^\r\n]+\r\n){0,8}\r\n[^\r\n]{0,4096}\r\n--[^\r\n]+\r\n){100}/i";'
+            new = line[:previous.start()] + replacement + line[previous.end():]
             modified.append(9005055)
         candidate.append(new)
     if sorted(modified) != list(SIDS):
@@ -117,6 +180,11 @@ def main() -> None:
         "mode": "static-integrity-only",
         "release_ready": False,
         "release_status": "BLOCKED_BY_KNOWN_FP_AND_FN_RISKS",
+        "security_acceptance": {
+            "status": "UNASSESSED_STATIC_ONLY",
+            "release_ready": False,
+            "risk_witness_count": len(ACCEPTABLE_RISK_OUTCOMES),
+        },
     })
     if args.run:
         if not args.config:
@@ -161,6 +229,8 @@ def main() -> None:
                 "risk_witnesses": [
                     x for x in actual if x["known_release_risk"] is not None
                 ],
+                "behavioral_regression": "PASS",
+                "security_acceptance": assess_security_acceptance(actual),
             })
     if args.report:
         Path(args.report).write_text(json.dumps(report, indent=2) + "\n")
