@@ -1,61 +1,83 @@
 ---
 title: "AI 지원 공격 탐지 룰"
 sidebarTitle: "AI 지원 공격 탐지 룰"
-description: "Stellar Cyber 7.0용 Suricata 탐지 룰 v1.0 — 총 333개, 실제 센서에서 331개 룰의 개별 Alert 확인"
+description: "Stellar Cyber 7.0용 Suricata v1.1 탐지 룰 339개. Java4Shell 6개 추가, 실제 센서 검증 범위 공개."
 ---
 
-Stellar Cyber 7.0용 **Suricata 탐지 룰 333개 전체**를 다운로드할 수 있습니다. 웹 공격, 취약점 악용, AI 지원 모의해킹 및 Red Team 도구의 네트워크 패턴을 탐지합니다.
+**Stellar Cyber Open XDR 7.0용 Suricata 탐지 룰 v1.1 — 총 339개.** 웹 공격, 취약점 악용, AI 지원 모의해킹 및 Red Team 도구의 네트워크 패턴에 더해, 최근 공개된 **Java4Shell(CVE-2026-114938)** 관련 탐지 룰 6개를 새로 추가했습니다.
 
 <CardGroup cols={2}>
-  <Card title="v1.0 룰 파일 다운로드 (.rules)" icon="download" href="https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.rules">
-    333개 Suricata 탐지 룰
+  <Card title="v1.1 다운로드 — 전체 339개 룰 (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.1-339.rules">
+    기존 v1.0의 333개를 모두 포함한 통합 파일입니다. 운영 적용 전 백업과 사전 검증이 필요합니다.
   </Card>
-  <Card title="v1.0 ZIP 다운로드" icon="file-archive" href="https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.zip">
-    333개 룰과 최신 검증 결과·적용 안내
+  <Card title="v1.1 검증 기록 및 릴리스 안내" icon="clipboard-check" href="https://github.com/xdr-labs/xdr-labs-portal/blob/main/validation/java4shell-20261118/README.md">
+    실제 Suricata 8.0.1 테스트 결과, 신규 SID 상세, 체크섬, 제약사항 및 재현 스크립트.
   </Card>
 </CardGroup>
 
+> **검증 범위 안내:** 기존 v1.0 333개 중 **331개는 실제 센서 트래픽으로 개별 Alert가 확인**되었습니다. 새로 추가한 Java4Shell 룰 6개는 **Stellar Cyber 7.0 Modular Sensor에서 오프라인 PCAP 재생**으로 탐지를 확인했으며, **10/10** 테스트 케이스가 기대 결과와 일치했습니다. 이를 전체 339개의 운영 트래픽·Data Processor UI Alert 검증 완료로 해석해서는 안 됩니다.
+
+## v1.1 업데이트 내용 (2026년 11월 18일)
+
+기존 333개 룰의 원본과 SID는 그대로 보존하고, CVE-2026-114938 관련 네트워크 탐지 룰 6개를 추가했습니다. 공개 커뮤니티 탐지 패턴을 Suricata 8.0.1에 맞게 보정했고, 정상적인 Base64 패딩에서도 발생하던 오탐을 재현·수정했습니다.
+
+| 추가 SID | 탐지 대상 |
+| --- | --- |
+| `9006101` | HTTP Basic 인증의 비정상 길이 Base64 패딩 |
+| `9006102` | 패딩 오류를 포함한 64자 Base64 테스트 패턴 |
+| `9006103` | 패딩 오류를 포함한 128자 Base64 테스트 패턴 |
+| `9006104` | 60초 동안 단일 소스에서 발생한 Basic 인증 요청 1,000회 |
+| `9006105` | HTTP 응답 본문에 노출된 JVM 충돌 문자열 |
+| `9006106` | JWT Bearer 헤더의 비정상 Base64URL 패딩 |
+
+이 룰은 **의심스러운 네트워크 지표**를 확인하는 용도이며, 특정 Java 서버의 취약 여부나 원격 코드 실행 성공을 확정하지 않습니다. 특히 `9006104`·`9006105`는 환경에 따라 정상 요청도 탐지할 수 있어 운영 전 튜닝이 필요합니다. HTTP 페이로드는 평문이거나 복호화된 트래픽에서만 검사할 수 있습니다.
+
+[새로 추가한 6개 룰 상세 보기](https://github.com/xdr-labs/xdr-labs-portal/blob/main/downloads/java4shell-cve-2026-114938-6.rules).
+
 ## 탐지 대상
 
-| 탐지 분야 | 룰 수 | 주요 탐지 패턴 |
+| 탐지 분야 | v1.1 룰 수 | 주요 탐지 패턴 |
 | --- | ---: | --- |
 | 웹셸·명령 실행·파일 업로드 | 90 | 웹셸, OS 명령 삽입, PHP/JSP/ASPX 업로드 |
 | SQL Injection | 54 | UNION, 오류·시간 기반 SQL Injection |
 | 기타 웹 취약점 | 61 | XSS, 경로 탐색, LFI/RFI, SSRF, XXE, SSTI, 역직렬화 |
 | 정보 노출·탐색 | 33 | 설정·백업 파일 접근, 경로 스캔, 오류 응답 |
-| AI·Red Team·스캐너 도구 지문 | 35 | ARTEX, CyberStrikeAI, HexStrike-AI, nuclei, sqlmap 등 |
-| 제품 취약점·악성코드 관련 시그니처 | 56 | CVE 공격 패턴, Cobalt Strike, Havoc, Metasploit 등 |
-| OAST DNS | 4 | Interactsh, Burp Collaborator 조회 |
-| **합계** | **333** | |
+| AI·Red Team·스캐너 지문 | 35 | ARTEX, CyberStrikeAI, HexStrike-AI, nuclei, sqlmap 등 |
+| 제품 취약점·악성코드 | 56 | CVE 공격 패턴, Cobalt Strike, Havoc, Metasploit |
+| OAST DNS | 4 | Interactsh, Burp Collaborator |
+| **Java4Shell — v1.1 신규** | **6** | Base64 이상 패턴, 인증 요청 이상 징후, JVM 충돌 지표 |
+| **합계** | **339** | |
 
-## 실제 센서 테스트
+## Modular Sensor 테스트 결과
 
-<strong>Stellar Cyber 7.0 Modular Sensor</strong>에서 전체 333개 중 <strong>331개 룰</strong>의 개별 Alert를 확인했습니다.
+| 검증 항목 | 확인 결과 |
+| --- | --- |
+| 기존 v1.0 원본 333개 | **331/333** 개별 실센서 Alert 확인 |
+| 기존 미재현 SID `9005017`, `9005055` | 패키지에 포함, 개별 실센서 Alert 미확인 유지 |
+| v1.1 339개 통합 룰 | Suricata 8.0.1 **`suricata -T` 339개 로드 성공** |
+| 신규 Java4Shell 룰 | 격리 오프라인 PCAP 재생으로 **6/6** 개별 탐지 |
+| 정상·비정상 샘플 검증 | **10/10 PASS** — 정상 Basic/JWT 패딩, 999/1,000회 임계치 포함 |
+| 운영 IDS에 v1.1 활성화 | **미실시** — 기존 v1.0 설치본 보존 |
+| Data Processor UI·실운영 트래픽 검증 | 미검증 |
 
-나머지 <strong>2개 룰(SID 9005017, 9005055)</strong>도 다운로드 파일과 운영 센서에 포함되어 있으나, 개별 실센서 Alert는 아직 확인되지 않았습니다.
-
-*통제된 테스트 트래픽에 대한 실제 센서 Alert 검증 결과입니다.*
+*오프라인 Suricata 엔진의 Alert는 운영 센서 실시간 수집, DP/UI 경보 발생률 또는 실제 공격 탐지율·오탐률과 동일하지 않습니다.* [재현 방법 및 센서 테스트 증적](https://github.com/xdr-labs/xdr-labs-portal/blob/main/validation/java4shell-20261118/README.md).
 
 ## Stellar Cyber 7.0 룰 임포트
 
-1. 기존 커스텀 룰을 백업합니다. 임포트 시 `custom_defined.rules`가 <strong>전체 교체</strong>됩니다.
-2. `System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules`를 엽니다.
-3. 다운로드한 `.rules` 파일을 선택하고, 대상 센서를 지정한 다음 `Upload and Deploy`를 클릭합니다.
-4. 센서 프로필의 `IDS → Signature → Selected Rules`에서 `custom_defined.rules` 적용 여부를 확인합니다.
+1. **현재 `custom_defined.rules`를 백업하세요.** 룰 임포트는 파일을 **전체 교체**하므로 신규 6개만 담긴 파일을 단독으로 임포트하면 안 됩니다.
+2. 위에서 **v1.1 통합 339개 `.rules` 파일**을 다운로드하고 무결성을 확인합니다. SHA-256: `2478ffd6b3dbdfbb527695f07e00e1a106a554d8bb898a0f9584bb3845b07483`.
+3. `System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules`로 이동합니다.
+4. 전체 `.rules` 파일을 선택하고 대상 센서를 지정한 뒤 `Upload and Deploy`를 실행합니다.
+5. `Sensor Profiles → IDS → Signature → Selected Rules`에서 활성화를 확인하고, 탐지·오탐 및 실제 트래픽 가시성을 검증합니다.
 
-## HOME_NET / EXTERNAL_NET 설정
+### HOME_NET / EXTERNAL_NET 및 트래픽 가시성
 
-Stellar Cyber는 RFC 1918 사설 주소(`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`)를 기본적으로 <strong>Private IP</strong>로 분류하고, 그 외의 공인 주소는 <strong>Public IP</strong>로 분류합니다. 이는 IP 분류 기준이며, **IDS의 HOME_NET / EXTERNAL_NET 설정은 센서 프로필에서 별도로 확인해야 합니다.**
+이번 **339개 커스텀 룰**은 모두 `any any → any any` 주소 조건을 사용하므로 룰의 IP 매칭 범위가 `HOME_NET`·`EXTERNAL_NET` 설정에 직접 의존하지 않습니다. 다만 센서의 패킷 수집·IDS 활성화, 개별 룰의 프로토콜·`flow` 조건, HTTPS 복호화 제약은 적용됩니다. 다른 기본 ET/IDS 룰에는 `HOME_NET` 설정이 중요할 수 있으므로, 보호 대상 공인 IP를 포함한 실제 네트워크 범위를 센서 프로필에서 확인하세요.
 
-- <strong>HOME_NET:</strong> 보호 대상 네트워크. 사설 IP뿐 아니라 <strong>회사에서 사용 중인 공인 IP(웹서버·DMZ 등)도 추가</strong>하세요.
-- <strong>EXTERNAL_NET:</strong> 외부·상대 네트워크. 내부 보호 대역과 외부 범위를 실제 트래픽에 맞게 설정하세요.
+**설정 위치:** `System → Data Source Management → Sensors → Sensor Profiles → Feature Customization → IDS → Networks`.
 
-많은 기본 IDS 룰이 `$EXTERNAL_NET → $HOME_NET` 방향으로 동작합니다. 보호 대상 공인 IP가 HOME_NET에서 빠지면 <strong>해당 서버로 향하는 공격을 놓칠 수 있습니다.</strong>
+## 이전 버전
 
-<strong>설정 위치:</strong> `System → Data Source Management → Sensors → Sensor Profiles → Feature Customization → IDS → Networks`
+기존 **v1.0 (333개)** 파일은 변경 없이 계속 제공됩니다. [v1.0 룰 다운로드](https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.rules) · [v1.0 ZIP 다운로드](https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.zip).
 
-## 이번 333개 룰과의 차이
-
-이번 333개 룰은 모두 `any any → any any` 주소 조건을 사용하므로 <strong>HOME_NET / EXTERNAL_NET 주소 설정과 관계없이</strong> 공격 패턴을 검사합니다. 단, 센서의 트래픽 수신·IDS 활성화와 개별 룰의 프로토콜·`flow`·패턴 조건은 필요합니다.
-
-공식 문서: [룰 임포트](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [IDS Networks](https://docs.stellarcyber.ai/7.0.xs/Configure/Sensors/Sensor-Profile-Modular-Config.htm) · [Private IP 분류](https://docs.stellarcyber.ai/7.0.x/Configure/Data-Enrichment.htm)
+공식 문서: [IDS 룰 임포트](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [IDS Networks](https://docs.stellarcyber.ai/7.0.xs/Configure/Sensors/Sensor-Profile-Modular-Config.htm).
