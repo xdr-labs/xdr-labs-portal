@@ -48,3 +48,24 @@ scenarios:
   invariants:
   - committed candidate/base diff has no whitespace errors
   release_gate: true
+- id: JAVA4SHELL-PACKAGE-001
+  cost: cheap
+  estimated_seconds: 2
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Java4Shell 333+6 candidate integrity
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  - preflight
+  - release
+  platforms:
+  - linux
+  command: python3 validation/java4shell-20261118/verify_package.py
+  invariants:
+  - Published 333 rules remain byte-identical and combined 339 rule SIDs stay unique
+  release_gate: true
