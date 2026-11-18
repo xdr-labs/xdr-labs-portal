@@ -15,6 +15,19 @@ description: "Suricata detection rules v1.0 for Stellar Cyber 7.0 — 333 rules;
   </Card>
 </CardGroup>
 
+
+## Java4Shell detection candidate — CVE-2026-114938 (November 18, 2026)
+
+**v1.1 RC1 validation candidate:** 6 new Java4Shell network indicators (SIDs `9006101–9006106`) added to the unchanged v1.0 set of 333, for **339 total**. [Review complete 339-rule RC1](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/downloads/local-web-attack-ai-v1.1-rc1-339.rules) · [Review six supplemental rules](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/downloads/java4shell-cve-2026-114938-6.rules).
+
+- **Sensor QA:** All 339 candidate signatures load with `suricata -T` on the actual Modular Sensor running Suricata 8.0.1. All six new SIDs individually alerted in controlled **offline PCAP replay**; 10/10 expected-case fixtures passed, including valid Basic/JWT padding negatives and a 999/1,000-request threshold boundary.
+- **Status:** **Not released or installed in the operating IDS.** The verified live baseline remains **331/333** original rules. The six new signatures have **offline-engine evidence only**, not live capture or DP/UI alert confirmation.
+- These indicators detect suspicious Base64 formatting, HTTP authorization bursts, and JVM crash strings; **they do not establish that a Java host is vulnerable or that code execution occurred**. They require plaintext HTTP visibility and may need environment-specific tuning. The burst and crash rules are exploratory heuristics.
+
+**Import warning:** Stellar Cyber's Import Security Rules replaces the entire `custom_defined.rules` file. The six-rule supplement is **not** a standalone import package. Review the full 339-rule candidate, back up existing rules, and obtain approval before deployment.
+
+[Reproducible QA scripts and sensor evidence](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/validation/java4shell-20261118/README.md)
+
 ## Detection coverage
 
 | Category | Rules | Example detections |

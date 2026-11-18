@@ -15,6 +15,19 @@ Stellar Cyber 7.0용 **Suricata 탐지 룰 333개 전체**를 다운로드할 �
   </Card>
 </CardGroup>
 
+
+## Java4Shell 탐지 룰 추가 후보 — CVE-2026-114938 (2026년 11월 18일)
+
+**v1.1 RC1 검증 후보:** 기존 v1.0의 333개 룰을 그대로 보존하고 Java4Shell 탐지 룰 6개(SID `9006101–9006106`)를 추가한 **총 339개 패키지**입니다. [339개 전체 RC1 룰 검토](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/downloads/local-web-attack-ai-v1.1-rc1-339.rules) · [추가 6개 룰 검토](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/downloads/java4shell-cve-2026-114938-6.rules).
+
+- **센서 테스트:** Modular Sensor의 Suricata 8.0.1에서 전체 339개 `suricata -T` 로드 성공. 격리된 **오프라인 PCAP 재생**으로 신규 SID 6개 모두 Alert를 확인했고, 정상 Basic/JWT 패딩과 999/1,000회 임계치 테스트를 포함한 10종의 기대 결과가 모두 일치했습니다.
+- **현재 상태:** **정식 릴리스 및 운영 IDS 적용 전**입니다. 기존 원본 룰의 실센서 검증 실적은 여전히 **331/333**입니다. 신규 6개는 오프라인 엔진 검증만 완료했으며, 운영 트래픽·DP/UI Alert 검증 실적은 아닙니다.
+- 이 룰은 Base64 이상 패턴, 인증 요청 폭증, JVM 크래시 문자열 등을 탐지하는 **네트워크 지표**입니다. **해당 Java 서버가 실제 취약하거나 원격 코드 실행이 성공했다는 의미는 아닙니다.** 평문 HTTP 가시성이 필요하고, 요청량·크래시 휴리스틱은 운영환경별 조정이 필요할 수 있습니다.
+
+**임포트 주의:** Stellar Cyber의 Import Security Rules는 `custom_defined.rules`를 **전체 교체**합니다. 추가 6개만 담긴 파일을 단독 임포트하지 마세요. 전체 339개 후보를 검토하고 기존 룰을 백업한 다음 승인을 거쳐 배포해야 합니다.
+
+[재현 스크립트 및 실제 센서 QA 증적](https://github.com/xdr-labs/xdr-labs-portal/blob/feat/java4shell-cve-2026-114938-339/validation/java4shell-20261118/README.md)
+
 ## 탐지 대상
 
 | 탐지 분야 | 룰 수 | 주요 탐지 패턴 |

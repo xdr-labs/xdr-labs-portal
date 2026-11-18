@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-18",
+  "host": "modular",
+  "managed_endpoint": "AT Secu MDS",
+  "suricata_version": "8.0.1",
+  "mode": "isolated offline PCAP replay and suricata -T; no production rule import",
+  "original_rule_count": 333,
+  "new_rule_count": 6,
+  "combined_rule_count": 339,
+  "original_sha256": "5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96",
+  "supplemental_sha256": "e05bcf3dc56bb0331481dbec8c4cad92561b66133e1fd274421886472e33cd03",
+  "combined_sha256": "2478ffd6b3dbdfbb527695f07e00e1a106a554d8bb898a0f9584bb3845b07483",
+  "syntax_pass": true,
+  "fixtures_pass": 10,
+  "fixtures_total": 10,
+  "expected_sids": [
+    9006101,
+    9006102,
+    9006103,
+    9006104,
+    9006105,
+    9006106
+  ],
+  "fixtures": {
+    "basic-malformed": {
+      "9006101": 1,
+      "9006102": 1
+    },
+    "basic-valid-padded": {},
+    "benign-normal": {},
+    "burst-1000": {
+      "9006104": 1
+    },
+    "burst-999": {},
+    "crash-response": {
+      "9006105": 1
+    },
+    "exact-128-header": {
+      "9006103": 1
+    },
+    "exact-64-header": {
+      "9006102": 1
+    },
+    "jwt-padded": {
+      "9006106": 1
+    },
+    "jwt-valid-padded": {}
+  },
+  "scope_limit": "Not a production false-positive rate, actual exploit detection rate, or live sensor/DP/UI alert confirmation; original 331/333 live status unchanged."
+}
