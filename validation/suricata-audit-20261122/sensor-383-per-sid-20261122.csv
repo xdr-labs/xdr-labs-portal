@@ -1,0 +1,384 @@
+sid,protocol,message,group,sensor_offline_alert_observed,evidence_type
+9001002,http,LOCAL WEB WEBSHELL PHP script with CMD parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9001003,http,LOCAL WEB WEBSHELL JSP script with CMD parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9001004,http,LOCAL WEB WEBSHELL ASPX script with CMD parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9001005,http,LOCAL WEB WEBSHELL Query CMD with OS command token,original_v1_0,True,current_sensor_77_pcap_differential
+9001007,http,LOCAL WEB WEBSHELL POST CMD with OS command token,original_v1_0,True,current_sensor_77_pcap_differential
+9001011,http,LOCAL WEB WEBSHELL Direct shell PHP path,original_v1_0,True,current_sensor_77_pcap_differential
+9001012,http,LOCAL WEB WEBSHELL PHP in web upload directory,original_v1_0,True,current_sensor_77_pcap_differential
+9001013,http,LOCAL WEB COMMAND URI command separator and whoami,original_v1_0,True,current_sensor_77_pcap_differential
+9001014,http,LOCAL WEB COMMAND URI shell command substitution,original_v1_0,True,current_sensor_77_pcap_differential
+9001015,http,LOCAL WEB COMMAND URI IFS shell token,original_v1_0,True,current_sensor_77_pcap_differential
+9001016,http,LOCAL WEB COMMAND URI shell bin sh interpreter,original_v1_0,True,current_sensor_77_pcap_differential
+9001017,http,LOCAL WEB COMMAND URI shell bin bash interpreter,original_v1_0,True,current_sensor_77_pcap_differential
+9001101,http,LOCAL WEB SQLI URI UNION SELECT,original_v1_0,True,current_sensor_77_pcap_differential
+9001102,http,LOCAL WEB SQLI POST UNION SELECT,original_v1_0,True,current_sensor_77_pcap_differential
+9001103,http,LOCAL WEB SQLI URI information schema enumeration,original_v1_0,True,current_sensor_77_pcap_differential
+9001104,http,LOCAL WEB SQLI POST information schema enumeration,original_v1_0,True,current_sensor_77_pcap_differential
+9001105,http,LOCAL WEB SQLI URI SQL SLEEP delay,original_v1_0,True,current_sensor_77_pcap_differential
+9001106,http,LOCAL WEB SQLI POST SQL SLEEP delay,original_v1_0,True,current_sensor_77_pcap_differential
+9001107,http,LOCAL WEB SQLI URI SQL BENCHMARK function,original_v1_0,True,current_sensor_77_pcap_differential
+9001108,http,LOCAL WEB SQLI POST SQL BENCHMARK function,original_v1_0,True,current_sensor_77_pcap_differential
+9001109,http,LOCAL WEB SQLI URI WAITFOR DELAY,original_v1_0,True,current_sensor_77_pcap_differential
+9001110,http,LOCAL WEB SQLI POST WAITFOR DELAY,original_v1_0,True,current_sensor_77_pcap_differential
+9001111,http,LOCAL WEB SQLI URI PG SLEEP delay,original_v1_0,True,current_sensor_77_pcap_differential
+9001112,http,LOCAL WEB SQLI POST PG SLEEP delay,original_v1_0,True,current_sensor_77_pcap_differential
+9001113,http,LOCAL WEB SQLI URI boolean tautology,original_v1_0,True,current_sensor_77_pcap_differential
+9001114,http,LOCAL WEB SQLI POST boolean tautology,original_v1_0,True,current_sensor_77_pcap_differential
+9001115,http,LOCAL WEB SQLI URI MSSQL XP CMDSHELL,original_v1_0,True,current_sensor_77_pcap_differential
+9001116,http,LOCAL WEB SQLI POST MSSQL XP CMDSHELL,original_v1_0,True,current_sensor_77_pcap_differential
+9001117,http,LOCAL WEB SQLI URI SQL INTO OUTFILE,original_v1_0,True,current_sensor_77_pcap_differential
+9001118,http,LOCAL WEB SQLI POST SQL INTO OUTFILE,original_v1_0,True,current_sensor_77_pcap_differential
+9001119,http,LOCAL WEB SQLI URI SQL LOAD FILE function,original_v1_0,True,current_sensor_77_pcap_differential
+9001120,http,LOCAL WEB SQLI POST SQL LOAD FILE function,original_v1_0,True,current_sensor_77_pcap_differential
+9001122,http,LOCAL WEB SQLI URI stacked DROP TABLE statement,original_v1_0,True,current_sensor_77_pcap_differential
+9001123,http,LOCAL WEB SQLI POST stacked DROP TABLE statement,original_v1_0,True,current_sensor_77_pcap_differential
+9001201,http,LOCAL WEB LFI URI ETC SHADOW,original_v1_0,True,current_sensor_77_pcap_differential
+9001202,http,LOCAL WEB LFI URI ETC PASSWD,original_v1_0,True,current_sensor_77_pcap_differential
+9001203,http,LOCAL WEB LFI Repeated dotdot traversal in raw URI,original_v1_0,True,current_sensor_77_pcap_differential
+9001204,http,LOCAL WEB LFI Encoded dotdot traversal in raw URI,original_v1_0,True,current_sensor_77_pcap_differential
+9001205,http,LOCAL WEB LFI URI PHP stream filter wrapper,original_v1_0,True,current_sensor_77_pcap_differential
+9001206,http,LOCAL WEB LFI URI proc self environ,original_v1_0,True,current_sensor_77_pcap_differential
+9001207,http,LOCAL WEB LFI URI dotenv file probing,original_v1_0,True,current_sensor_77_pcap_differential
+9001208,http,LOCAL WEB LFI URI git config probing,original_v1_0,True,current_sensor_77_pcap_differential
+9001209,http,LOCAL WEB LFI URI SSH private key probing,original_v1_0,True,current_sensor_77_pcap_differential
+9001210,http,LOCAL WEB LFI URI PHP data stream wrapper,original_v1_0,True,current_sensor_77_pcap_differential
+9001301,http,LOCAL WEB UPLOAD Multipart PHP webshell extension,original_v1_0,True,current_sensor_77_pcap_differential
+9001302,http,LOCAL WEB UPLOAD Multipart JSP ASPX executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9001303,http,LOCAL WEB UPLOAD POST PHP source with EVAL,original_v1_0,True,current_sensor_77_pcap_differential
+9001304,http,LOCAL WEB UPLOAD POST PHP source with SYSTEM,original_v1_0,True,current_sensor_77_pcap_differential
+9001305,http,LOCAL WEB UPLOAD POST PHP source with BASE64 DECODE,original_v1_0,True,current_sensor_77_pcap_differential
+9001306,http,LOCAL WEB UPLOAD POST JSP runtime command execution,original_v1_0,True,current_sensor_77_pcap_differential
+9001401,http,LOCAL WEB XSS URI HTML script tag,original_v1_0,True,current_sensor_77_pcap_differential
+9001402,http,LOCAL WEB XSS POST HTML script tag,original_v1_0,True,current_sensor_77_pcap_differential
+9001403,http,LOCAL WEB XSS URI javascript scheme,original_v1_0,True,current_sensor_77_pcap_differential
+9001404,http,LOCAL WEB XSS URI onerror handler injection,original_v1_0,True,current_sensor_77_pcap_differential
+9001405,http,LOCAL WEB XSS POST onerror handler injection,original_v1_0,True,current_sensor_77_pcap_differential
+9001501,http,LOCAL WEB XXE POST external XML entity declaration,original_v1_0,True,current_sensor_77_pcap_differential
+9001502,http,LOCAL WEB XXE POST file URL to sensitive system file,original_v1_0,True,current_sensor_77_pcap_differential
+9001601,http,LOCAL WEB SSTI URI basic Jinja expression probe,original_v1_0,True,current_sensor_77_pcap_differential
+9001602,http,LOCAL WEB RCE URI Log4Shell JNDI token,original_v1_0,True,current_sensor_77_pcap_differential
+9001603,http,LOCAL WEB RCE HTTP header Log4Shell JNDI token,original_v1_0,True,current_sensor_77_pcap_differential
+9001604,http,LOCAL WEB SSRF URI cloud instance metadata address,original_v1_0,True,current_sensor_77_pcap_differential
+9001605,http,LOCAL WEB SSRF POST cloud instance metadata address,original_v1_0,True,current_sensor_77_pcap_differential
+9002001,http,LOCAL WEB EXPOSURE Git HEAD fetch,original_v1_0,True,current_sensor_77_pcap_differential
+9002002,http,LOCAL WEB EXPOSURE Git index fetch,original_v1_0,True,current_sensor_77_pcap_differential
+9002003,http,LOCAL WEB EXPOSURE Git objects fetch,original_v1_0,True,current_sensor_77_pcap_differential
+9002004,http,LOCAL WEB EXPOSURE Subversion entries fetch,original_v1_0,True,current_sensor_77_pcap_differential
+9002005,http,LOCAL WEB EXPOSURE Docker environment fetch,original_v1_0,True,current_sensor_77_pcap_differential
+9002006,http,LOCAL WEB EXPOSURE Kubernetes service account token path,original_v1_0,True,current_sensor_77_pcap_differential
+9002007,http,LOCAL WEB EXPOSURE AWS credential file URI,original_v1_0,True,current_sensor_77_pcap_differential
+9002008,http,LOCAL WEB EXPOSURE Private SSH key URI,original_v1_0,True,current_sensor_77_pcap_differential
+9002009,http,LOCAL WEB EXPOSURE WordPress config backup file,original_v1_0,True,current_sensor_77_pcap_differential
+9002010,http,LOCAL WEB EXPOSURE PHP info endpoint,original_v1_0,True,current_sensor_77_pcap_differential
+9002011,http,LOCAL WEB EXPOSURE Apache server status endpoint,original_v1_0,True,current_sensor_77_pcap_differential
+9002012,http,LOCAL WEB EXPOSURE Spring actuator env endpoint,original_v1_0,True,current_sensor_77_pcap_differential
+9002013,http,LOCAL WEB EXPOSURE Spring actuator heap dump endpoint,original_v1_0,True,current_sensor_77_pcap_differential
+9002014,http,LOCAL WEB EXPOSURE Backup archive URL,original_v1_0,True,current_sensor_77_pcap_differential
+9002015,http,LOCAL WEB EXPOSURE SQL dump download URL,original_v1_0,True,current_sensor_77_pcap_differential
+9002016,http,LOCAL WEB EXPOSURE Composer auth config access,original_v1_0,True,current_sensor_77_pcap_differential
+9002017,http,LOCAL WEB EXPOSURE Docker config JSON access,original_v1_0,True,current_sensor_77_pcap_differential
+9002018,http,LOCAL WEB EXPOSURE Hidden well known script probing,original_v1_0,True,current_sensor_77_pcap_differential
+9002019,http,LOCAL WEB WEBSHELL Query shell command with WHOAMI,original_v1_0,True,current_sensor_77_pcap_differential
+9002020,http,LOCAL WEB WEBSHELL Query shell command with ID,original_v1_0,True,current_sensor_77_pcap_differential
+9002021,http,LOCAL WEB WEBSHELL Query shell command with UNAME,original_v1_0,True,current_sensor_77_pcap_differential
+9002022,http,LOCAL WEB WEBSHELL Query shell command with PS,original_v1_0,True,current_sensor_77_pcap_differential
+9002023,http,LOCAL WEB WEBSHELL Query shell command with CAT,original_v1_0,True,current_sensor_77_pcap_differential
+9002024,http,LOCAL WEB WEBSHELL PHP eval parameter with base64 decode,original_v1_0,True,current_sensor_77_pcap_differential
+9002025,http,LOCAL WEB WEBSHELL PHP POST assert with base64,original_v1_0,True,current_sensor_77_pcap_differential
+9002026,http,LOCAL WEB WEBSHELL PHP POST system call parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9002027,http,LOCAL WEB WEBSHELL PHP POST shell exec function,original_v1_0,True,current_sensor_77_pcap_differential
+9002028,http,LOCAL WEB WEBSHELL Java ProcessBuilder invocation,original_v1_0,True,current_sensor_77_pcap_differential
+9002029,http,LOCAL WEB WEBSHELL JSP Runtime exec payload,original_v1_0,True,current_sensor_77_pcap_differential
+9002030,http,LOCAL WEB WEBSHELL ASPX Process Start payload,original_v1_0,True,current_sensor_77_pcap_differential
+9002031,http,LOCAL WEB COMMAND URI chained logical AND command,original_v1_0,True,current_sensor_77_pcap_differential
+9002032,http,LOCAL WEB COMMAND URI pipe with shell interpreter,original_v1_0,True,current_sensor_77_pcap_differential
+9002033,http,LOCAL WEB COMMAND URI command separator and curl,original_v1_0,True,current_sensor_77_pcap_differential
+9002034,http,LOCAL WEB COMMAND URI command separator and wget,original_v1_0,True,current_sensor_77_pcap_differential
+9002035,http,LOCAL WEB COMMAND URI PowerShell encoded command,original_v1_0,True,current_sensor_77_pcap_differential
+9002036,http,LOCAL WEB COMMAND URI Windows CMD execution,original_v1_0,True,current_sensor_77_pcap_differential
+9002037,http,LOCAL WEB COMMAND POST bash shell option execution,original_v1_0,True,current_sensor_77_pcap_differential
+9002038,http,LOCAL WEB COMMAND POST PowerShell encoded invocation,original_v1_0,True,current_sensor_77_pcap_differential
+9002039,http,LOCAL WEB COMMAND POST Windows CMD interpreter,original_v1_0,True,current_sensor_77_pcap_differential
+9002040,http,LOCAL WEB COMMAND POST curl pipe to shell,original_v1_0,True,current_sensor_77_pcap_differential
+9002041,http,LOCAL WEB COMMAND URI shell backtick command,original_v1_0,True,current_sensor_77_pcap_differential
+9002042,http,LOCAL WEB COMMAND HTTP body shell environment IFS,original_v1_0,True,current_sensor_77_pcap_differential
+9002043,http,LOCAL WEB SQLI URI MySQL EXTRACTVALUE XML errors,original_v1_0,True,current_sensor_77_pcap_differential
+9002044,http,LOCAL WEB SQLI POST MySQL EXTRACTVALUE XML errors,original_v1_0,True,current_sensor_77_pcap_differential
+9002045,http,LOCAL WEB SQLI URI MySQL UPDATEXML XML errors,original_v1_0,True,current_sensor_77_pcap_differential
+9002046,http,LOCAL WEB SQLI POST MySQL UPDATEXML XML errors,original_v1_0,True,current_sensor_77_pcap_differential
+9002047,http,LOCAL WEB SQLI URI PostgreSQL COPY PROGRAM,original_v1_0,True,current_sensor_77_pcap_differential
+9002048,http,LOCAL WEB SQLI POST PostgreSQL COPY PROGRAM,original_v1_0,True,current_sensor_77_pcap_differential
+9002049,http,LOCAL WEB SQLI URI MSSQL DBMS out of band,original_v1_0,True,current_sensor_77_pcap_differential
+9002050,http,LOCAL WEB SQLI POST MSSQL DBMS out of band,original_v1_0,True,current_sensor_77_pcap_differential
+9002051,http,LOCAL WEB SQLI URI MSSQL server version function,original_v1_0,True,current_sensor_77_pcap_differential
+9002052,http,LOCAL WEB SQLI POST MSSQL server version function,original_v1_0,True,current_sensor_77_pcap_differential
+9002053,http,LOCAL WEB SQLI URI MySQL user password table,original_v1_0,True,current_sensor_77_pcap_differential
+9002054,http,LOCAL WEB SQLI POST MySQL user password table,original_v1_0,True,current_sensor_77_pcap_differential
+9002055,http,LOCAL WEB SQLI URI MySQL dynamic function LOAD XML,original_v1_0,True,current_sensor_77_pcap_differential
+9002056,http,LOCAL WEB SQLI POST MySQL dynamic function LOAD XML,original_v1_0,True,current_sensor_77_pcap_differential
+9002057,http,LOCAL WEB SQLI URI SQLite schema enumeration,original_v1_0,True,current_sensor_77_pcap_differential
+9002058,http,LOCAL WEB SQLI POST SQLite schema enumeration,original_v1_0,True,current_sensor_77_pcap_differential
+9002059,http,LOCAL WEB SQLI URI PostgreSQL PG catalog,original_v1_0,True,current_sensor_77_pcap_differential
+9002060,http,LOCAL WEB SQLI POST PostgreSQL PG catalog,original_v1_0,True,current_sensor_77_pcap_differential
+9002061,http,LOCAL WEB SQLI URI MSSQL WAITFOR TIME,original_v1_0,True,current_sensor_77_pcap_differential
+9002062,http,LOCAL WEB SQLI POST MSSQL WAITFOR TIME,original_v1_0,True,current_sensor_77_pcap_differential
+9002063,http,LOCAL WEB SQLI URI SQL ORDER BY probe,original_v1_0,True,current_sensor_77_pcap_differential
+9002064,http,LOCAL WEB SQLI POST SQL ORDER BY probe,original_v1_0,True,current_sensor_77_pcap_differential
+9002065,http,LOCAL WEB SQLI URI SQL inline comments around UNION,original_v1_0,True,current_sensor_77_pcap_differential
+9002066,http,LOCAL WEB SQLI POST SQL inline comments around UNION,original_v1_0,True,current_sensor_77_pcap_differential
+9002067,http,LOCAL WEB SQLI URI MySQL executable version comment,original_v1_0,True,current_sensor_77_pcap_differential
+9002068,http,LOCAL WEB SQLI POST MySQL executable version comment,original_v1_0,True,current_sensor_77_pcap_differential
+9002069,http,LOCAL WEB SQLI URI SQL CAST hex expression,original_v1_0,True,current_sensor_77_pcap_differential
+9002070,http,LOCAL WEB SQLI POST SQL CAST hex expression,original_v1_0,True,current_sensor_77_pcap_differential
+9002071,http,LOCAL WEB SQLI URI Oracle UTL INADDR DNS exfil,original_v1_0,True,current_sensor_77_pcap_differential
+9002072,http,LOCAL WEB SQLI POST Oracle UTL INADDR DNS exfil,original_v1_0,True,current_sensor_77_pcap_differential
+9002073,http,LOCAL WEB SQLI URI SQL CHAR concat function,original_v1_0,True,current_sensor_77_pcap_differential
+9002074,http,LOCAL WEB SQLI POST SQL CHAR concat function,original_v1_0,True,current_sensor_77_pcap_differential
+9002075,http,LOCAL WEB RFI URI PHP input stream access,original_v1_0,True,current_sensor_77_pcap_differential
+9002076,http,LOCAL WEB RFI URI PHP expect stream execution,original_v1_0,True,current_sensor_77_pcap_differential
+9002077,http,LOCAL WEB RFI URI PHP Phar wrapper,original_v1_0,True,current_sensor_77_pcap_differential
+9002078,http,LOCAL WEB RFI URI PHP zip wrapper,original_v1_0,True,current_sensor_77_pcap_differential
+9002079,http,LOCAL WEB RFI URI external include parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9002080,http,LOCAL WEB RFI POST external include parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9002081,http,LOCAL WEB LFI URI Windows WIN INI,original_v1_0,True,current_sensor_77_pcap_differential
+9002082,http,LOCAL WEB LFI URI Windows BOOT INI,original_v1_0,True,current_sensor_77_pcap_differential
+9002083,http,LOCAL WEB LFI URI PROC SELF CMDLINE,original_v1_0,True,current_sensor_77_pcap_differential
+9002084,http,LOCAL WEB LFI URI PROC SELF MAPS,original_v1_0,True,current_sensor_77_pcap_differential
+9002085,http,LOCAL WEB LFI URI mixed traversal backslashes,original_v1_0,True,current_sensor_77_pcap_differential
+9002086,http,LOCAL WEB LFI URI PHP session file disclosure,original_v1_0,True,current_sensor_77_pcap_differential
+9002087,http,LOCAL WEB SSTI URI Jinja expression arithmetic,original_v1_0,True,current_sensor_77_pcap_differential
+9002088,http,LOCAL WEB SSTI POST Jinja expression arithmetic,original_v1_0,True,current_sensor_77_pcap_differential
+9002089,http,LOCAL WEB SSTI URI Jinja globals object access,original_v1_0,True,current_sensor_77_pcap_differential
+9002090,http,LOCAL WEB SSTI POST Jinja globals object access,original_v1_0,True,current_sensor_77_pcap_differential
+9002091,http,LOCAL WEB SSTI URI FreeMarker new Execute,original_v1_0,True,current_sensor_77_pcap_differential
+9002092,http,LOCAL WEB SSTI POST FreeMarker new Execute,original_v1_0,True,current_sensor_77_pcap_differential
+9002093,http,LOCAL WEB SSTI URI Java OGNL runtime access,original_v1_0,True,current_sensor_77_pcap_differential
+9002094,http,LOCAL WEB SSTI POST Java OGNL runtime access,original_v1_0,True,current_sensor_77_pcap_differential
+9002095,http,LOCAL WEB SSTI URI SpEL Runtime expression,original_v1_0,True,current_sensor_77_pcap_differential
+9002096,http,LOCAL WEB SSTI POST SpEL Runtime expression,original_v1_0,True,current_sensor_77_pcap_differential
+9002097,http,LOCAL WEB DESERIALIZATION POST Java serialization base64 header,original_v1_0,True,current_sensor_77_pcap_differential
+9002098,http,LOCAL WEB DESERIALIZATION POST PHP serialized object pattern,original_v1_0,True,current_sensor_77_pcap_differential
+9002099,http,LOCAL WEB DESERIALIZATION POST Fastjson JdbcRowSet gadget,original_v1_0,True,current_sensor_77_pcap_differential
+9002100,http,LOCAL WEB DESERIALIZATION POST Node child process exec,original_v1_0,True,current_sensor_77_pcap_differential
+9002101,http,LOCAL WEB DESERIALIZATION URI Node prototype pollution,original_v1_0,True,current_sensor_77_pcap_differential
+9002102,http,LOCAL WEB DESERIALIZATION POST Node prototype pollution,original_v1_0,True,current_sensor_77_pcap_differential
+9002103,http,LOCAL WEB SSRF URI GCP metadata host,original_v1_0,True,current_sensor_77_pcap_differential
+9002104,http,LOCAL WEB SSRF POST GCP metadata host,original_v1_0,True,current_sensor_77_pcap_differential
+9002105,http,LOCAL WEB SSRF URI AWS metadata path,original_v1_0,True,current_sensor_77_pcap_differential
+9002106,http,LOCAL WEB SSRF URI cloud container metadata IP,original_v1_0,True,current_sensor_77_pcap_differential
+9002107,http,LOCAL WEB SSRF POST cloud container metadata IP,original_v1_0,True,current_sensor_77_pcap_differential
+9002108,http,LOCAL WEB SSRF URI localhost URL fetch parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9002109,http,LOCAL WEB SSRF POST localhost URL fetch parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9002110,http,LOCAL WEB XXE POST external SYSTEM file entity,original_v1_0,True,current_sensor_77_pcap_differential
+9002111,http,LOCAL WEB XXE POST external SYSTEM network entity,original_v1_0,True,current_sensor_77_pcap_differential
+9002112,http,LOCAL WEB UPLOAD Multipart double extension PHP,original_v1_0,True,current_sensor_77_pcap_differential
+9002113,http,LOCAL WEB UPLOAD Multipart HTACCESS upload,original_v1_0,True,current_sensor_77_pcap_differential
+9002114,http,LOCAL WEB UPLOAD Multipart JSP uploaded as text,original_v1_0,True,current_sensor_77_pcap_differential
+9002115,http,LOCAL WEB RESPONSE HTTP SQL syntax MySQL error,original_v1_0,True,current_sensor_77_pcap_differential
+9002116,http,LOCAL WEB RESPONSE HTTP PostgreSQL syntax error,original_v1_0,True,current_sensor_77_pcap_differential
+9002117,http,LOCAL WEB RESPONSE HTTP SQL Server SQL exception,original_v1_0,True,current_sensor_77_pcap_differential
+9002118,http,LOCAL WEB RESPONSE HTTP Oracle SQL parse exception,original_v1_0,True,current_sensor_77_pcap_differential
+9002119,http,LOCAL WEB RESPONSE HTTP PHP fatal stack error,original_v1_0,True,current_sensor_77_pcap_differential
+9002120,http,LOCAL WEB RESPONSE HTTP exposed passwd file format,original_v1_0,True,current_sensor_77_pcap_differential
+9002121,http,LOCAL WEB RESPONSE HTTP JSP stack execution,original_v1_0,True,current_sensor_77_pcap_differential
+9002122,http,LOCAL WEB RESPONSE HTTP webshell shell prompt marker,original_v1_0,True,current_sensor_77_pcap_differential
+9002128,http,LOCAL WEB SCAN Acunetix HTTP user agent,original_v1_0,True,current_sensor_77_pcap_differential
+9002129,http,LOCAL WEB SCAN WPScan HTTP user agent,original_v1_0,True,current_sensor_77_pcap_differential
+9002131,http,LOCAL WEB SCAN Dirsearch HTTP user agent,original_v1_0,True,current_sensor_77_pcap_differential
+9002132,http,LOCAL WEB SCAN WordPress XMLRPC multicall abuse marker,original_v1_0,True,current_sensor_77_pcap_differential
+9002201,http,LOCAL WEB UPLOAD MULTIPART filename-star PHP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002204,http,LOCAL WEB UPLOAD MULTIPART encoded-dot PHP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002207,http,LOCAL WEB UPLOAD JSON API filename PHP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002210,http,LOCAL WEB UPLOAD HTTP PUT PHP executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002213,http,LOCAL WEB UPLOAD HTTP PATCH PHP executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002216,http,LOCAL WEB UPLOAD UPLOAD HEADER X-File-Name PHP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002202,http,LOCAL WEB UPLOAD MULTIPART filename-star JSP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002205,http,LOCAL WEB UPLOAD MULTIPART encoded-dot JSP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002208,http,LOCAL WEB UPLOAD JSON API filename JSP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002211,http,LOCAL WEB UPLOAD HTTP PUT JSP executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002214,http,LOCAL WEB UPLOAD HTTP PATCH JSP executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002217,http,LOCAL WEB UPLOAD UPLOAD HEADER X-File-Name JSP executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002203,http,LOCAL WEB UPLOAD MULTIPART filename-star ASPX executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002206,http,LOCAL WEB UPLOAD MULTIPART encoded-dot ASPX executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002209,http,LOCAL WEB UPLOAD JSON API filename ASPX executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002212,http,LOCAL WEB UPLOAD HTTP PUT ASPX executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002215,http,LOCAL WEB UPLOAD HTTP PATCH ASPX executable resource,original_v1_0,True,current_sensor_77_pcap_differential
+9002218,http,LOCAL WEB UPLOAD UPLOAD HEADER X-File-Name ASPX executable extension,original_v1_0,True,current_sensor_77_pcap_differential
+9002219,http,LOCAL WEB UPLOAD MULTIPART extension null-byte bypass,original_v1_0,True,current_sensor_77_pcap_differential
+9002220,http,LOCAL WEB UPLOAD MULTIPART extension semicolon disguise,original_v1_0,True,current_sensor_77_pcap_differential
+9002221,http,LOCAL WEB UPLOAD MULTIPART PHP source code marker,original_v1_0,True,current_sensor_77_pcap_differential
+9002222,http,LOCAL WEB UPLOAD MULTIPART JSP source code marker,original_v1_0,True,current_sensor_77_pcap_differential
+9002223,http,LOCAL WEB UPLOAD MULTIPART ASPX source code marker,original_v1_0,True,current_sensor_77_pcap_differential
+9004001,http,LOCAL WEB RCE Shellshock bash function in HTTP header,original_v1_0,True,current_sensor_77_pcap_differential
+9004002,http,LOCAL WEB RCE Shellshock bash function in raw URI,original_v1_0,True,current_sensor_77_pcap_differential
+9004005,http,LOCAL WEB RCE Log4Shell nested lower JNDI evasion,original_v1_0,True,current_sensor_77_pcap_differential
+9004006,http,LOCAL WEB RCE Log4Shell JNDI request body,original_v1_0,True,current_sensor_77_pcap_differential
+9004007,http,LOCAL WEB LFI Apache CGI encoded dot traversal,original_v1_0,True,current_sensor_77_pcap_differential
+9004008,http,LOCAL WEB RCE Struts OGNL memberAccess URI,original_v1_0,True,current_sensor_77_pcap_differential
+9004009,http,LOCAL WEB RCE Struts OGNL memberAccess in request body,original_v1_0,True,current_sensor_77_pcap_differential
+9004016,http,LOCAL WEB RCE PHPUnit eval-stdin POST exploit entrypoint,original_v1_0,True,current_sensor_77_pcap_differential
+9004017,http,LOCAL WEB RCE Laravel ignition execute-solution POST,original_v1_0,True,current_sensor_77_pcap_differential
+9004018,http,LOCAL WEB RCE Spring Actuator shutdown POST,original_v1_0,True,current_sensor_77_pcap_differential
+9004019,http,LOCAL WEB RCE Spring Cloud Gateway route modification,original_v1_0,True,current_sensor_77_pcap_differential
+9004020,http,LOCAL WEB RCE Jenkins scriptText endpoint POST,original_v1_0,True,current_sensor_77_pcap_differential
+9004023,http,LOCAL WEB SSRF gopher scheme in URL parameter,original_v1_0,True,current_sensor_77_pcap_differential
+9004025,http,LOCAL WEB HTTP CRLF response splitting header injection,original_v1_0,True,current_sensor_77_pcap_differential
+9004026,http,LOCAL WEB EXPOSURE IIS web config file retrieval,original_v1_0,True,current_sensor_77_pcap_differential
+9004027,http,LOCAL WEB EXPOSURE Magento application env secrets,original_v1_0,True,current_sensor_77_pcap_differential
+9004031,http,LOCAL WEB SSRF AWS IMDS instance credentials URI,original_v1_0,True,current_sensor_77_pcap_differential
+9004032,http,LOCAL WEB EXPOSURE Kubernetes kubeconfig file request,original_v1_0,True,current_sensor_77_pcap_differential
+9004033,http,LOCAL WEB ADMIN Docker API remote container creation,original_v1_0,True,current_sensor_77_pcap_differential
+9004034,http,LOCAL WEB ADMIN Kubernetes API exec to pod endpoint,original_v1_0,True,current_sensor_77_pcap_differential
+9500001,http,AIPT ARTEX Enrichment Prober User-Agent (artex-enrich),original_v1_0,True,current_sensor_77_pcap_differential
+9500002,http,AIPT ARTEX Norma SDK WebFetch User-Agent (norma),original_v1_0,True,current_sensor_77_pcap_differential
+9500004,http,AIPT ARTEX api-recon Skill Script User-Agent (spa-api-recon),original_v1_0,True,current_sensor_77_pcap_differential
+9500008,http,AIPT Generic HTTP 404 Burst to Single Client (path enumeration),original_v1_0,True,current_sensor_77_pcap_differential
+9500110,http,AIPT Scanner Nmap Scripting Engine User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500207,http,AIPT CyberStrikeAI WebShell Manager User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500223,http,AIPT HexStrike-AI HTTP Framework User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500224,http,AIPT HexStrike-AI Exploit Helper User-Agent (Compatible Exploit),original_v1_0,True,current_sensor_77_pcap_differential
+9500291,http,AIPT Scanner nuclei Project User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500292,http,AIPT Scanner ffuf User-Agent (Fuzz Faster U Fool),original_v1_0,True,current_sensor_77_pcap_differential
+9500293,http,AIPT Scanner sqlmap User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500294,http,AIPT Scanner gobuster User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500295,http,AIPT Scanner Nikto User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500020,http,AIPT ARTEX Self-Update User-Agent (artex-selfupdate),original_v1_0,True,current_sensor_77_pcap_differential
+9500021,http,AIPT ARTEX Self-Update GitHub Release Check,original_v1_0,True,current_sensor_77_pcap_differential
+9500022,http,AIPT ARTEX Self-Update Release Asset Download,original_v1_0,True,current_sensor_77_pcap_differential
+9500045,http,AIPT ARTEX ScopeSentry MCP API Key Header (ssk_),original_v1_0,True,current_sensor_77_pcap_differential
+9500206,http,AIPT CyberStrikeAI Client User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500230,http,AIPT PentAGI Searcher User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9500241,http,AIPT Strix Sandbox Image Pull (usestrix/strix-sandbox),original_v1_0,True,current_sensor_77_pcap_differential
+9500253,http,AIPT Shannon Worker Image Pull (keygraph/shannon),original_v1_0,True,current_sensor_77_pcap_differential
+9500260,http,AIPT Villager PyPI Package Download,original_v1_0,True,current_sensor_77_pcap_differential
+9500050,http,AIPT ARTEX Control Plane Health Response (service artex),original_v1_0,True,current_sensor_77_pcap_differential
+9500053,http,AIPT ARTEX Web Console HTML Title,original_v1_0,True,current_sensor_77_pcap_differential
+9500055,http,AIPT ARTEX Console Session Cookie (artex_token),original_v1_0,True,current_sensor_77_pcap_differential
+9500057,http,AIPT ARTEX Console First-Run Initialisation (POST /api/auth/init),original_v1_0,True,current_sensor_77_pcap_differential
+9500058,http,"AIPT ARTEX Console API Use (exploration, intercept, sync routes)",original_v1_0,True,current_sensor_77_pcap_differential
+9500200,http,AIPT CyberStrikeAI Console HTML Title,original_v1_0,True,current_sensor_77_pcap_differential
+9500202,http,AIPT CyberStrikeAI OpenAPI Spec Title,original_v1_0,True,current_sensor_77_pcap_differential
+9500103,http,"AIPT CyberStrikeAI Console API Use (agent, HITL, WebShell, CnC routes)",original_v1_0,True,current_sensor_77_pcap_differential
+9500208,http,AIPT CyberStrikeAI MCP Server Auth Header (X-MCP-Token),original_v1_0,True,current_sensor_77_pcap_differential
+9500220,http,AIPT HexStrike-AI API Server Health Response,original_v1_0,True,current_sensor_77_pcap_differential
+9500225,http,AIPT HexStrike-AI MCP Server Name in JSON-RPC Response,original_v1_0,True,current_sensor_77_pcap_differential
+9500231,http,AIPT PentAGI Web UI HTML Title,original_v1_0,True,current_sensor_77_pcap_differential
+9500268,http,AIPT MetasploitMCP MCP tools/call of a Metasploit Tool,original_v1_0,True,current_sensor_77_pcap_differential
+9005001,http,ET WEB_SERVER Possible XXE SYSTEM ENTITY in POST BODY.,original_v1_0,True,current_sensor_77_pcap_differential
+9005002,http,ET EXPLOIT Possible SpringCore RCE/Spring4Shell Inbound (CVE-2022-22965),original_v1_0,True,current_sensor_77_pcap_differential
+9005003,http,ET EXPLOIT F5 BIG-IP iControl REST Authentication Bypass Attempt (CVE-2022-1388) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005004,http,ET ATTACK_RESPONSE Possible WebShell Upload Attempt via Directory Traversal M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005005,http,ET ATTACK_RESPONSE Possible WebShell Upload Attempt via Directory Traversal M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005006,http,ET EXPLOIT SpringShell/Spring4Shell RCE Attempt (CVE-2022-22965),original_v1_0,True,current_sensor_77_pcap_differential
+9005007,http,ET EXPLOIT F5 BIG-IP iControl REST Authentication Bypass Attempt (CVE-2022-1388) M3,original_v1_0,True,current_sensor_77_pcap_differential
+9005008,http,ET WEB_SPECIFIC_APPS Palo Alto GlobalProtect Session Cookie Command Injection Attempt (CVE-2024-3400),original_v1_0,True,current_sensor_77_pcap_differential
+9005009,http,ET WEB_SPECIFIC_APPS PHP-CGI OS Command Injection (soft hyphen) (CVE-2024-4577),original_v1_0,True,current_sensor_77_pcap_differential
+9005010,http,ET WEB_SERVER Next.js Middleware Authorization Bypass (CVE-2025-29927),original_v1_0,True,current_sensor_77_pcap_differential
+9005011,http,ET WEB_SPECIFIC_APPS Anthropic MCP Inspector Proxy Server-Sent Events (SSE) Unauthenticated Remote Code Execution (CVE-2025-49596),original_v1_0,True,current_sensor_77_pcap_differential
+9005012,http,ET WEB_SPECIFIC_APPS Palo Alto GlobalProtect Directory Traversal in Session Cookie (CVE-2024-3400),original_v1_0,True,current_sensor_77_pcap_differential
+9005013,http,ET WEB_SPECIFIC_APPS React Server Components React2Shell Unsafe Flight Protocol Property Access (CVE-2025-55182),original_v1_0,True,current_sensor_77_pcap_differential
+9005014,http,ET WEB_SPECIFIC_APPS Vite RSC React2Shell Unsafe Flight Protocol Property Access (CVE-2025-55182),original_v1_0,True,current_sensor_77_pcap_differential
+9005015,http,ET WEB_SPECIFIC_APPS Waku RSC React2Shell Unsafe Flight Protocol Property Access (CVE-2025-55182),original_v1_0,True,current_sensor_77_pcap_differential
+9005016,http,ET WEB_SPECIFIC_APPS nginx-ui MCP Module Authentication Bypass (CVE-2026-33032),original_v1_0,True,current_sensor_77_pcap_differential
+9005017,http,ET WEB_SPECIFIC_APPS Next.js WebSocket Upgrade Handler Server-Side Request Forgery (CVE-2026-44578),original_v1_0,False,not_reproduced_current_sensor
+9005018,http,ET WEB_SPECIFIC_APPS Atlassian MCP Server-side Request Forgery via HTTP Headers (CVE-2026-27826) M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005019,http,ET WEB_SPECIFIC_APPS Atlassian MCP Server-side Request Forgery via HTTP Headers (CVE-2026-27826) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005020,http,ET WEB_SPECIFIC_APPS Next.js Manifest Disclosure via Path Traversal,original_v1_0,True,current_sensor_77_pcap_differential
+9005021,http,ET WEB_SPECIFIC_APPS Next.js Unauthenticated Remote Code Execution (CVE-2026-75604),original_v1_0,True,current_sensor_77_pcap_differential
+9005022,tcp,ET MALWARE Metasploit Meterpreter stdapi_* Command Request,original_v1_0,True,current_sensor_77_pcap_differential
+9005023,tcp,ET MALWARE Metasploit Meterpreter core_channel_* Command Request,original_v1_0,True,current_sensor_77_pcap_differential
+9005024,tcp,ET MALWARE Metasploit Meterpreter stdapi_* Command Response,original_v1_0,True,current_sensor_77_pcap_differential
+9005025,tcp,ET MALWARE Metasploit Meterpreter core_channel_* Command Response,original_v1_0,True,current_sensor_77_pcap_differential
+9005026,http,ET SCAN NETWORK Outgoing Masscan detected,original_v1_0,True,current_sensor_77_pcap_differential
+9005027,smb,ET EXPLOIT Possible ETERNALBLUE MS17-010 Heap Spray,original_v1_0,True,current_sensor_77_pcap_differential
+9005028,tcp,ET EXPLOIT ETERNALBLUE Exploit M2 MS17-010,original_v1_0,True,current_sensor_77_pcap_differential
+9005029,smb,ET EXPLOIT Possible ETERNALBLUE Probe MS17-010 (MSF style),original_v1_0,True,current_sensor_77_pcap_differential
+9005030,http,ET SCAN Zmap User-Agent (Inbound),original_v1_0,True,current_sensor_77_pcap_differential
+9005031,http,ET MALWARE Cobalt Strike Beacon Activity (GET),original_v1_0,True,current_sensor_77_pcap_differential
+9005032,http,ET MALWARE Cobalt Strike Beacon Observed (MASB UA),original_v1_0,True,current_sensor_77_pcap_differential
+9005033,http,ET MALWARE Havoc Framework CnC Request,original_v1_0,True,current_sensor_77_pcap_differential
+9005034,http,ET MALWARE Havoc Framework CnC Response,original_v1_0,True,current_sensor_77_pcap_differential
+9005035,dcerpc,ET INFO Suspected Impacket WMIExec Activity,original_v1_0,True,current_sensor_77_pcap_differential
+9005036,http,ET MALWARE Havoc Framework Header in HTTP Response,original_v1_0,True,current_sensor_77_pcap_differential
+9005037,http,ET WEB_SPECIFIC_APPS Apache Struts2 uploadFileName Directory Traversal Attempt (CVE-2023-50164) M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005038,http,ET WEB_SPECIFIC_APPS Apache Struts2 uploadFileName Directory Traversal Attempt (CVE-2023-50164) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005039,http,ET WEB_SPECIFIC_APPS Apache Struts2 Possible uploadFileName Directory Traversal Attempt (CVE-2023-50164) - uploadFileName Parameter M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005040,http,ET WEB_SPECIFIC_APPS Apache Struts2 Possible uploadFileName Directory Traversal Attempt (CVE-2023-50164) - uploadFileName Parameter M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005041,http,ET EXPLOIT Atlassian Confluence RCE Attempt Observed (CVE-2023-22527) M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005042,http,ET EXPLOIT Jenkins Unauthenticated RCE Attempt Observed (CVE-2024-23897),original_v1_0,True,current_sensor_77_pcap_differential
+9005043,http,ET EXPLOIT Atlassian Confluence RCE Attempt Observed (CVE-2023-22527) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005044,http,ET WEB_SPECIFIC_APPS Fortinet Authentication Bypass via Node.js Websocket (CVE-2024-55591),original_v1_0,True,current_sensor_77_pcap_differential
+9005045,http,ET WEB_SPECIFIC_APPS Apache Tomcat Path Equivalence (CVE-2025-24813),original_v1_0,True,current_sensor_77_pcap_differential
+9005046,http,ET WEB_SERVER Cisco ASA/FTD Authenticated Buffer Overflow (CVE-2025-20333),original_v1_0,True,current_sensor_77_pcap_differential
+9005047,http,ET WEB_SERVER Citrix Netscaler Unauthenticated Command Injection via HTTP Header (CVE-2026-88771) M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005048,http,ET WEB_SERVER Citrix Netscaler Unauthenticated Command Injection via HTTP Header (CVE-2026-88771) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005049,http,ET WEB_SERVER Citrix Netscaler Unauthenticated Command Injection via HTTP Body (CVE-2026-88771) M1,original_v1_0,True,current_sensor_77_pcap_differential
+9005050,http,ET WEB_SERVER Citrix Netscaler Unauthenticated Command Injection via HTTP Body (CVE-2026-88771) M2,original_v1_0,True,current_sensor_77_pcap_differential
+9005051,http,ET WEB_SPECIFIC_APPS Atlassian Unauthenticated Arbitrary File Read (CVE-2026-21589),original_v1_0,True,current_sensor_77_pcap_differential
+9005052,http,ET EXPLOIT PHP php2shell Handler-mismatch Session Injection (CVE-2026-109619),original_v1_0,True,current_sensor_77_pcap_differential
+9005053,http,ET EXPLOIT PHP php2shell Nested Empty File Control OOM (CVE-2026-109618),original_v1_0,True,current_sensor_77_pcap_differential
+9005054,http,ET EXPLOIT PHP php2shell Code Injection in Filename (CVE-2026-109619),original_v1_0,True,current_sensor_77_pcap_differential
+9005055,http,ET EXPLOIT PHP php2shell Excessive Empty Multipart File Controls (CVE-2026-109618),original_v1_0,False,not_reproduced_current_sensor
+9005056,http,ET WEB_SPECIFIC_APPS Fortinet FortiSIEM gRPC phoenixSvc SendQueryResult query-id Header Path Traversal Attempt (CVE-2026-106173),original_v1_0,True,current_sensor_77_pcap_differential
+9006001,http,LOCAL WEB COMMAND URI reverse shell dev tcp redirection,original_v1_0,True,current_sensor_77_pcap_differential
+9006002,http,LOCAL WEB COMMAND POST reverse shell dev tcp redirection,original_v1_0,True,current_sensor_77_pcap_differential
+9006009,http,LOCAL WEB COMMAND URI newline separator followed by OS command,original_v1_0,True,current_sensor_77_pcap_differential
+9006071,http,LOCAL WEB COMMAND URI separator or substitution followed by id,original_v1_0,True,current_sensor_77_pcap_differential
+9006072,http,LOCAL WEB COMMAND URI raw shell command substitution,original_v1_0,True,current_sensor_77_pcap_differential
+9006010,http,LOCAL WEB WEBSHELL AntSword manager default User-Agent,original_v1_0,True,current_sensor_77_pcap_differential
+9006011,http,LOCAL WEB WEBSHELL China Chopper or AntSword PHP payload prefix,original_v1_0,True,current_sensor_77_pcap_differential
+9006064,dns,LOCAL OAST interactsh oast domain DNS lookup,original_v1_0,True,current_sensor_77_pcap_differential
+9006065,dns,LOCAL OAST interact.sh domain DNS lookup,original_v1_0,True,current_sensor_77_pcap_differential
+9006066,dns,LOCAL OAST Burp Collaborator oastify domain DNS lookup,original_v1_0,True,current_sensor_77_pcap_differential
+9006067,dns,LOCAL OAST Burp Collaborator legacy domain DNS lookup,original_v1_0,True,current_sensor_77_pcap_differential
+9006101,http,LOCAL JAVA4SHELL Invalid-length padded Basic auth token CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9006102,http,LOCAL JAVA4SHELL 64-char padded Base64 marker CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9006103,http,LOCAL JAVA4SHELL 128-char padded Base64 marker CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9006104,http,LOCAL JAVA4SHELL High-rate Basic auth anomaly heuristic CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9006105,http,LOCAL JAVA4SHELL JVM crash strings in HTTP response CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9006106,http,LOCAL JAVA4SHELL Invalid-length padded JWT payload CVE-2026-114938,java4shell_v1_1,True,current_sensor_10_java4shell_cases
+9876001,http,XDR AGENTIC ARTEX user agent artex-<role>/1.0,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876002,http,XDR AGENTIC ARTEX user agent ARTEX-worker,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876003,http,XDR AGENTIC ARTEX ScopeWeaver renamed build user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876004,http,XDR AGENTIC ARTEX X-ARTX-KEY request header,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876005,http,XDR AGENTIC ARTEX placeholder probe path,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876006,http,XDR AGENTIC ARTEX OAuth callback probe,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876007,http,XDR AGENTIC ARTEX probe marker in request,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876008,http,XDR AGENTIC ARTEX spa-api-recon user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876009,http,XDR AGENTIC ARTEX console page served,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876010,http,XDR AGENTIC ARTEX user agent canary,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876011,http,XDR AGENTIC CyberStrikeAI webshell manager user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876012,http,XDR AGENTIC CyberStrikeAI webshell OS probe in URI,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876013,http,XDR AGENTIC CyberStrikeAI webshell OS probe in request body,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876014,http,XDR AGENTIC CyberStrikeAI webshell OS probe answered by a Windows server,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876015,http,XDR AGENTIC CyberStrikeAI implant token header,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876016,http,XDR AGENTIC CyberStrikeAI implant session header with check-in,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876017,tcp,XDR AGENTIC CyberStrikeAI TCP implant magic CSB1,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876018,tls,XDR AGENTIC CyberStrikeAI console self-signed certificate,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876019,http,XDR AGENTIC CyberStrikeAI console user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876020,http,XDR AGENTIC HexStrike HTTP framework user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876021,http,XDR AGENTIC HexStrike browser agent user agent,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876022,http,XDR AGENTIC HexStrike XSS reflection probe,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876023,http,XDR AGENTIC HexStrike server health response,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876024,tls,XDR AGENTIC PentAGI console self-signed certificate (PentAGI CA),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876025,tls,XDR AGENTIC PentAGI console certificate subject O=PentAGI,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876026,http,XDR AGENTIC PentAGI Swagger UI served,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876027,http,XDR AGENTIC Cairn server OpenAPI description in response,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876028,http,XDR AGENTIC Cairn dispatcher intent heartbeat,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876029,dns,XDR AGENTIC VAPOR PANDA BLOODALCHEMY C2 domain lookup (ARTEX campaign),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876030,tls,XDR AGENTIC VAPOR PANDA BLOODALCHEMY C2 domain in TLS SNI (ARTEX campaign),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876101,http,XDR HUNT ARTEX-associated norma web client user-agent non-unique,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876102,http,XDR HUNT HexStrike shell command API request,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876103,http,XDR HUNT HexStrike tool API request,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876104,tcp,XDR HUNT Outbound connection to PentAGI worker port range 28000-29999,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876105,dns,XDR HUNT PentAGI update service lookup,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876106,tls,XDR HUNT PentAGI update service in TLS SNI,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876107,http,"XDR HUNT Claude Code WebFetch user agent (AI agent page reader, Cairn workers, also legitimate use)",agentic_v1_2,True,current_sensor_49_agentic_cases
+9876108,http,"XDR HUNT Qwen Code user agent (AI agent page reader or search, also legitimate use)",agentic_v1_2,True,current_sensor_49_agentic_cases
+9876109,dns,XDR HUNT Out-of-band testing domain lookup (interact.sh),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876110,dns,XDR HUNT Out-of-band testing domain lookup (oast.fun),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876111,dns,XDR HUNT Out-of-band testing domain lookup (burpcollaborator.net),agentic_v1_2,True,current_sensor_49_agentic_cases
+9876112,http,XDR HUNT WSUS admin or sync web service requested from external address,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876113,http,XDR HUNT Cairn anti-refusal task prompt in model request,agentic_v1_2,True,current_sensor_49_agentic_cases
+9876114,dns,"XDR HUNT ARTEX toolkit payload host lookup (vietnam852.com, zhzy999.net, jiancai008.com)",agentic_v1_2,True,current_sensor_49_agentic_cases
