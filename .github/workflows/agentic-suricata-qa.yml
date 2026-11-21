@@ -1,4 +1,4 @@
-name: Suricata Agentic Offline QA
+name: Suricata 383-rule Agentic Offline QA
 on:
   pull_request:
     paths:
@@ -24,7 +24,8 @@ jobs:
           sudo apt-get update -q
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
           suricata --build-info | head -30
-      - name: Validate full 383-rule engine load and inert PCAPs
+          python3 validation/java4shell-20261118/verify_package.py
+      - name: Validate 383-rule engine and all 44 synthetic SID fixtures
         run: python3 validation/agentic-20261121/run_offline.py
 
   suricata-8-0-1-compatibility:
