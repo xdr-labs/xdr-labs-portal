@@ -45,3 +45,7 @@ python3 validation/qa-suricata-last-two/run_offline.py --run \
 **Interpretation:** a PASS for risk witnesses means the *dangerous match can be reproduced*, not that operating deployment is approved. All 383 remain unified and `alert`-only; no automatic blocking. Publication and Sensor deployment are out of scope for this audit.
 
 **Audit acceptance:** explicit review required for low-specificity indicators, overlap, existing two SIDs and live Modular Sensor + DP E2E. This audit provides deterministic evidence and does not imply `release_ready=true`.
+
+## Engine security note (not caused by the signatures)
+
+The laboratory Sensor-compatible Suricata **8.0.1** is within the affected range for OISF's [GHSA-cfq5-g2v5-6652](https://github.com/OISF/suricata/security/advisories/GHSA-cfq5-g2v5-6652), a high-severity HTTP header parsing DoS. OISF fixed it in **8.0.5** (or 7.0.16). Suricata **8.0.8** is the published stable version as of November 22, 2026 (October 29 release); the CI therefore also performs signature, individual new SID, normal/risk-witness and old-legacy observation tests on 8.0.8. This is **not an instruction to upgrade a Stellar Cyber-managed Sensor independently**: vendor-supported component upgrades require their own compatibility and maintenance approval.
