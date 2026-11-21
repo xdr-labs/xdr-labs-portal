@@ -76,6 +76,7 @@ def verify():
     assert [int(x["sid"]) for x in historical] == [x[0] for x in old]
     assert [int(x["new_sid"]) for x in source] == [x[0] for x in allrules[339:]]
     assert {int(x["sid"]) for x in historical if x["status"] == "NOT_REPRODUCED"} == KNOWN_UNREPRODUCED
+    historical_ids = {int(x["sid"]) for x in historical}
 
     evidence = collections.Counter()
     kinds = collections.Counter()
@@ -83,7 +84,7 @@ def verify():
     for (sid, proto, msg, line), row in zip(allrules, inventory):
         assert row["signature_message"] == msg and row["protocol"] == proto, f"{sid}: inventory mismatch"
         ev = row["per_sid_evidence"]
-        expected = ("historical_sensor_individual_alert" if sid < 9006101 and sid not in KNOWN_UNREPRODUCED
+        expected = ("historical_sensor_individual_alert" if sid in historical_ids and sid not in KNOWN_UNREPRODUCED
                     else "historical_not_reproduced" if sid in KNOWN_UNREPRODUCED
                     else "historical_modular_sensor_offline_java_fixture" if 9006101 <= sid <= 9006106
                     else "isolated_suricata_7_8_individual_synthetic_fixture")
