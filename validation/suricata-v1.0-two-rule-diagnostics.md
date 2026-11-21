@@ -41,3 +41,58 @@ A 100-session compact multipart isolated test produced 100 candidate alerts vers
 Five negative-lookahead variants of the 4096-byte repeated filename pattern failed Suricata PCRE2 compilation with "regular expression is too large". Two DEFINE/subroutine-based PCRE variants compiled but did not alert on either compact or wide-gap 100/105-field fixtures. This further supports not publishing an unproven rewrite. Sensor-side QA artifacts are under `/tmp/modular-suricata-333-validation-20261108/risk-controls-20261109/` (`php-tempered-results.json`, `php-subroutine-test-results.json`).
 
 The production sensor config and existing custom rules were never modified.
+
+## Latest 24-case QA candidate (November 9, 2026 KST)
+
+The original 333-rule v1.0, live modular configuration and ETPRO signatures
+remain unchanged. The preceding 9-case/13-case and 100-session resource
+figures are historical results for prior experimental candidates, not
+claims for this later structured MIME implementation.
+
+- The current 9005017 **test-only** rule uses a raw absolute URI, GET method,
+  an anchored HTTP/HTTPS regex and single/double percent-encoded slash support.
+  Two normal-shaped WebSocket forward-proxy controls still produce Alerts;
+  this is a **known non-specific/false-positive release risk**.
+- The current 9005055 **test-only** rule counts at least 100 structurally
+  formatted empty-filename MIME parts with bounded per-part header and
+  single-line body matching. Both original wide-header adversarial fixtures
+  now alert, along with normal compact forms. A valid 105-part multipart
+  request with multiline file content does **not** alert, demonstrating a
+  **known incomplete-coverage/false-negative release risk**.
+- All 24 SHA256-verified offline PCAPs passed Suricata 8.0.1 actual
+  per-SID alert expectations with temporary 333-rule copy and only
+  those two SID lines changed. The runner returns release_ready=false,
+  release_status=BLOCKED_BY_KNOWN_FP_AND_FN_RISKS.
+- The exact sensor runner evidence is in
+  validation/qa-suricata-last-two/suricata-8.0.1-results.json
+  (SHA256 a1d259a3ec14e8edfd440950df6f6f4c656fd243e41c2ee092dd2a86b959cb11).
+
+Neither test candidate is ready for general distribution or live import.
+**331/333 original real sensor Alerts** remains the supported public metric;
+no QA-only candidate Alert is included.
+
+## QA security-gate hardening and structured-rule measurement
+
+The QA test runner now evaluates **behavioral-regression success
+separately** from safe release acceptance, with required benign proxy
+and valid multiline-form witnesses. On modular / Suricata 8.0.1:
+24/24 expected offline rule matches PASS, **security acceptance BLOCKED**
+with two potential false-positive proxy alerts and one multipart
+false-negative witness (see
+validation/qa-suricata-last-two/suricata-8.0.1-security-acceptance.json).
+The Python stdlib policy contract has 5 passing unit tests.
+
+For the same inert 100-session compact multipart PCAP, the original SID
+9005055 generated zero alerts while the structured-MIME QA candidate
+generated 100. CPU user was 0.70s/0.69s and RSS 88776/89388 KB for
+original/candidate respectively, in a single isolated replay. See
+validation/qa-suricata-last-two/suricata-8.0.1-structured-stress100.json.
+These figures do **not** establish sensor throughput or deployed safety.
+
+The operating sensor uses Suricata 8.0.1; OISF identifies its separate
+HTTP Content-Disposition parsing DoS vulnerability CVE-2026-45759 as
+patched in 8.0.5:
+https://github.com/OISF/suricata/security/advisories/GHSA-cfq5-g2v5-6652
+A runtime upgrade would require separate maintenance authorization;
+none was attempted during QA. Original v1.0 release and 331/333 live
+sensor validation remain unchanged.

@@ -1,0 +1,19 @@
+{
+  "trial_count": 1,
+  "source": "same inert 100-session PCAP",
+  "caveat": "Includes process startup; not sustained throughput, original vs QA-only candidate",
+  "results": {
+    "original": {
+      "php_sid_alert_count": 0,
+      "event_count": 201,
+      "stats": "user_sec=0.70 sys_sec=0.06 elapsed_sec=0.65 max_rss_kb=88776",
+      "eve_sha256": "12cf2c1fb473d4c69f09915ffff27300ba065369b386a1ea5322cffdd28b5a05"
+    },
+    "candidate": {
+      "php_sid_alert_count": 100,
+      "event_count": 301,
+      "stats": "user_sec=0.69 sys_sec=0.09 elapsed_sec=0.65 max_rss_kb=89388",
+      "eve_sha256": "640e80623cdf1f0a0b7e554d8f8ab60c52bd9ba383accc6405b84ffc555278df"
+    }
+  }
+}
