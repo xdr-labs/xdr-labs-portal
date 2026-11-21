@@ -4,7 +4,7 @@ sidebarTitle: "AI-Assisted Attack Detection Rules"
 description: "Suricata v1.2 for Stellar Cyber 7.0: 383 unified alert-only rules including 44 agentic attack detections."
 ---
 
-**Suricata v1.2 (November 21, 2026): one integrated 383-rule set for Stellar Cyber Open XDR 7.0.** All **339 prior v1.1 rules are unchanged**, with **44 new agentic attack and extended-hunting signatures merged into the same .rules file**. There is no separate optional supplement.
+**Suricata v1.2 (November 21, 2026): 383 alert-only detection rules for Stellar Cyber Open XDR 7.0.** This release preserves all **339 prior v1.1 rules** and adds **44 signatures covering agentic offensive frameworks and related network activity**.
 
 <CardGroup cols={2}>
   <Card title="Download v1.2 — complete 383-rule ZIP" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383.zip">
@@ -38,12 +38,12 @@ description: "Suricata v1.2 for Stellar Cyber 7.0: 383 unified alert-only rules 
 | Existing product exploits & malware | 56 | CVE patterns, Cobalt Strike, Havoc, Metasploit |
 | Existing OAST DNS | 4 | Interactsh, Burp Collaborator |
 | Existing Java4Shell v1.1 indicators | 6 | Authentication anomalies, malformed Base64 and JVM crash patterns |
-| **New agentic attack & extended hunting (v1.2)** | **44** | ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn |
+| **New agentic frameworks and related indicators (v1.2)** | **44** | ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn |
 | **Total** | **383** | **One complete .rules file** |
 
 ## New agentic framework rules (44)
 
-The **14 previously optional hunting signatures are now included and enabled as alert-only signatures**. They may also detect legitimate AI developer tools, OAST tests, or routine management traffic. They are not a verified production false-positive baseline.
+The new rules cover identifiable framework traffic and broader network indicators. Some User-Agent, OAST and administrative API patterns may also occur during authorized activity; review their context and false positives before production deployment.
 
 | Framework / detection | New rules | SID ranges and examples |
 | --- | ---: | --- |
@@ -52,7 +52,7 @@ The **14 previously optional hunting signatures are now included and enabled as 
 | HexStrike | 6 | \`9876020–9876023\`, \`9876102–9876103\`: framework/BrowserAgent, XSS test probe, API commands and tool calls |
 | PentAGI | 6 | \`9876024–9876026\`, \`9876104–9876106\`: TLS certificates, Swagger, worker ports, update service |
 | Cairn | 3 | \`9876027–9876028\`, \`9876113\`: OpenAPI description, heartbeat, request-body indicator |
-| General AI-agent and hunting activity | 6 | \`9876107–9876112\`: Claude Code/QwenCode UA, OAST DNS and WSUS paths |
+| Related tools and network activity | 6 | \`9876107–9876112\`: Claude Code/QwenCode UA, OAST DNS and WSUS paths |
 | **Added** | **44** | \`9876001–9876030\` and \`9876101–9876114\` |
 
 [View all 383 signatures, one SID per CSV row](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383-catalog.csv). A signature match is **not proof of an AI-directed malicious attack**; correlate with Identity, Endpoint, Cloud and Network evidence. Velocity and multi-step identity correlation require XDR/ATH, not standalone Suricata signatures.
@@ -78,7 +78,7 @@ The **14 previously optional hunting signatures are now included and enabled as 
 2. Download the **full 383-rule file** from the link above, check its SHA-256, and merge any site-local rules as necessary.
 3. Use \`System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules\` on a **lab Sensor**.
 4. Select the merged file and use \`Upload and Deploy\`, then check \`Sensor Profiles → IDS → Signature → Selected Rules\`, \`eve.json\` and DP Alerts.
-5. Baseline normal traffic and tune the 14 broad hunting rules **before production**.
+5. Baseline normal traffic and tune lower-specificity indicators **before production**.
 
 Unlike the previous 339, some new signatures use \`$HOME_NET\`, \`$EXTERNAL_NET\`, \`$HTTP_SERVERS\` or specific destination ports. Confirm IDS Networks settings and protected public IP ranges. HTTPS headers/bodies require plaintext or decrypted capture; QUIC, DoH and ECH may reduce visibility.
 
