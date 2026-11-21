@@ -27,7 +27,7 @@ def verify():
         assert z.read(RULE)==data
         assert z.read(CAT)==(D/CAT).read_bytes()
         assert z.read("source-map.csv")==(ROOT/"validation/agentic-20261121/source-map.csv").read_bytes()
-        assert z.read("SHA256SUMS-v1.2.txt")==f"{SHA}  {RULE}\\n".encode()
+        assert z.read("SHA256SUMS-v1.2.txt")==f"{SHA}  {RULE}\n".encode()
         assert {"README-v1.2-KO.txt","README-v1.2-EN.txt","LICENSE-THREATDEFENCE.txt"}.issubset(z.namelist())
     for f in ("products/ai-assisted-attack-detection-rules.mdx",
               "ko/products/ai-assisted-attack-detection-rules.mdx"):
