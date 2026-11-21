@@ -76,7 +76,7 @@ scenarios:
   timeout_seconds: 30
   agent_default: true
   scope: static
-  name: Agentic 369 RC immutable baseline and SID validation
+  name: Agentic 383 unified RC baseline and SID validation
   level: static
   domains:
   - core
@@ -87,5 +87,5 @@ scenarios:
   - linux
   command: python3 validation/agentic-20261121/run_offline.py --static-only
   invariants:
-  - Existing 339 bytes retained and 30+14 SIDs collision-free
+  - Original 339 bytes retained and all 44 new SID signatures merged in one file
   release_gate: true

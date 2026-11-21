@@ -2,7 +2,7 @@ name: Suricata Agentic Offline QA
 on:
   pull_request:
     paths:
-      - 'downloads/local-web-attack-ai-v1.2-369-rc1.rules'
+      - 'downloads/local-web-attack-ai-v1.2-383-rc1.rules'
       - 'validation/agentic-20261121/**'
       - '.github/workflows/agentic-suricata-qa.yml'
       - '.engineering/tests.yaml'
@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update -q
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
           suricata --build-info | head -30
-      - name: Validate full 369-rule engine load and inert PCAPs
+      - name: Validate full 383-rule engine load and inert PCAPs
         run: python3 validation/agentic-20261121/run_offline.py
 
   suricata-8-0-1-compatibility:
@@ -32,10 +32,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Check 369 signature syntax on Sensor-equivalent Suricata 8.0.1
+      - name: Check 383 signature syntax on Sensor-equivalent Suricata 8.0.1
         run: |
           docker pull jasonish/suricata:8.0.1
           docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
             jasonish/suricata:8.0.1 \
             -T -c /etc/suricata/suricata.yaml \
-            -S /repo/downloads/local-web-attack-ai-v1.2-369-rc1.rules
+            -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules

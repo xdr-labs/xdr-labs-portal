@@ -1,42 +1,47 @@
 #!/usr/bin/env python3
-"""Static additive-integrity checks (not a replacement for Suricata -T or PCAP QA)."""
-import re
-import hashlib
+"""Static policy and preservation gate for combined 383-rule Suricata candidate."""
 from pathlib import Path
+import csv, hashlib, re
 
-ROOT=Path(__file__).resolve().parents[2]
-BASE=ROOT/'downloads/local-web-attack-ai-v1.1-339.rules'
-CAND=ROOT/'downloads/local-web-attack-ai-v1.2-369-rc1.rules'
-HUNT=ROOT/'validation/agentic-20261121/agentic-hunting-optional-14.rules'
-def rules(text):
-    return [x for x in text.splitlines() if x.startswith('alert ')]
-def sids(lines):
-    result=[]
-    for x in lines:
-        m=re.search(r'\bsid:(\d+);',x)
-        assert m, f'missing SID: {x[:90]}'
-        assert x.endswith(')'), f'incomplete rule {m.group(1)}'
-        assert x.startswith('alert '), 'unexpected blocking action'
-        result.append(int(m.group(1)))
-    return result
+ROOT = Path(__file__).resolve().parents[2]
+BASE = ROOT / "downloads/local-web-attack-ai-v1.1-339.rules"
+CAND = ROOT / "downloads/local-web-attack-ai-v1.2-383-rc1.rules"
+MAP = ROOT / "validation/agentic-20261121/source-map.csv"
+BASELINE_SHA = "2478ffd6b3dbdfbb527695f07e00e1a106a554d8bb898a0f9584bb3845b07483"
+
+def parse(data):
+    lines = [line for line in data.decode().splitlines() if line.startswith("alert ")]
+    ids = []
+    for line in lines:
+        match = re.search(r"\bsid:(\d+);", line)
+        assert match and line.endswith(")"), f"malformed rule: {line[:120]}"
+        assert line.startswith("alert "), "blocking rule action"
+        proto = line.split()[1]
+        if proto == "http": assert "http." in line, "HTTP without sticky buffer"
+        if proto == "tls": assert "tls." in line, "TLS without sticky buffer"
+        if proto == "dns": assert "dns.query" in line, "DNS without query buffer"
+        ids.append(int(match.group(1)))
+    return lines, ids
+
 def verify():
-    base=BASE.read_bytes()
-    cand=CAND.read_bytes()
-    assert cand.startswith(base), 'v1.1 bytes were changed'
-    old=sids(rules(base.decode()))
-    fresh=sids(rules(cand[len(base):].decode()))
-    hunt=sids(rules(HUNT.read_text()))
-    assert len(old)==339 and len(set(old))==339
-    assert fresh==list(range(9876001,9876031))
-    assert hunt==list(range(9876101,9876115))
-    assert len(set(old+fresh+hunt))==383, 'SID collision'
-    assert len(rules(cand.decode()))==369
-    for line in rules(cand[len(base):].decode())+rules(HUNT.read_text()):
-        proto=line.split()[1]
-        if proto=='http': assert 'http.' in line
-        if proto=='tls': assert 'tls.' in line
-        if proto=='dns': assert 'dns.query' in line
-    print('STATIC_PASS: 339 identical + 30 default + 14 isolated optional; 383 unique SIDs')
-    print('BASE_SHA256',hashlib.sha256(base).hexdigest())
-    print('RC_SHA256',hashlib.sha256(cand).hexdigest())
-if __name__=='__main__': verify()
+    base, cand = BASE.read_bytes(), CAND.read_bytes()
+    assert hashlib.sha256(base).hexdigest() == BASELINE_SHA, "published baseline modified"
+    assert cand.startswith(base), "first 339 signatures must be byte-identical"
+    base_lines, base_ids = parse(base)
+    all_lines, all_ids = parse(cand)
+    assert len(base_lines) == len(set(base_ids)) == 339
+    assert len(all_lines) == len(set(all_ids)) == 383, "383 count or SID collision"
+    delta_ids = all_ids[len(base_ids):]
+    assert delta_ids == list(range(9876001, 9876031)) + list(range(9876101, 9876115)), "missing or reordered new SID"
+    with MAP.open(newline="") as stream:
+        mapping = list(csv.DictReader(stream))
+    assert len(mapping) == 44
+    assert [int(m["new_sid"]) for m in mapping] == delta_ids, "source-map inconsistent"
+    assert all(m["group"] == "integrated" for m in mapping)
+    print("STATIC_PASS 339 byte-preserved + 44 merged + 383 unique alert SIDs")
+    print("BASE_SHA256", hashlib.sha256(base).hexdigest())
+    print("CANDIDATE_SHA256", hashlib.sha256(cand).hexdigest())
+    return all_ids
+
+if __name__ == "__main__":
+    verify()

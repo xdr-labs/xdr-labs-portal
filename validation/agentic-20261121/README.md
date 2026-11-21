@@ -1,22 +1,25 @@
-# Stellar Cyber Agentic Attack QA Candidate — 2026-11-21
+# Stellar Cyber Agentic Attack 383-rule combined candidate — 2026-11-21
 
-- **Candidate**: `downloads/local-web-attack-ai-v1.2-369-rc1.rules` = exact v1.1 339 rules + 30 new agentic framework alerts.
-- **Optional**: `agentic-hunting-optional-14.rules` = additional 14 low-specificity hunt rules, intentionally **not merged**.
-- **Sources**: [ThreatDefence agentic-attack-detections](https://github.com/ThreatDefence/agentic-attack-detections), MIT license; source-to-local SID map in `source-map.csv`. Detection design context: Elastic Security Labs.
-- **Scope**: ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn, related campaign DNS/TLS.
-- **Safety**: no blocking actions, only inert HTTP strings in synthetic PCAPs.
-- **Behavioral correlation is not covered**: Elastic's 60-second 3-tool/20-request logic needs Stellar Cyber ATH/multi-event aggregation, not these packet signatures.
-- **Previous QA is preserved**: 331/333 historical sensor alerts confirmed, 2 original source SIDs unresolved; Java4Shell +6 offline verification separate. Never report these as newly reverified.
+## Unified rule file
+- `downloads/local-web-attack-ai-v1.2-383-rc1.rules`: **339 existing rules, unchanged byte-for-byte; 44 new agentic rules in the same .rules file**.
+- New SIDs `9876001-9876030` (30 framework-specific) and `9876101-9876114` (14 broader / hunting indicators). All 44 are enabled in this **QA candidate**.
+- License: upstream ThreatDefence MIT. This repo also retains its existing AIPT and ET Open notices. `source-map.csv` documents the original SID mapping.
+- We did not convert Elastic's multi-event velocity/correlation analytics into a packet signature. Those require Stellar Cyber ATH.
+- This commit replaces the old split 369+14 candidate with one unified 383 signature file. No production import, release, or website downloads were changed.
 
-## Offline tests
-```sh
+## Verification
+```bash
 python3 validation/agentic-20261121/run_offline.py --static-only
 python3 validation/agentic-20261121/run_offline.py
 ```
-The second command needs the Suricata executable and default Suricata configuration. CI uses an isolated Ubuntu runner; actual Modular Sensor Suricata 8.0.1 and Stellar Cyber Alert/DP UI remain unverified.
+Additional engine tests are performed by CI for Suricata 7.0.3 and containerized 8.0.1. Synthetic PCAP coverage is not proof of production precision. Previous 331/333 source signature live-sensor observations and two unresolved SIDs remain unchanged.
 
-## Deployment guardrails
-Do **NOT** publish or deploy this RC automatically. Stellar Cyber *Import Security Rules* replaces the **whole** `custom_defined.rules` content. Back up any site-local additions and merge prior rules. Test specific Suricata runtime and validate HTTP cleartext/decryption visibility, SNI/ECH limitations, historical IOC false positives, and 14 optional rule FP baseline before enablement.
+## Risk and applicability
+- The 14 newly included hunting signatures can flag legitimate developer agents, WebFetch, security scanners, OAST services, PentAGI updates and administrative endpoints.
+- Distinguish alert-generation from automated blocking: all 383 rules use `alert`, no `drop` or `reject`.
+- HTTPS bodies and HTTP headers require decrypted traffic. DNS over HTTPS and ECH also reduce visibility.
+- On Stellar Cyber, `Import Security Rules` **overwrites the whole** `custom_defined.rules`. A Sensor-specific backup/merge and lab confirmation are mandatory.
+- User's request to merge all 44 into one file is complete at RC level; production publication or installation remains separate.
 
 ## Attribution / license
 MIT License

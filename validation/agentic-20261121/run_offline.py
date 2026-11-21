@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Offline additive 369-rule engine syntax and harmless PCAP replays."""
+"""Offline additive 383-rule engine syntax and harmless PCAP replays."""
 import argparse, json, subprocess, tempfile
 from pathlib import Path
 from verify_candidate import verify
 from generate_inert_pcap import CASES,generate
 
 ROOT=Path(__file__).resolve().parents[2]
-RULES=ROOT/'downloads/local-web-attack-ai-v1.2-369-rc1.rules'
+RULES=ROOT/'downloads/local-web-attack-ai-v1.2-383-rc1.rules'
 p=argparse.ArgumentParser()
 p.add_argument('--static-only',action='store_true')
 p.add_argument('--config',default='/etc/suricata/suricata.yaml')
@@ -34,7 +34,7 @@ with tempfile.TemporaryDirectory(prefix='agentic-qa-') as tmp:
             e=json.loads(line)
             if e.get('event_type')=='alert':
                 sid=int(e['alert']['signature_id'])
-                if 9876001<=sid<=9876030: seen.add(sid)
+                if 9876001<=sid<=9876030 or 9876101<=sid<=9876114: seen.add(sid)
         assert expected.issubset(seen),f'{name}: missing {expected-seen}; observed {seen}'
         if not expected: assert not seen,f'{name}: benign fixture triggered {seen}'
         out[name]=sorted(seen)
