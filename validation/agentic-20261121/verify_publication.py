@@ -21,10 +21,18 @@ def verify():
     assert [int(x["sid"]) for x in catalog]==sids
     assert sum(x["group"]=="v1.1 preserved" for x in catalog)==339
     assert sum(x["group"]!="v1.1 preserved" for x in catalog)==44
+    import zipfile
+    with zipfile.ZipFile(D/"local-web-attack-ai-v1.2-383.zip") as z:
+        assert z.testzip() is None
+        assert z.read(RULE)==data
+        assert z.read(CAT)==(D/CAT).read_bytes()
+        assert z.read("source-map.csv")==(ROOT/"validation/agentic-20261121/source-map.csv").read_bytes()
+        assert z.read("SHA256SUMS-v1.2.txt")==f"{SHA}  {RULE}\\n".encode()
+        assert {"README-v1.2-KO.txt","README-v1.2-EN.txt","LICENSE-THREATDEFENCE.txt"}.issubset(z.namelist())
     for f in ("products/ai-assisted-attack-detection-rules.mdx",
               "ko/products/ai-assisted-attack-detection-rules.mdx"):
         src=(ROOT/f).read_text()
-        for item in (RULE,CAT,SHA,"49/49","383","44","9005017","9005055"):
+        for item in (RULE,CAT,"local-web-attack-ai-v1.2-383.zip",SHA,"49/49","383","44","9005017","9005055"):
             assert item in src, (f,item)
     print("PUBLICATION_PASS 383 rules, catalog and EN/KR pages; original 339 bytes preserved")
 if __name__=="__main__": verify()
