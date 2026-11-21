@@ -47,6 +47,8 @@ jobs:
             --report /tmp/suricata-383-audit/legacy-two-test-only-13.json
       - name: Replay 20 legitimate/near-miss traffic risk scenarios against actual 383 rules
         run: python3 validation/suricata-audit-20261122/risk_witnesses.py --root /tmp/suricata-383-audit/risk7
+      - name: Observe old unreproduced 9005017 and 9005055 against UNMODIFIED 383 candidate
+        run: python3 validation/suricata-audit-20261122/replay_original_legacy.py --root /tmp/suricata-383-audit/legacy-original7
       - name: Publish machine-readable 383-SID audit evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,6 +59,7 @@ jobs:
             /tmp/suricata-383-audit/inventory-summary.json
             /tmp/suricata-383-audit/legacy-two-test-only-13.json
             /tmp/suricata-383-audit/risk7/risk-replay-report.json
+            /tmp/suricata-383-audit/legacy-original7/legacy-current-observations.json
           if-no-files-found: warn
 
   suricata-8-0-1-compatibility:
@@ -116,6 +119,25 @@ jobs:
             '
           python3 validation/suricata-audit-20261122/risk_witnesses.py --mode verify \
             --root /tmp/suricata-383-audit-risk8 --version-name "Suricata 8.0.1 Docker"
+      - name: Observe unchanged historical SIDs using all 13 PCAPs on Suricata 8.0.1
+        run: |
+          mkdir -p /tmp/suricata-383-legacy8/logs
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/suricata-383-legacy8:/qa" \
+            jasonish/suricata:8.0.1 -c '
+              set -eu
+              for p in /repo/validation/qa-suricata-last-two/*.pcap; do
+                n="${p##*/}"
+                mkdir -p "/qa/logs/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/logs/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/suricata-audit-20261122/replay_original_legacy.py --mode verify \
+            --root /tmp/suricata-383-legacy8 --version-name "Suricata 8.0.1 Docker"
       - name: Preserve Suricata 8 risk replay evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -123,4 +145,5 @@ jobs:
           name: suricata-383-risk8
           path: |
             /tmp/suricata-383-audit-risk8/risk-replay-report.json
+            /tmp/suricata-383-legacy8/legacy-current-observations.json
           if-no-files-found: warn
