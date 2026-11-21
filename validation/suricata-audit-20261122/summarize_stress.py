@@ -34,7 +34,7 @@ report = {
     "sid_alert_counts": dict(sorted(alerts.items())),
     "legacy_9005055_alerts": alerts[9005055],
     "source_rules_file": "downloads/local-web-attack-ai-v1.2-383-rc1.rules",
-    "interpretation": "Offline engine completed. Process CPU/RSS includes startup, not an EPS benchmark or production FP/FN result.",
+    "interpretation": "Offline engine completed. Wall time and RSS refer to the host Docker client/wrapper, NOT the Suricata process; not an EPS/RSS benchmark or production FP/FN result.",
     "release_ready": False,
 }
 a.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")

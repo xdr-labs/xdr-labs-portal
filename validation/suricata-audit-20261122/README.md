@@ -48,3 +48,5 @@ python3 validation/suricata-audit-20261122/replay_original_legacy.py
 ## Engine security note (not caused by the signatures)
 
 The laboratory Sensor-compatible Suricata **8.0.1** is within the affected range for OISF's [GHSA-cfq5-g2v5-6652](https://github.com/OISF/suricata/security/advisories/GHSA-cfq5-g2v5-6652), a high-severity HTTP header parsing DoS. OISF fixed it in **8.0.5** (or 7.0.16). Suricata **8.0.8** is the published stable version as of November 22, 2026 (October 29 release); the CI therefore also performs signature, individual new SID, normal/risk-witness and old-legacy observation tests on 8.0.8. This is **not an instruction to upgrade a Stellar Cyber-managed Sensor independently**: vendor-supported component upgrades require their own compatibility and maintenance approval.
+
+**100-session stress measurement note:** CI wall-time and RSS counters describe the host Docker invocation/client. They are not measurements of the containerized Suricata engine's peak resident set or sustainable EPS; only successful bounded PCAP completion is asserted.

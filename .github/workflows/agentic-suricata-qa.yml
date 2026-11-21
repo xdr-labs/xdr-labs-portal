@@ -222,7 +222,7 @@ jobs:
           python3 validation/qa-suricata-last-two/generate_risk_fixtures.py \
             --stress 100 --output-dir /tmp/suricata-383-stress808
           mkdir -p /tmp/suricata-383-stress808/log
-          /usr/bin/time -f 'BENCH_PROCESS_WALL=%e MAX_RSS_KB=%M' \
+          /usr/bin/time -f 'DOCKER_INVOCATION_WALL=%e DOCKER_CLIENT_RSS_KB=%M' \
             timeout 60s docker run --rm --entrypoint suricata \
               -v "$PWD:/repo:ro" -v "/tmp/suricata-383-stress808:/qa" \
               jasonish/suricata:8.0.8 \
