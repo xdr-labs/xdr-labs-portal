@@ -226,6 +226,24 @@ jobs:
             '
           python3 validation/suricata-audit-20261122/replay_original_legacy.py --mode verify \
             --root /tmp/suricata-383-legacy808 --version-name "Suricata 8.0.8 Docker"
+      - name: Bounded 100-session multipart stress replay on patched Suricata 8.0.8
+        run: |
+          python3 validation/qa-suricata-last-two/generate_risk_fixtures.py \
+            --stress 100 --output-dir /tmp/suricata-383-stress808
+          mkdir -p /tmp/suricata-383-stress808/log
+          /usr/bin/time -f 'BENCH_PROCESS_WALL=%e MAX_RSS_KB=%M' \
+            timeout 60s docker run --rm --entrypoint suricata \
+              -v "$PWD:/repo:ro" -v "/tmp/suricata-383-stress808:/qa" \
+              jasonish/suricata:8.0.8 \
+              -r /qa/multipart-stress-generated.pcap --runmode=single \
+              -c /etc/suricata/suricata.yaml \
+              -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+              -l /qa/log -k none
+          python3 validation/suricata-audit-20261122/summarize_stress.py \
+            --pcap /tmp/suricata-383-stress808/multipart-stress-generated.pcap \
+            --eve /tmp/suricata-383-stress808/log/eve.json \
+            --output /tmp/suricata-383-stress808/result.json \
+            --version Suricata-8.0.8
       - name: Preserve Suricata 8.0.8 risk replay evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -234,4 +252,5 @@ jobs:
           path: |
             /tmp/suricata-383-audit-risk808/risk-replay-report.json
             /tmp/suricata-383-legacy808/legacy-current-observations.json
+            /tmp/suricata-383-stress808/result.json
           if-no-files-found: warn
