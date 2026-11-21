@@ -4,7 +4,7 @@ sidebarTitle: "AI 지원 공격 탐지 룰"
 description: "Stellar Cyber Open XDR 7.0용 Suricata v1.2: 기존 339개와 신규 Agentic Attack 44개를 통합한 383개 탐지 룰."
 ---
 
-**Stellar Cyber Open XDR 7.0용 Suricata v1.2 (2026년 11월 21일) — 383개 룰을 하나의 파일로 통합했습니다.** 기존 v1.1의 **339개 원본을 그대로 보존**하고, **Agentic Attack 및 확장 헌팅 룰 44개**를 추가했습니다. 별도의 선택적 파일을 병합할 필요가 없습니다.
+**Stellar Cyber Open XDR 7.0용 Suricata v1.2 (2026년 11월 21일) — 총 383개 탐지 룰을 제공합니다.** 기존 v1.1의 **339개 원본을 그대로 보존**하고, **Agentic Offensive Framework 및 관련 네트워크 활동 탐지 룰 44개**를 추가했습니다.
 
 <CardGroup cols={2}>
   <Card title="v1.2 전체 383개 룰 ZIP 다운로드" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383.zip">
@@ -38,12 +38,12 @@ description: "Stellar Cyber Open XDR 7.0용 Suricata v1.2: 기존 339개와 신�
 | 기존 제품 취약점·악성코드 | 56 | CVE, Cobalt Strike, Havoc, Metasploit |
 | 기존 OAST DNS | 4 | Interactsh, Burp Collaborator |
 | 기존 Java4Shell(v1.1) | 6 | 인증 이상, Base64 오류, JVM 충돌 문자열 |
-| **신규 Agentic Attack·확장 헌팅(v1.2)** | **44** | ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn |
+| **신규 Agentic Attack 및 관련 네트워크 지표(v1.2)** | **44** | ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn |
 | **전체 합계** | **383** | **단일 .rules 파일** |
 
 ## 신규 44개 룰의 상세 탐지 대상
 
-이전에 분리했던 **선택적 헌팅 14개도 모두 통합하고 Alert로 활성화**했습니다. 정상 AI 개발 도구, OAST 점검이나 관리 트래픽을 탐지할 수 있으므로 운영 적용 전 오탐 검증이 반드시 필요합니다.
+신규 룰은 공격 프레임워크의 식별 지표와 관련 네트워크 활동을 탐지합니다. 일부 User-Agent, OAST 및 관리 API 패턴은 정상적인 도구 사용이나 보안 점검에서도 관측될 수 있으므로 운영 적용 전에 오탐을 확인해야 합니다.
 
 | 탐지 그룹 | 신규 룰 | SID 및 탐지 예시 |
 | --- | ---: | --- |
@@ -52,7 +52,7 @@ description: "Stellar Cyber Open XDR 7.0용 Suricata v1.2: 기존 339개와 신�
 | HexStrike | 6 | \`9876020–9876023\`, \`9876102–9876103\`: BrowserAgent, XSS Probe, API 명령·도구 호출 |
 | PentAGI | 6 | \`9876024–9876026\`, \`9876104–9876106\`: TLS 인증서, Swagger, 워커 포트, 업데이트 도메인 |
 | Cairn | 3 | \`9876027–9876028\`, \`9876113\`: OpenAPI, Heartbeat, AI 요청 본문 |
-| 공통 AI 도구·확장 헌팅 | 6 | \`9876107–9876112\`: Claude Code/QwenCode UA, OAST DNS, WSUS 경로 |
+| 관련 도구·네트워크 활동 | 6 | \`9876107–9876112\`: Claude Code/QwenCode UA, OAST DNS, WSUS 경로 |
 | **신규 합계** | **44** | \`9876001–9876030\`, \`9876101–9876114\` |
 
 [전체 383개 룰별 SID·탐지 설명(CSV)](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383-catalog.csv)에서 개별 룰을 확인할 수 있습니다. **룰 탐지만으로 공격이 AI에 의해 실행됐다고 확정할 수 없습니다.** 정상 보안 테스트 및 개발 도구에서 같은 패턴이 나타날 수 있으므로 Identity, Endpoint, Cloud, Network 상관분석이 필요합니다. 여러 이벤트의 속도·행동 연결은 Suricata 단독이 아닌 XDR/ATH에서 처리해야 합니다.
@@ -78,7 +78,7 @@ description: "Stellar Cyber Open XDR 7.0용 Suricata v1.2: 기존 339개와 신�
 2. 통합 **383개 .rules** 파일을 다운로드해 SHA-256을 검증하고 현장 고유 룰과 병합 여부를 확인합니다.
 3. **테스트용 Modular Sensor**의 \`System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules\` 메뉴에서 전체 파일을 선택합니다.
 4. 실험 환경에서 \`Upload and Deploy\` 후 \`Sensor Profiles → IDS → Signature → Selected Rules\`, Sensor \`eve.json\`, DP Alert 등을 검증합니다.
-5. **확장 헌팅 14개**를 정상 트래픽으로 튜닝한 뒤에만 운영 적용을 판단합니다.
+5. **일반적인 도구 사용과 겹치는 탐지 지표**를 정상 트래픽으로 검증·튜닝한 뒤 운영 적용을 판단합니다.
 
 신규 44개에는 \`$HOME_NET\`, \`$EXTERNAL_NET\`, \`$HTTP_SERVERS\` 및 특정 포트 조건이 포함돼 기존 339개와 달리 IDS Networks 설정이 탐지에 영향을 줄 수 있습니다. HTTPS 헤더/본문은 평문 또는 복호화 데이터가 필요하며 QUIC/DoH/ECH 환경에서는 가시성이 제한됩니다.
 

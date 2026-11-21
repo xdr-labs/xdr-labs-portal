@@ -32,6 +32,9 @@ def verify():
     for f in ("products/ai-assisted-attack-detection-rules.mdx",
               "ko/products/ai-assisted-attack-detection-rules.mdx"):
         src=(ROOT/f).read_text()
+        assert "previously optional hunting" not in src
+        assert "선택적 헌팅 14개" not in src
+        assert "별도의 선택적 파일을 병합" not in src
         assert all(x.strip() == "</Card>" for x in src.splitlines() if "</Card>" in x), f"Invalid mixed Card closing tag: {f}"
         for item in (RULE,CAT,"local-web-attack-ai-v1.2-383.zip",SHA,"49/49","383","44","9005017","9005055"):
             assert item in src, (f,item)
