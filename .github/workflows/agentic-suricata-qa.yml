@@ -26,3 +26,16 @@ jobs:
           suricata --build-info | head -30
       - name: Validate full 369-rule engine load and inert PCAPs
         run: python3 validation/agentic-20261121/run_offline.py
+
+  suricata-8-0-1-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check 369 signature syntax on Sensor-equivalent Suricata 8.0.1
+        run: |
+          docker pull jasonish/suricata:8.0.1
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
+            jasonish/suricata:8.0.1 \
+            -T -c /etc/suricata/suricata.yaml \
+            -S /repo/downloads/local-web-attack-ai-v1.2-369-rc1.rules
