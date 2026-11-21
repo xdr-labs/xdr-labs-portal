@@ -1,0 +1,47 @@
+# Suricata 383-rule full audit and risk-witness reproducibility
+
+**Reference:** the public v1.2 unified 383-rule file, SHA-256 `0cb8e39aef5251f28d0a12354797c2068812bdb6d9be8ec911fb43baee1f4d92`. This audit is read-only: it must **not** alter the 383 rules, downloadable ZIP, site pages, deployed Sensor configuration, or DP.
+
+## Full per-SID inventory and evidence truth
+
+Run `python3 validation/suricata-audit-20261122/audit_inventory.py`. The checked-in `inventory-383.csv` contains one row for **each of the 383 actual SIDs** with protocol, description, verification-source type and any observed or hypothesized risk. Statuses must remain distinct:
+
+| Evidence group | SIDs | Meaning |
+| --- | ---: | --- |
+| Initial original rules | 331 | Historical individual live Modular Sensor EVE Alert observed in the November 2026 controlled lab; **not freshly re-run as 331 PCAPs against v1.2 in this audit** |
+| Initial original unresolved | 2 | `9005017`, `9005055` — not live-reproduced, FP/FN risks documented |
+| Java4Shell v1.1 | 6 | Historical Sensor offline PCAP fixtures (10/10) plus current CI regression |
+| Agentic additions v1.2 | 44 | Current isolated Suricata 7.0.3 and 8.0.1 per-SID synthetic PCAP positives (49/49 including 5 benign controls) |
+
+Full 383-rule `suricata -T` checks on both 7/8 assert syntax/keyword load, **not** individual behavioral detection for 383 SIDs.
+
+## Duplicates / false-positive and attribution findings
+
+- **Three OAST pairs overlap**: existing `9006065` with new `9876109` (`interact.sh`); `9006064` with `9876110` (`oast.fun`); `9006067` with `9876111` (`burpcollaborator.net`). A single authorized OAST lookup can generate duplicate Alerts. The new signatures have different source/threshold scopes; they are not text-identical, but their matched events overlap.
+- `9876104` is **port-only**: any established outbound TCP flow destined for 28000–29999 can Alert regardless of PentAGI evidence.
+- `9876107` and `9876108` detect **legitimate Claude Code and Qwen Code User-Agents**; `9876101` `norma/0.4` is a non-exclusive client fingerprint.
+- `9876102/03`, `9876112`: generic management/WSUS URL patterns can Alert for legitimate use. `9876105/06`: ordinary PentAGI update DNS/SNI can Alert; suffix-boundary near-miss cases are included to study lookalike false positives.
+- `9876029/30` are named **BLOODALCHEMY/VAPOR PANDA** in rule metadata yet include an unverified `(ARTEX campaign)` label. Do not represent the domain detections as proof of ARTEX attribution. `9876114` references older Gh0stRAT-related infrastructure, not necessarily ARTEX.
+- `9876024/25` can both trigger for one PentAGI certificate, which is valid multi-signal detection but can create two Alerts.
+- The two original outstanding SIDs `9005017` (absolute URI normalization/ordinary WebSocket proxy FP on modified candidates) and `9005055` (100 multipart file PCRE FN/budget limitation) remain unaccepted. Their **test-only modifications** are not in v1.2.
+
+## What is tested now
+
+- Entire 383 individual SID *inventory* and fingerprints cross-reconciled against v1.0/v1.1 history, v1.2 source and full public CSV.
+- Isolated Suricata 7.0.3/8.0.1 syntax and each of 44 new SID synthetic positive fixtures, five benign controls.
+- Six Java4Shell rules with 10 current PCAP fixtures on Suricata 7.0.3.
+- **20 additional benign-looking/near-miss HTTP, TLS SNI, DNS and TCP risk scenarios on both Suricata 7/8**: risk-positive witnesses are expected to alert and are not counted as FP acceptance.
+- **13 historical PCAPs against two temporary, non-release modified SIDs**, proving the known FP/FN tradeoffs remain. This is **not** revalidation of the original 2 rules.
+- The 331 historical per-SID input PCAPs were created on the prior controlled Sensor and are not stored in this repository. They cannot be independently re-executed against current v1.2 while the Sensor development host is unavailable. Report this limitation explicitly.
+
+For local execution (Suricata 7/8 installed):
+```sh
+python3 validation/suricata-audit-20261122/audit_inventory.py
+python3 validation/suricata-audit-20261122/risk_witnesses.py
+python3 validation/qa-suricata-last-two/run_offline.py --run \
+  --suricata /usr/bin/suricata --config /etc/suricata/suricata.yaml
+```
+
+**Interpretation:** a PASS for risk witnesses means the *dangerous match can be reproduced*, not that operating deployment is approved. All 383 remain unified and `alert`-only; no automatic blocking. Publication and Sensor deployment are out of scope for this audit.
+
+**Audit acceptance:** explicit review required for low-specificity indicators, overlap, existing two SIDs and live Modular Sensor + DP E2E. This audit provides deterministic evidence and does not imply `release_ready=true`.
