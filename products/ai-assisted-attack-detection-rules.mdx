@@ -1,83 +1,90 @@
 ---
 title: "AI-Assisted Attack Detection Rules"
 sidebarTitle: "AI-Assisted Attack Detection Rules"
-description: "Suricata v1.1: 339 custom detection rules for Stellar Cyber 7.0, including six Java4Shell indicators. Sensor validation scope disclosed."
+description: "Suricata v1.2 for Stellar Cyber 7.0: 383 unified alert-only rules including 44 agentic attack detections."
 ---
 
-**Suricata v1.1 — 339 custom detection signatures for Stellar Cyber Open XDR 7.0.** The collection covers web attacks, vulnerability exploitation, AI-assisted and red-team tool activity, and the newly disclosed **Java4Shell (CVE-2026-114938)** detection indicators.
+**Suricata v1.2 (November 21, 2026): one integrated 383-rule set for Stellar Cyber Open XDR 7.0.** All **339 prior v1.1 rules are unchanged**, with **44 new agentic attack and extended-hunting signatures merged into the same .rules file**. There is no separate optional supplement.
 
 <CardGroup cols={2}>
-  <Card title="Download v1.1 — 339 rules (.rules)" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.1-339.rules">
-    Complete 339-signature file for review or controlled import; includes all 333 original v1.0 rules.
+  <Card title="Download v1.2 — complete 383-rule ZIP" icon="download" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383.zip">
+  Complete .rules file, full 383-SID CSV, source mapping, checksum, QA summary, EN/KR notes and attribution.
   </Card>
-  <Card title="v1.1 validation & release notes" icon="clipboard-check" href="https://github.com/xdr-labs/xdr-labs-portal/blob/main/validation/java4shell-20261118/README.md">
-    Real Suricata 8.0.1 test evidence, detection details, checksums, limitations, and validation scripts.
+  <Card title="Standalone 383-rule file" icon="file-code" href="https://github.com/xdr-labs/xdr-labs-portal/blob/main/downloads/local-web-attack-ai-v1.2-383-rc1.rules">
+    For review and controlled import, open on GitHub and select Raw / Download raw file.</Card>
+  <Card title="All 383 SID descriptions (CSV)" icon="list" href="https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383-catalog.csv">
+    SID, protocol, detection message, v1.1/new classification and declared confidence.
+  </Card>
+  <Card title="Reproducible test evidence" icon="clipboard-check" href="https://github.com/xdr-labs/xdr-labs-portal/tree/main/validation/agentic-20261121">
+    Suricata 7 and 8, PCAP tests, SID source mapping, and verification scripts.
+  </Card>
+  <Card title="v1.2 release notes & checksum" icon="file-text" href="https://github.com/xdr-labs/xdr-labs-portal/blob/main/downloads/README-v1.2-EN.txt">
+    SHA-256, coverage, compatibility, known risks and import precautions.
   </Card>
 </CardGroup>
 
-> **Verification scope:** The existing 333-rule set has **331 individually confirmed live-sensor Alerts**. All six new Java4Shell rules were validated with **offline PCAP replay on a real Stellar Cyber 7.0 Modular Sensor**, with **10/10** controlled fixture expectations passing. This does **not** mean all 339 rules have been validated against live traffic or in the Data Processor UI.
+> **Verification scope:** All **383** signatures passed isolated Suricata **7.0.3 and 8.0.1** syntax loading. All **44 new SIDs** triggered in synthetic PCAP testing: **49/49 cases per engine** (44 positives + 5 benign controls); earlier Java4Shell regression **10/10** passed on 7.0.3. **This does not establish real-traffic detection accuracy or production false-positive rates.** The v1.2 rules have **not** been deployed to an operating Stellar Cyber Sensor or verified in the DP Alert/Case UI.
 
-## What's new in v1.1 (November 18, 2026)
+## Detection coverage — all 383 rules
 
-Six alert-only signatures covering traffic indicators related to CVE-2026-114938 were added without modifying the existing 333 v1.0 signatures. Community detection ideas were adapted for Suricata 8.0.1, and Base64 matching was tightened after benign padded-token false positives were reproduced in testing.
-
-| New SID | Detection indicator |
-| --- | --- |
-| `9006101` | Invalid-length, padded HTTP Basic Authentication Base64 |
-| `9006102` | Exact 64-character Base64 test marker with invalid padding |
-| `9006103` | Exact 128-character Base64 test marker with invalid padding |
-| `9006104` | High-volume Basic Authentication requests (1,000 per source within 60 seconds) |
-| `9006105` | JVM crash signatures exposed within HTTP response content |
-| `9006106` | Suspicious padded Base64URL segment in a JWT Bearer header |
-
-These signatures identify **suspicious network patterns**, not a confirmed Java exploit, vulnerable runtime, or successful remote code execution. Rules `9006104` and `9006105` are contextual/low-confidence indicators; deployment-specific false-positive tuning is recommended. HTTP payload detection requires plaintext visibility; encrypted HTTPS/QUIC traffic cannot be inspected without decryption.
-
-[View the six supplemental rules](https://github.com/xdr-labs/xdr-labs-portal/blob/main/downloads/java4shell-cve-2026-114938-6.rules).
-
-## Detection coverage
-
-| Category | v1.1 rules | Example detections |
+| Detection area | Count | Examples |
 | --- | ---: | --- |
-| Webshells, command execution & uploads | 90 | Webshells, OS command injection, PHP/JSP/ASPX uploads |
-| SQL injection | 54 | UNION, error-based and time-based injection |
-| Other web vulnerabilities | 61 | XSS, traversal, LFI/RFI, SSRF, XXE, SSTI, deserialization |
-| Exposure & reconnaissance | 33 | Configuration/backup files, path scans, error responses |
-| AI, red-team & scanner fingerprints | 35 | ARTEX, CyberStrikeAI, HexStrike-AI, nuclei, sqlmap |
-| Product exploits & malware-related signatures | 56 | CVE patterns, Cobalt Strike, Havoc, Metasploit |
-| OAST DNS | 4 | Interactsh and Burp Collaborator |
-| **Java4Shell — new in v1.1** | **6** | Malformed Base64, authentication anomalies, JVM crash indicators |
-| **Total** | **339** | |
+| Existing webshell, command execution & uploads | 90 | Webshells, OS commands, PHP/JSP/ASPX uploads |
+| Existing SQL injection | 54 | UNION, error/time-based SQLi |
+| Existing other web vulnerabilities | 61 | XSS, traversal, SSRF, XXE, SSTI, deserialization |
+| Existing exposure & reconnaissance | 33 | Config/backup access, scanning |
+| Existing AI, red-team & scanner indicators | 35 | Tool fingerprints, nuclei, sqlmap |
+| Existing product exploits & malware | 56 | CVE patterns, Cobalt Strike, Havoc, Metasploit |
+| Existing OAST DNS | 4 | Interactsh, Burp Collaborator |
+| Existing Java4Shell v1.1 indicators | 6 | Authentication anomalies, malformed Base64 and JVM crash patterns |
+| **New agentic attack & extended hunting (v1.2)** | **44** | ARTEX, CyberStrikeAI, HexStrike, PentAGI, Cairn |
+| **Total** | **383** | **One complete .rules file** |
 
-## Modular Sensor verification
+## New agentic framework rules (44)
 
-| Test area | Verified result |
+The **14 previously optional hunting signatures are now included and enabled as alert-only signatures**. They may also detect legitimate AI developer tools, OAST tests, or routine management traffic. They are not a verified production false-positive baseline.
+
+| Framework / detection | New rules | SID ranges and examples |
+| --- | ---: | --- |
+| ARTEX and related campaign indicators | 14 | \`9876001–9876010\`, \`9876029–9876030\`, \`9876101\`, \`9876114\`: User-Agent, X-ARTX-KEY header, probe markers, console, DNS/SNI and related historical domains |
+| CyberStrikeAI | 9 | \`9876011–9876019\`: WebShell, OSPROBE, implant/session token, check-in, TCP magic, TLS certificate |
+| HexStrike | 6 | \`9876020–9876023\`, \`9876102–9876103\`: framework/BrowserAgent, XSS test probe, API commands and tool calls |
+| PentAGI | 6 | \`9876024–9876026\`, \`9876104–9876106\`: TLS certificates, Swagger, worker ports, update service |
+| Cairn | 3 | \`9876027–9876028\`, \`9876113\`: OpenAPI description, heartbeat, request-body indicator |
+| General AI-agent and hunting activity | 6 | \`9876107–9876112\`: Claude Code/QwenCode UA, OAST DNS and WSUS paths |
+| **Added** | **44** | \`9876001–9876030\` and \`9876101–9876114\` |
+
+[View all 383 signatures, one SID per CSV row](https://raw.githubusercontent.com/xdr-labs/xdr-labs-portal/main/downloads/local-web-attack-ai-v1.2-383-catalog.csv). A signature match is **not proof of an AI-directed malicious attack**; correlate with Identity, Endpoint, Cloud and Network evidence. Velocity and multi-step identity correlation require XDR/ATH, not standalone Suricata signatures.
+
+## Tested behavior and limitations
+
+| Test | Result |
 | --- | --- |
-| Previously published v1.0 signature set | **331/333** individually observed live-sensor Alerts |
-| Original SIDs `9005017` and `9005055` | Included, but individual live Alerts still not reproduced |
-| v1.1 combined rules on Suricata 8.0.1 | **339/339** accepted by `suricata -T` |
-| Six Java4Shell signatures | **6/6** triggered in isolated, offline PCAP playback |
-| Synthetic positive/negative test cases | **10/10** expected outcomes, including benign Basic/JWT padding and burst threshold boundaries |
-| v1.1 installation on the operating IDS | **Not performed**; original v1.0 installed rules were preserved |
-| Data Processor UI / production traffic validation | Not claimed |
+| Previous 339 signatures | Unchanged byte-for-byte and SHA-256 verified |
+| All 383 signatures | **383 unique SIDs; alert-only, no blocking actions** |
+| Suricata 7.0.3 | **383-rule -T PASS; 49/49 PCAP cases; 44/44 new SIDs** |
+| Suricata 8.0.1 | **383-rule -T PASS; 49/49 PCAP cases; 44/44 new SIDs** |
+| Java4Shell legacy 6-SID regression | **10/10 PASS** (7.0.3) |
+| Earlier v1.0 live Sensor evidence | **331/333** SIDs historically confirmed; SIDs \`9005017\` and \`9005055\` still unresolved |
+| v1.2 live Modular Sensor import, DP Alert and Case | **Not performed** |
+| Actual production false-positive rate or exploit success | **Not measured** |
 
-*Offline Suricata engine alerts are not equivalent to live-sensor capture, Data Processor UI, a measured production detection rate, or a false-positive rate.* See the [reproducible test and technical evidence](https://github.com/xdr-labs/xdr-labs-portal/blob/main/validation/java4shell-20261118/README.md).
+[Detailed GitHub CI evidence](https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44895318676). **SHA-256 of the complete 383-rule file:** \`0cb8e39aef5251f28d0a12354797c2068812bdb6d9be8ec911fb43baee1f4d92\`
 
-## Import into Stellar Cyber 7.0
+## Import into Stellar Cyber 7.0 (lab first)
 
-1. **Back up the current `custom_defined.rules` file.** Import Security Rules **replaces the entire file**; do not import the six-rule supplemental file on its own.
-2. Download the **complete v1.1 339-rule** file above and verify its integrity. SHA-256: `2478ffd6b3dbdfbb527695f07e00e1a106a554d8bb898a0f9584bb3845b07483`.
-3. Navigate to `System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules`.
-4. Select the full `.rules` file and applicable sensors, then choose `Upload and Deploy`.
-5. Confirm selection under `Sensor Profiles → IDS → Signature → Selected Rules`, monitor alerts/false positives and validate your actual network visibility before broad deployment.
+1. **Back up the existing complete \`custom_defined.rules\`.** *Import Security Rules replaces the entire custom rules file* and can discard site-specific signatures.
+2. Download the **full 383-rule file** from the link above, check its SHA-256, and merge any site-local rules as necessary.
+3. Use \`System → Data Source Management → Sensors → Sensors → Manage → Import Security Rules\` on a **lab Sensor**.
+4. Select the merged file and use \`Upload and Deploy\`, then check \`Sensor Profiles → IDS → Signature → Selected Rules\`, \`eve.json\` and DP Alerts.
+5. Baseline normal traffic and tune the 14 broad hunting rules **before production**.
 
-### HOME_NET / EXTERNAL_NET and visibility
+Unlike the previous 339, some new signatures use \`$HOME_NET\`, \`$EXTERNAL_NET\`, \`$HTTP_SERVERS\` or specific destination ports. Confirm IDS Networks settings and protected public IP ranges. HTTPS headers/bodies require plaintext or decrypted capture; QUIC, DoH and ECH may reduce visibility.
 
-All 339 custom rules use `any any → any any` address headers, so their address eligibility does not depend on `HOME_NET` or `EXTERNAL_NET`. However, sensor capture visibility, IDS enablement, rule protocol/flow requirements, and HTTP decryption limitations still apply. Built-in ET/IDS signatures may depend on `HOME_NET`; include protected public addresses in the sensor profile as appropriate.
+**Research and QA-backed signature pack only.** Do not interpret controlled PCAP passes as production-grade detection accuracy.
 
-**Network configuration:** `System → Data Source Management → Sensors → Sensor Profiles → Feature Customization → IDS → Networks`.
+## Previous versions and sources
 
-## Previous version
+[v1.1 — 339 rules](https://github.com/xdr-labs/xdr-labs-portal/blob/main/downloads/local-web-attack-ai-v1.1-339.rules) · [v1.0 — 333 rules](https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.rules)
 
-The original **v1.0 (333-rule)** assets remain available unchanged: [v1.0 rules](https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.rules) · [v1.0 ZIP](https://github.com/xdr-labs/xdr-labs-portal/releases/download/v1.0/local-web-attack-ai-v1.0-333.zip).
-
-Official documentation: [Security rule import](https://docs.stellarcyber.ai/7.0.x/Configure/Sensors/Sensor-List-Main.htm) · [IDS networks](https://docs.stellarcyber.ai/7.0.xs/Configure/Sensors/Sensor-Profile-Modular-Config.htm).
+[ThreatDefence agentic attack detections](https://github.com/ThreatDefence/agentic-attack-detections) (MIT; attribution retained) · [Elastic Security Labs](https://www.elastic.co/security-labs/threat-command/agentic-offensive-frameworks-detection-artex) · [Stellar Cyber documentation](https://docs.stellarcyber.ai/prod-docs/7.0.x/Configure/Sensors/Sensor-List-Main.htm)

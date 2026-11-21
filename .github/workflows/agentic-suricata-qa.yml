@@ -1,0 +1,71 @@
+name: Suricata 383-rule Agentic Offline QA
+on:
+  pull_request:
+    paths:
+      - 'downloads/local-web-attack-ai-v1.2-383-rc1.rules'
+      - 'validation/agentic-20261121/**'
+      - '.github/workflows/agentic-suricata-qa.yml'
+      - '.engineering/tests.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-pcap:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate baseline integrity and SID uniqueness
+        run: python3 validation/agentic-20261121/run_offline.py --static-only
+      - name: Install isolated Suricata
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
+          suricata --build-info | head -30
+          python3 validation/java4shell-20261118/verify_package.py
+      - name: Validate 383-rule engine and all 44 synthetic SID fixtures
+        run: python3 validation/agentic-20261121/run_offline.py
+      - name: Regression on existing Java4Shell six rules using new 383-rule set
+        run: |
+          python3 validation/java4shell-20261118/run_offline.py \
+            --rules downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+            --output /tmp/agentic383-java4shell-regression
+      - name: Verify unchanged historical two-SID risk evidence
+        run: python3 validation/qa-suricata-last-two/run_offline.py
+
+  suricata-8-0-1-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check 383 signature syntax on Sensor-equivalent Suricata 8.0.1
+        run: |
+          docker pull jasonish/suricata:8.0.1
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
+            jasonish/suricata:8.0.1 \
+            -T -c /etc/suricata/suricata.yaml \
+            -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules
+      - name: Generate complete harmless 44-SID PCAP corpus
+        run: python3 validation/agentic-20261121/generate_inert_pcap.py
+      - name: Replay full 383-rule set on Suricata 8.0.1
+        run: |
+          mkdir -p /tmp/agentic383-suricata8-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/agentic-383-pcap:/qa/pcaps:ro" \
+            -v "/tmp/agentic383-suricata8-eve:/qa/out" \
+            jasonish/suricata:8.0.1 -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/out/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/agentic-20261121/verify_replay.py --logs /tmp/agentic383-suricata8-eve

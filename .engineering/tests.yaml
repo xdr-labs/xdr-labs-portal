@@ -69,3 +69,44 @@ scenarios:
   invariants:
   - Published 333 rules remain byte-identical and combined 339 rule SIDs stay unique
   release_gate: true
+
+- id: AGENTIC-SURICATA-STATIC-001
+  cost: cheap
+  estimated_seconds: 3
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Agentic 383 unified RC baseline and SID validation
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  platforms:
+  - linux
+  command: python3 validation/agentic-20261121/run_offline.py --static-only
+  invariants:
+  - Original 339 bytes retained and all 44 new SID signatures merged in one file
+  release_gate: true
+
+- id: AGENTIC-SITE-STATIC-001
+  cost: cheap
+  estimated_seconds: 3
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Agentic 383 catalog and bilingual public page verification
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  - release
+  platforms:
+  - linux
+  command: python3 validation/agentic-20261121/verify_publication.py
+  invariants:
+  - Both pages and the full 383-rule catalog match the immutable source
+  release_gate: true

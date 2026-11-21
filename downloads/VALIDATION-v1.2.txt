@@ -1,0 +1,10 @@
+AI-Assisted Attack Detection v1.2 (2026-11-21)
+Unified 383 alert-only Suricata rules, 339 baseline unchanged and 44 added.
+Rule SHA256: 0cb8e39aef5251f28d0a12354797c2068812bdb6d9be8ec911fb43baee1f4d92
+Suricata 7.0.3/8.0.1 -T: PASS; new 44 SID PCAP tests 49/49 per engine.
+Java4Shell regression: 10/10 on Suricata 7.0.3.
+Known limitations: v1.2 is not tested on live Sensor/DP/Case.
+Broad 14 signatures can trigger on legitimate clients; production FP/FN unknown.
+Existing SID 9005017 and 9005055 risk unresolved.
+Stellar Cyber rule import overwrites complete custom_defined.rules.
+https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44895318676
