@@ -57,7 +57,7 @@ def main():
         coverage = all_pos & set.union(set(), *(set(v) for v in observed.values()))
         report = {
             "candidate": str(RULES.relative_to(ROOT)),
-            "engine": run([args.engine, "--version"]).stdout.strip(),
+            "engine": run([args.engine, "-V"]).stdout.strip(),
             "total_rules": 383,
             "new_rules": 44,
             "fixtures": count,
