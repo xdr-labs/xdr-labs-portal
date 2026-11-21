@@ -110,3 +110,45 @@ scenarios:
   invariants:
   - Both pages and the full 383-rule catalog match the immutable source
   release_gate: true
+
+- id: SURICATA-383-INVENTORY-001
+  cost: cheap
+  estimated_seconds: 4
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Audit 383 per-SID evidence rows without historical/new conflation
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  platforms:
+  - linux
+  command: python3 validation/suricata-audit-20261122/audit_inventory.py
+  invariants:
+  - 383 unique SIDs and historical verification provenance remain explicit
+  - Risk flags and overlapping OAST rules are disclosed
+  release_gate: true
+
+- id: SURICATA-383-SENSOR-EVIDENCE-001
+  cost: cheap
+  estimated_seconds: 3
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Actual Modular Sensor 381-of-383 SID offline evidence integrity
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  platforms:
+  - linux
+  command: python3 validation/suricata-audit-20261122/verify_sensor_evidence.py
+  invariants:
+  - Current Sensor offline 381/383 results preserve distinction from DP and production acceptance
+  - Original 333 versus 383 result has zero per-PCAP regressions
+  release_gate: true

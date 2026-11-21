@@ -1,0 +1,80 @@
+{
+  "agentic_v1_2": {
+    "cases_passing": 49,
+    "negative_cases": 5,
+    "positive_cases": 44,
+    "positive_sids": 44
+  },
+  "candidate_sha256": "0cb8e39aef5251f28d0a12354797c2068812bdb6d9be8ec911fb43baee1f4d92",
+  "current_sensor_offline_not_reproduced": [
+    9005017,
+    9005055
+  ],
+  "current_sensor_offline_positive_sids": 381,
+  "date_kst": "2026-11-22",
+  "host": "modular",
+  "host_product": "Stellar Cyber 7.0 Modular Sensor",
+  "java4shell_v1_1": {
+    "cases_passing": 10,
+    "pcap_cases": 10,
+    "positive_sids": 6
+  },
+  "legacy_unconfirmed_24": {
+    "alerts_for_unconfirmed_2": 0,
+    "pass_engine_execution": 24,
+    "pcap_cases": 24
+  },
+  "limitations": [
+    "controlled offline PCAPs, not proof of production detection or false positive rates",
+    "no live deployment of candidate; no Stellar Cyber DP Alert/Case E2E",
+    "vulnerable Suricata 8.0.1 component remains vendor-managed; no upgrade performed",
+    "some generic/redundant signatures demonstrably alert on non-malicious-looking traffic"
+  ],
+  "normal_traffic_risks": {
+    "cases_executed": 20,
+    "fixtures": 20,
+    "legitimate_code_agent_uas": [
+      9876107,
+      9876108
+    ],
+    "lookalike_update_domain_sids": [
+      9876105,
+      9876106
+    ],
+    "oast_duplicate_sid_pairs": [
+      [
+        9006065,
+        9876109
+      ],
+      [
+        9006064,
+        9876110
+      ],
+      [
+        9006067,
+        9876111
+      ]
+    ],
+    "port_only_sid": 9876104,
+    "real_network_false_positive_rate_measured": false
+  },
+  "operational_rules_sha256": "5947a64a6b45ee122537a1ea166ebf383307302cf210b63d24b350b0df98eb96",
+  "operational_rules_unchanged": true,
+  "operational_suricata_process_unchanged": true,
+  "original_v1_0": {
+    "baseline_and_unified_observed_sid_sets_equal": true,
+    "curated_pcaps": 77,
+    "differential_full_vs_original_pcap_runs": 154,
+    "observed": 331,
+    "per_pcap_regression_count": 0,
+    "tested_original_sids": 333,
+    "unconfirmed": [
+      9005017,
+      9005055
+    ]
+  },
+  "release_ready": false,
+  "suricata_version": "8.0.1",
+  "test_mode": "offline -r separate processes -S full 383 temp file -l temp per scenario; no live sensor changes",
+  "total_rule_sids": 383
+}

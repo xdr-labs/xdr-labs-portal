@@ -4,6 +4,7 @@ on:
     paths:
       - 'downloads/local-web-attack-ai-v1.2-383-rc1.rules'
       - 'validation/agentic-20261121/**'
+      - 'validation/suricata-audit-20261122/**'
       - '.github/workflows/agentic-suricata-qa.yml'
       - '.engineering/tests.yaml'
   workflow_dispatch:
@@ -19,6 +20,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate baseline integrity and SID uniqueness
         run: python3 validation/agentic-20261121/run_offline.py --static-only
+      - name: Audit all 383 published SIDs and historical evidence without conflating tests
+        run: |
+          mkdir -p /tmp/suricata-383-audit
+          python3 validation/suricata-audit-20261122/audit_inventory.py --report /tmp/suricata-383-audit/inventory-summary.json
       - name: Install isolated Suricata
         run: |
           sudo apt-get update -q
@@ -34,6 +39,21 @@ jobs:
             --output /tmp/agentic383-java4shell-regression
       - name: Verify unchanged historical two-SID risk evidence
         run: python3 validation/qa-suricata-last-two/run_offline.py
+      - name: Replay 20 legitimate/near-miss traffic risk scenarios against actual 383 rules
+        run: python3 validation/suricata-audit-20261122/risk_witnesses.py --root /tmp/suricata-383-audit/risk7
+      - name: Observe old unreproduced 9005017 and 9005055 against UNMODIFIED 383 candidate
+        run: python3 validation/suricata-audit-20261122/replay_original_legacy.py --root /tmp/suricata-383-audit/legacy-original7
+      - name: Publish machine-readable 383-SID audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: suricata-383-inventory-risk7
+          path: |
+            validation/suricata-audit-20261122/inventory-383.csv
+            /tmp/suricata-383-audit/inventory-summary.json
+            /tmp/suricata-383-audit/risk7/risk-replay-report.json
+            /tmp/suricata-383-audit/legacy-original7/legacy-current-observations.json
+          if-no-files-found: warn
 
   suricata-8-0-1-compatibility:
     runs-on: ubuntu-24.04
@@ -69,3 +89,159 @@ jobs:
               done
             '
           python3 validation/agentic-20261121/verify_replay.py --logs /tmp/agentic383-suricata8-eve
+      - name: Generate 20 controlled benign/near-miss risk-witness PCAPs
+        run: |
+          python3 validation/suricata-audit-20261122/risk_witnesses.py --mode generate --root /tmp/suricata-383-audit-risk8
+      - name: Replay controlled risk witnesses using the entire 383-rule pack (Suricata 8.0.1)
+        run: |
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/suricata-383-audit-risk8:/qa" \
+            jasonish/suricata:8.0.1 -c '
+              set -eu
+              mkdir -p /qa/logs
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/logs/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/logs/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/suricata-audit-20261122/risk_witnesses.py --mode verify \
+            --root /tmp/suricata-383-audit-risk8 --version-name "Suricata 8.0.1 Docker"
+      - name: Observe unchanged historical SIDs using all 13 PCAPs on Suricata 8.0.1
+        run: |
+          mkdir -p /tmp/suricata-383-legacy8/logs
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/suricata-383-legacy8:/qa" \
+            jasonish/suricata:8.0.1 -c '
+              set -eu
+              for p in /repo/validation/qa-suricata-last-two/*.pcap; do
+                n="${p##*/}"
+                mkdir -p "/qa/logs/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/logs/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/suricata-audit-20261122/replay_original_legacy.py --mode verify \
+            --root /tmp/suricata-383-legacy8 --version-name "Suricata 8.0.1 Docker"
+      - name: Preserve Suricata 8 risk replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: suricata-383-risk8
+          path: |
+            /tmp/suricata-383-audit-risk8/risk-replay-report.json
+            /tmp/suricata-383-legacy8/legacy-current-observations.json
+          if-no-files-found: warn
+
+  suricata-8-0-8-stable-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check 383 signature syntax on Sensor-equivalent Suricata 8.0.8
+        run: |
+          docker pull jasonish/suricata:8.0.8
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
+            jasonish/suricata:8.0.8 \
+            -T -c /etc/suricata/suricata.yaml \
+            -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules
+      - name: Generate complete harmless 44-SID PCAP corpus
+        run: python3 validation/agentic-20261121/generate_inert_pcap.py
+      - name: Replay full 383-rule set on Suricata 8.0.8
+        run: |
+          mkdir -p /tmp/agentic383-suricata808-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/agentic-383-pcap:/qa/pcaps:ro" \
+            -v "/tmp/agentic383-suricata808-eve:/qa/out" \
+            jasonish/suricata:8.0.8 -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/out/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/agentic-20261121/verify_replay.py --logs /tmp/agentic383-suricata808-eve
+      - name: Generate 20 controlled benign/near-miss risk-witness PCAPs
+        run: |
+          python3 validation/suricata-audit-20261122/risk_witnesses.py --mode generate --root /tmp/suricata-383-audit-risk808
+      - name: Replay controlled risk witnesses using the entire 383-rule pack (Suricata 8.0.8)
+        run: |
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/suricata-383-audit-risk808:/qa" \
+            jasonish/suricata:8.0.8 -c '
+              set -eu
+              mkdir -p /qa/logs
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/logs/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/logs/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/suricata-audit-20261122/risk_witnesses.py --mode verify \
+            --root /tmp/suricata-383-audit-risk808 --version-name "Suricata 8.0.8 Docker"
+      - name: Observe unchanged historical SIDs using all 13 PCAPs on Suricata 8.0.8
+        run: |
+          mkdir -p /tmp/suricata-383-legacy808/logs
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v "/tmp/suricata-383-legacy808:/qa" \
+            jasonish/suricata:8.0.8 -c '
+              set -eu
+              for p in /repo/validation/qa-suricata-last-two/*.pcap; do
+                n="${p##*/}"
+                mkdir -p "/qa/logs/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+                  -l "/qa/logs/$n" -k none > /dev/null
+              done
+            '
+          python3 validation/suricata-audit-20261122/replay_original_legacy.py --mode verify \
+            --root /tmp/suricata-383-legacy808 --version-name "Suricata 8.0.8 Docker"
+      - name: Bounded 100-session multipart stress replay on patched Suricata 8.0.8
+        run: |
+          python3 validation/qa-suricata-last-two/generate_risk_fixtures.py \
+            --stress 100 --output-dir /tmp/suricata-383-stress808
+          mkdir -p /tmp/suricata-383-stress808/log
+          /usr/bin/time -f 'DOCKER_INVOCATION_WALL=%e DOCKER_CLIENT_RSS_KB=%M' \
+            timeout 60s docker run --rm --entrypoint suricata \
+              -v "$PWD:/repo:ro" -v "/tmp/suricata-383-stress808:/qa" \
+              jasonish/suricata:8.0.8 \
+              -r /qa/multipart-stress-generated.pcap --runmode=single \
+              -c /etc/suricata/suricata.yaml \
+              -S /repo/downloads/local-web-attack-ai-v1.2-383-rc1.rules \
+              -l /qa/log -k none
+          python3 validation/suricata-audit-20261122/summarize_stress.py \
+            --pcap /tmp/suricata-383-stress808/multipart-stress-generated.pcap \
+            --eve /tmp/suricata-383-stress808/log/eve.json \
+            --output /tmp/suricata-383-stress808/result.json \
+            --version Suricata-8.0.8
+      - name: Preserve Suricata 8.0.8 risk replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: suricata-383-risk808
+          path: |
+            /tmp/suricata-383-audit-risk808/risk-replay-report.json
+            /tmp/suricata-383-legacy808/legacy-current-observations.json
+            /tmp/suricata-383-stress808/result.json
+          if-no-files-found: warn
