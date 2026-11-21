@@ -1,0 +1,28 @@
+name: Suricata Agentic Offline QA
+on:
+  pull_request:
+    paths:
+      - 'downloads/local-web-attack-ai-v1.2-369-rc1.rules'
+      - 'validation/agentic-20261121/**'
+      - '.github/workflows/agentic-suricata-qa.yml'
+      - '.engineering/tests.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-pcap:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate baseline integrity and SID uniqueness
+        run: python3 validation/agentic-20261121/run_offline.py --static-only
+      - name: Install isolated Suricata
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
+          suricata --build-info | head -30
+      - name: Validate full 369-rule engine load and inert PCAPs
+        run: python3 validation/agentic-20261121/run_offline.py
