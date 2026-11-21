@@ -32,6 +32,7 @@ def verify():
     for f in ("products/ai-assisted-attack-detection-rules.mdx",
               "ko/products/ai-assisted-attack-detection-rules.mdx"):
         src=(ROOT/f).read_text()
+        assert all(x.strip() == "</Card>" for x in src.splitlines() if "</Card>" in x), f"Invalid mixed Card closing tag: {f}"
         for item in (RULE,CAT,"local-web-attack-ai-v1.2-383.zip",SHA,"49/49","383","44","9005017","9005055"):
             assert item in src, (f,item)
     print("PUBLICATION_PASS 383 rules, catalog and EN/KR pages; original 339 bytes preserved")
