@@ -39,6 +39,8 @@ jobs:
             --output /tmp/agentic383-java4shell-regression
       - name: Verify unchanged historical two-SID risk evidence
         run: python3 validation/qa-suricata-last-two/run_offline.py
+      - name: Allow isolated test-runner Suricata log output (no operating Sensor change)
+        run: sudo chown "$USER":"$(id -gn)" /var/log/suricata
       - name: Verify historical two-SID test-only variants and 13 risk fixtures (NOT release approval)
         run: |
           python3 validation/qa-suricata-last-two/run_offline.py --run \
