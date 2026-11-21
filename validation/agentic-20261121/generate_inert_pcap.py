@@ -188,8 +188,8 @@ dns(9876114, "vietnam852.com")
 
 # Unrelated traffic must not trigger any NEW SID. False-positive assessment
 # of known legitimate agent tooling is a *separate* security acceptance gate.
-h(0, uri="/healthz", ua="curl/8.0")
-CASES["benign-health"] = CASES.pop("sid-0")
+CASES["benign-health"] = ("http", dict(uri="/healthz", method="GET", headers=["User-Agent: curl/8.0"],
+                         body=b"", response=b"OK", port=8080, src=HOME, dst=HOME_SERVER), set())
 CASES["benign-safe-web"] = ("http", dict(uri="/docs", method="GET", headers=["User-Agent: Mozilla/5.0"],
                         body=b"", response=b"Welcome", port=8080, src=HOME, dst=HOME_SERVER), set())
 CASES["benign-dns"] = ("dns", dict(host="www.example.com"), set())
