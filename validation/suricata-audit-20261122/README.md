@@ -31,15 +31,14 @@ Full 383-rule `suricata -T` checks on both 7/8 assert syntax/keyword load, **not
 - Isolated Suricata 7.0.3/8.0.1 syntax and each of 44 new SID synthetic positive fixtures, five benign controls.
 - Six Java4Shell rules with 10 current PCAP fixtures on Suricata 7.0.3.
 - **20 additional benign-looking/near-miss HTTP, TLS SNI, DNS and TCP risk scenarios on both Suricata 7/8**: risk-positive witnesses are expected to alert and are not counted as FP acceptance.
-- **13 historical PCAPs against two temporary, non-release modified SIDs**, proving the known FP/FN tradeoffs remain. This is **not** revalidation of the original 2 rules.
+- **13 historical risk PCAPs against the exact unchanged public 383 rules** on all tested engines, recording original SIDs `9005017`/`9005055` without claiming their false-negative limitations have been fixed. Previous test-only modified-SID evaluations remain historical evidence, not a release candidate.
 - The 331 historical per-SID input PCAPs were created on the prior controlled Sensor and are not stored in this repository. They cannot be independently re-executed against current v1.2 while the Sensor development host is unavailable. Report this limitation explicitly.
 
 For local execution (Suricata 7/8 installed):
 ```sh
 python3 validation/suricata-audit-20261122/audit_inventory.py
 python3 validation/suricata-audit-20261122/risk_witnesses.py
-python3 validation/qa-suricata-last-two/run_offline.py --run \
-  --suricata /usr/bin/suricata --config /etc/suricata/suricata.yaml
+python3 validation/suricata-audit-20261122/replay_original_legacy.py
 ```
 
 **Interpretation:** a PASS for risk witnesses means the *dangerous match can be reproduced*, not that operating deployment is approved. All 383 remain unified and `alert`-only; no automatic blocking. Publication and Sensor deployment are out of scope for this audit.

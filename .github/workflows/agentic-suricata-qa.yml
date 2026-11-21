@@ -39,14 +39,6 @@ jobs:
             --output /tmp/agentic383-java4shell-regression
       - name: Verify unchanged historical two-SID risk evidence
         run: python3 validation/qa-suricata-last-two/run_offline.py
-      - name: Allow isolated test-runner Suricata log output (no operating Sensor change)
-        run: sudo chown -R "$USER":"$(id -gn)" /var/log/suricata
-      - name: Verify historical two-SID test-only variants and 13 risk fixtures (NOT release approval)
-        run: |
-          python3 validation/qa-suricata-last-two/run_offline.py --run \
-            --suricata /usr/bin/suricata \
-            --config /etc/suricata/suricata.yaml \
-            --report /tmp/suricata-383-audit/legacy-two-test-only-13.json
       - name: Replay 20 legitimate/near-miss traffic risk scenarios against actual 383 rules
         run: python3 validation/suricata-audit-20261122/risk_witnesses.py --root /tmp/suricata-383-audit/risk7
       - name: Observe old unreproduced 9005017 and 9005055 against UNMODIFIED 383 candidate
@@ -59,7 +51,6 @@ jobs:
           path: |
             validation/suricata-audit-20261122/inventory-383.csv
             /tmp/suricata-383-audit/inventory-summary.json
-            /tmp/suricata-383-audit/legacy-two-test-only-13.json
             /tmp/suricata-383-audit/risk7/risk-replay-report.json
             /tmp/suricata-383-audit/legacy-original7/legacy-current-observations.json
           if-no-files-found: warn
