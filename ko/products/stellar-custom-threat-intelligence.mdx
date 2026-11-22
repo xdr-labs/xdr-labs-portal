@@ -1,0 +1,68 @@
+---
+title: "Stellar Cyber 통합 Custom TI"
+sidebarTitle: "통합 Custom TI"
+description: "Stellar Cyber 7.0 단일 Custom TSV 피드 설계와 2026년 11월 22일 기준 검증된 IP·도메인 IOC 462개 QA 스냅샷, 서명·만료·배포 상태."
+---
+
+**Stellar Cyber Open XDR 7.0에서 Custom TI를 하나만 등록**하는 공급 구조입니다. IP·도메인 등 여러 IOC 유형을 **하나의 4컬럼 TSV**로 통합하며, 고객 ID·고객별 계정·분리된 피드 주소는 사용하지 않습니다.
+
+<CardGroup cols={2}>
+  <Card title="최신 IOC QA 및 수집 검증 증거" icon="clipboard-check" href="https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44997698618">
+    11월 22일 원본 서명 확인, IOC 재생성 검증, 품질 검사 및 QA 결과를 확인합니다.
+  </Card>
+  <Card title="단일 피드 공급 구조" icon="file-text" href="https://github.com/xdr-labs/xdr-labs-portal/blob/6a51bae8246f0154dd9f559a1036d7119a783740/docs/stellar-one-feed-delivery-20261122.md">
+    하나의 URL, 소스 검증, 서명·만료 검증, 배포 전제 조건을 설명합니다.
+  </Card>
+</CardGroup>
+
+## 현재 검증된 IOC
+
+**집계 시점: 2026년 11월 22일 약 16:20 KST(07:20 UTC).** 최신 GitHub Actions의 **QA 스테이징 스냅샷**이며, 운영 중인 공용 TI 서버의 실시간 IOC 수가 아닙니다.
+
+| IOC 유형 | 검증된 QA 후보 | 원본 및 선별 근거 |
+| --- | ---: | --- |
+| 최근 공격 행위 IP (IPv4) | **8개** | OffSeq Mirage: 위험 행동 관측, 신뢰도 85 이상, 최소 3개 센서·2개 네트워크 증거 |
+| 현재 활성 피싱·사기 도메인 | **454개** | CERT Polska: 목록에 현재 존재하며 최초 추가 24시간 이내 |
+| **향후 단일 통합 피드** | **462개** | IP 8개 + 도메인 454개의 동일 검증 스냅샷 |
+| 단일 허니팟 인증 시도 IP | **14개 제외** | Jacobrakai: 독립적 악성 근거 부족, **헌팅 전용(HUNT ONLY)** |
+
+**공급원 현황:** 외부 TI 공급원 후보 **41개 조사**, 원본 기반 수집원 **3개 검토**, 이번 QA에서 실제 채택된 공급원 **2개**입니다. 라이선스가 불명확하거나 비상업적 사용만 허용되는 소스, 이미 Stellar Cyber에 내장된 OEM 피드, 오래된 IP 목록은 자동 재배포하지 않습니다.
+
+**462개는 시점이 고정된 QA 결과**입니다. 새 IOC 추가·삭제 및 만료에 따라 수량은 변합니다. 실제 고객에게 공급 중인 462개 피드라는 의미가 아니며, Stellar Cyber 내장 Proofpoint/ET Pro 등의 TI와 중복이 없다는 뜻도 아닙니다. 정확한 중복률은 해당 고객의 실제 내장 TI 수집 결과와 비교해야 합니다.
+
+## 단일 Custom TI 공급 방식
+
+향후 등록할 HTTPS 경로는 **`https://<승인된-호스트>/stellar-ti.tsv`** 형식입니다. **아직 운영 서버·도메인·TLS 인증서가 승인되거나 배포되지 않았으므로 실제 사용 가능한 URL은 없습니다.** 예시 경로를 Stellar Cyber에 등록하지 마세요.
+
+| TSV 컬럼 | 설명 |
+| --- | --- |
+| `TYPE` | `ip`, `domain` (향후 검증된 `url`, `md5-hash`, `sha1-hash`, `sha256-hash` 추가 가능) |
+| `VALUE` | 악성 지표 값 |
+| `SOURCE` | `OffSeqMirage`, `CERTPolska` 등 원본 출처 |
+| `SCORE` | 0~100 점수 |
+
+다음은 **실제 악성 IOC가 아닌 문서용 예시 값**입니다.
+
+```text
+ip	203.0.113.9	OffSeqMirage	90
+domain	phishing.example.invalid	CERTPolska	75
+```
+
+수집 내부에서는 IP·도메인별 증거를 개별 유지하지만, **고객에게 제공할 파일은 하나**입니다. 외부 공개 전에 원본 제공자 Minisign 서명, 원본 SHA256, IOC 관측 시각·근거, 독립 검증된 Ed25519 릴리스 서명, 순서 번호 및 유효기간을 확인합니다. 변조·만료·미승인 상태에서는 오래된 값을 계속 제공하지 않고 오류로 중단합니다.
+
+**신선도 기준:** OffSeq는 24시간 이내 관측된 고신뢰 공격 행위만, CERT Polska는 현재 활성 상태이면서 24시간 이내 새로 추가된 도메인만 후보로 채택합니다. 삭제·만료된 IOC는 영구 악성 IP·도메인으로 간주하지 않습니다. 현재 수집 QA는 동작하지만 공개 운영 피드 자동 배포는 아직 활성화하지 않았습니다.
+
+## 데이터 출처·라이선스·검증
+
+- [CERT Polska Warning List](https://cert.pl/en/warning-list/) — 활성 피싱 도메인 데이터; 공표된 정책에 따라 상업적 사용 가능하며 원본 기관의 보증·추천을 의미하지 않습니다.
+- [OffSeq Mirage](https://github.com/offseq/mirage-feed) — 실제 허니팟 관측 기반 데이터, **CC BY 4.0 출처 표시 필요**. 퍼블리셔의 SHA256SUMS 및 Minisign 서명을 독립적으로 검증합니다.
+- Jacobrakai — 독립 검증이 부족한 인증 시도 IP 14개는 통합 악성 피드에 넣지 않고 헌팅 후보로만 관리합니다.
+- [41개 소스 조사 및 제외 근거](https://github.com/xdr-labs/xdr-labs-portal/blob/6a51bae8246f0154dd9f559a1036d7119a783740/docs/stellar-osint-strict-source-audit-20261122.md).
+
+**확인된 결과:** 원본 서명 검증, 스냅샷 전체 IOC 원본 재생성 검사, 단일 URL HTTP 합성 테스트, Suricata 7.0.3·8.0.1 검증. [CI 3/3 PASS](https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44997698618).
+
+**아직 확인되지 않은 항목:** 실제 공용 HTTPS 배포, 보호된 운영 서명키, 고객에게 지속 제공되는 TI URL, Stellar Cyber DP의 IOC 수집·삭제 동작, OEM 중복률, 실제 Sensor → DP Alert/Case E2E 및 운영 탐지율·오탐률.
+
+## 연계 Suricata 룰
+
+[AI 지원 공격 탐지 룰](/ko/products/ai-assisted-attack-detection-rules)에서 기존 **383개 공개 v1.2 룰**과 신규 **15개를 추가한 398개 QA 후보**를 확인할 수 있습니다. Suricata 룰과 IOC TI는 서로 다른 탐지 입력이므로 별도로 검증한 다음 Stellar Cyber에서 연계 분석해야 합니다.
