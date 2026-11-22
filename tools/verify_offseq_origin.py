@@ -129,6 +129,10 @@ def fetch_verified_sources(out: Path, now: datetime):
                           for name, blob in sources.items()},
         "unverified_provider_signatures": ["CERTPolska", "JacobHoneypot"],
     }
+    # Preserve the exact upstream-signed evidence for independent release-time
+    # verification; a JSON success assertion alone is not a publisher signature.
+    (out / "offseq-SHA256SUMS").write_bytes(sums)
+    (out / "offseq-SHA256SUMS.minisig").write_bytes(sig)
     (out / "source-verification.json").write_text(
         json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     return report
