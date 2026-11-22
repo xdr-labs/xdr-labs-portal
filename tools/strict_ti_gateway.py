@@ -208,13 +208,15 @@ def promote(stage: Path, root: Path, pubkey: Path, now: datetime, apply: bool = 
         return {"result":"TEMPORARY_RELEASE_PROMOTED", "sequence":seq,
                 "file_counts":meta["feed_counts"]}
 
-def serve_local(root: Path, pubkey: Path, port: int):
-    if not (1024 <= port <= 65535):
+def serve_local(root: Path, pubkey: Path, port: int, clock=None, run_forever: bool = True):
+    # Port 0 and injected clocks are permitted only for isolated automated tests.
+    if not (1024 <= port <= 65535 or (port == 0 and not run_forever)):
         raise ValueError("Invalid loopback port")
+    current_time = clock if clock is not None else lambda: datetime.now(timezone.utc)
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             try:
-                selected = current_file(root,pubkey,self.path,datetime.now(timezone.utc))
+                selected = current_file(root,pubkey,self.path,current_time())
                 body = selected.read_bytes()
             except (ValueError, OSError, KeyError, TypeError, json.JSONDecodeError):
                 self.send_error(503,"Signed fresh TIP snapshot not available")
@@ -231,7 +233,13 @@ def serve_local(root: Path, pubkey: Path, port: int):
             self.send_error(405)
         def do_DELETE(self):
             self.send_error(405)
-    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    if run_forever:
+        try:
+            server.serve_forever()
+        finally:
+            server.server_close()
+    return server
 
 def main():
     p = argparse.ArgumentParser()
