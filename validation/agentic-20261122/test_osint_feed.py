@@ -60,6 +60,22 @@ class PolicyTests(unittest.TestCase):
             self.assertTrue(all(len(x.split("\t")) == 4 for x in tsv.splitlines()))
             self.assertIn("HUNT_ONLY,false", (Path(d) / "agentic-ip-HUNT-ONLY.csv").read_text())
 
+    def test_stale_source_fails_closed(self):
+        td, talos = sources()
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaisesRegex(ValueError, "stale"):
+                make_outputs(td, talos, Path(d), date(2027, 2, 1),
+                             datetime(2027, 2, 1, tzinfo=timezone.utc))
+
+    def test_stale_talos_hunt_removed_even_if_source_fetched(self):
+        td, talos = sources()
+        td = td.replace(b"2026-11-21", b"2026-12-22")
+        with tempfile.TemporaryDirectory() as d:
+            result = make_outputs(td, talos, Path(d), date(2026, 12, 23),
+                                  datetime(2026, 12, 23, tzinfo=timezone.utc))
+            self.assertEqual(result["talos_hunt_status"], "HUNT_EXPIRED_EXCLUDED")
+            self.assertEqual(result["hunt_ipv4_count"], 0)
+
     def test_empty_or_duplicate_feed_rejected(self):
         td, talos = sources()
         with tempfile.TemporaryDirectory() as d:
