@@ -6,7 +6,7 @@
 local http = require("suricata.http")
 
 function init(args)
-    return {}
+    return {["http.request_body"] = tostring(true)}
 end
 
 function match(args)
