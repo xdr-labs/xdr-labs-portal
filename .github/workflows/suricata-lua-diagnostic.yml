@@ -1,0 +1,62 @@
+name: Suricata Lua Multipart Hook Diagnostics (QA Only)
+on:
+  pull_request:
+    paths:
+      - 'validation/suricata-tuning-20261122/php2shell_100_empty_filename.lua'
+      - 'validation/suricata-tuning-20261122/suricata-php2shell-lua-experimental.rules'
+      - '.github/workflows/suricata-lua-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create synthetic Lua engine probes in /tmp only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          d = Path('/tmp/suricata-lua-probe')
+          d.mkdir(exist_ok=True)
+          cases = {
+            "hook": 'return 1',
+            "transaction": 'local tx=http.get_tx(); if tx ~= nil then return 1 end; return 0',
+            "post": 'local tx=http.get_tx(); if not tx then return 0 end; local l=tx:request_line(); if type(l)=="string" and string.find(l,"^POST%s") then return 1 end; return 0',
+            "header": 'local tx=http.get_tx(); if not tx then return 0 end; local c=tx:request_header("Content-Type"); if type(c)=="string" and string.find(string.lower(c),"multipart/form-data",1,true) then return 1 end; return 0',
+            "body": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="string" and #b>0 then return 1 end; return 0',
+            "filename": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="string" and string.find(b, "filename=\\\"\\\"",1,true) then return 1 end; return 0',
+          }
+          rows = []
+          for i,(name,code) in enumerate(cases.items()):
+            (d/(name+'.lua')).write_text('local http=require("suricata.http")\nfunction init(args) return {} end\nfunction match(args) '+code+' end\n')
+            rows.append('alert http1:request_complete any any -> any any (msg:"Synthetic Lua '+name+' probe"; lua:'+name+'.lua; sid:'+str(9899901+i)+'; rev:1;)')
+          (d/'qa.rules').write_text('\n'.join(rows)+'\n')
+          print('LUA_HOOK_DIAGNOSTIC_PREPARED',len(rows))
+          PY
+      - name: Run 6 tiny Lua hook probes on one harmless multipart PCAP
+        run: |
+          mkdir -p /tmp/suricata-lua-probe/output
+          docker run --rm --entrypoint suricata \
+            -v "$PWD:/repo:ro" -v /tmp/suricata-lua-probe:/qa/diag \
+            jasonish/suricata:8.0.8 \
+            -r /repo/validation/qa-suricata-last-two/php-empty105.pcap \
+            --runmode=single -c /etc/suricata/suricata.yaml \
+            --set default-rule-path=/qa/diag \
+            -S /qa/diag/qa.rules -l /qa/diag/output -k none
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          eve=Path('/tmp/suricata-lua-probe/output/eve.json')
+          alerts=[]
+          for line in eve.read_text().splitlines():
+            x=json.loads(line)
+            if x.get('event_type')=='alert': alerts.append(x['alert']['signature_id'])
+          print('LUA_HOOK_PROBES_OBSERVED',sorted(alerts))
+          log=Path('/tmp/suricata-lua-probe/output/suricata.log')
+          if log.exists():
+            print('SURICATA_DIAGNOSTIC_WARNINGS', [x.strip() for x in log.read_text().splitlines() if 'lua' in x.lower() or 'error' in x.lower()][-20:])
+          PY
