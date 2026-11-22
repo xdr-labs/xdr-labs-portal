@@ -11,6 +11,7 @@ import argparse
 import csv
 from datetime import datetime, timedelta, timezone
 import fcntl
+import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import ipaddress
 import json
@@ -152,7 +153,7 @@ def _existing_seq(root: Path):
         raise ValueError("Current release is not an atomic symlink")
     return value
 
-def current_stage(root: Path, pubkey: Path, now: datetime) -> Path:
+def _validated_snapshot(root: Path, pubkey: Path, now: datetime) -> tuple[Path, dict]:
     """Resolve exactly one immutable approved snapshot, or fail closed."""
     current = root/"current"
     if not current.is_symlink():
@@ -162,7 +163,11 @@ def current_stage(root: Path, pubkey: Path, now: datetime) -> Path:
     meta = validate(stage, pubkey, 0, now)
     if int(meta["sequence"]) != seq:
         raise ValueError("Release-state rollback or pointer mismatch")
-    return stage
+    return stage, meta
+
+
+def current_stage(root: Path, pubkey: Path, now: datetime) -> Path:
+    return _validated_snapshot(root, pubkey, now)[0]
 
 
 def current_file(root: Path, pubkey: Path, request_path: str, now: datetime) -> Path:
@@ -179,7 +184,7 @@ def current_unified_tsv(root: Path, pubkey: Path, now: datetime) -> bytes:
     file was signed and validated with its own per-IOC evidence beforehand.
     No unsigned intermediary is persisted or published.
     """
-    stage = current_stage(root, pubkey, now)
+    stage, signed_manifest = _validated_snapshot(root, pubkey, now)
     output = bytearray()
     observed_iocs = set()
     total = 0
@@ -187,7 +192,11 @@ def current_unified_tsv(root: Path, pubkey: Path, now: datetime) -> bytes:
         ("/feeds/recent-attackers.tsv", "ip"),
         ("/feeds/recent-phishing.tsv", "domain"),
     ):
-        data = (stage/TSV_FILES[internal_route]).read_bytes()
+        member = TSV_FILES[internal_route]
+        data = (stage/member).read_bytes()
+        # Reject a concurrent modification after validation (TOCTOU guard).
+        if hashlib.sha256(data).hexdigest() != signed_manifest["files"][member]:
+            raise ValueError("Release member changed during unified feed generation")
         if not data or not data.endswith(b"\n"):
             raise ValueError("Missing final newline in signed component")
         # Signed bytes are re-checked in validate() before being read.
