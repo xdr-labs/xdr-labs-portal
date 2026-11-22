@@ -6,7 +6,7 @@
 phishing URLs.** Every Stellar Cyber customer subscribes to the *same* current
 four-column TSV at one HTTPS URL:
 
-\`https://ti.example.invalid/stellar-ti.tsv\`
+`https://ti.example.invalid/stellar-ti.tsv`
 
 The hostname is deliberately invalid until an authorized operator supplies an
 approved domain/TLS cert and deploys the service. This is **NOT LIVE**.
@@ -14,10 +14,10 @@ approved domain/TLS cert and deploys the service. This is **NOT LIVE**.
 Stellar Cyber TIP Custom TSV configuration: one feed URL, no Basic credentials,
 refresh every available poll interval. One line per IOC, no header:
 
-\`\`\`tsv
+```tsv
 ip	203.0.113.9	OffSeqMirage	90
 domain	phishing.example.invalid	CERTPolska	75
-\`\`\`
+```
 
 The addresses above are **documentation-only**; they are not current malicious
 indicators and must not be added to any live feed.
@@ -46,8 +46,8 @@ indicators and must not be added to any live feed.
    after they are independently licensed/validated and included in the same
    signed release.
 7. Nginx terminates public TLS, rate-limits clients, exposes only the one
-   \`/stellar-ti.tsv\` endpoint and forwards to \`127.0.0.1:18332\`.
-   No HTTP fallback; \`/internal/healthz\` is loopback-only and blocked
+   `/stellar-ti.tsv` endpoint and forwards to `127.0.0.1:18332`.
+   No HTTP fallback; `/internal/healthz` is loopback-only and blocked
    from the public proxy. No Basic authentication and no customer DB.
 
 When a signature, source, observation or release expires, HTTP returns **503**,
@@ -57,16 +57,16 @@ Stellar's existing imported indicators without customer DP testing.
 
 ## Code and operations
 
-- Public loopback read-only service: \`tools/ti_public_service.py\`
-- Restricted signed origin/release: \`tools/strict_ti_gateway.py\`
-- Publisher-signed inputs and bytes: \`tools/verify_offseq_origin.py\`
-- Source-to-IOC replay: \`tools/verify_ti_build_replay.py\`
-- Public TLS only, ONE endpoint: \`deploy/stellar-ti/nginx-single-feed.conf.example\`
-- Restricted process service example: \`deploy/stellar-ti/stellar-ti-public.service.example\`
-- Isolated integration tests: \`validation/agentic-20261122/test_ti_public_service.py\`
+- Public loopback read-only service: `tools/ti_public_service.py`
+- Restricted signed origin/release: `tools/strict_ti_gateway.py`
+- Publisher-signed inputs and bytes: `tools/verify_offseq_origin.py`
+- Source-to-IOC replay: `tools/verify_ti_build_replay.py`
+- Public TLS only, ONE endpoint: `deploy/stellar-ti/nginx-single-feed.conf.example`
+- Restricted process service example: `deploy/stellar-ti/stellar-ti-public.service.example`
+- Isolated integration tests: `validation/agentic-20261122/test_ti_public_service.py`
 
 Customer configuration in Stellar Cyber 7.0 (after approved deployment):
-TIP → Custom Feed → TSV → URL = \`https://<approved-host>/stellar-ti.tsv\`,
+TIP → Custom Feed → TSV → URL = `https://<approved-host>/stellar-ti.tsv`,
 authentication = none, refresh as supported. Confirm license attribution
 and actual Proofpoint/ET OEM overlap separately.
 
