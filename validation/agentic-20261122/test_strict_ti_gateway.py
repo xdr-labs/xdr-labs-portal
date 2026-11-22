@@ -15,6 +15,7 @@ from test_strict_recent_osint import fixture, NOW
 from strict_recent_osint import build
 from origin_evidence import attach_origin
 from verify_offseq_origin import SOURCE_MAP
+from verify_ti_build_replay import audit_rebuild
 from verify_ti_release import sign
 from strict_ti_gateway import promote, current_file, serve_local
 
@@ -41,6 +42,7 @@ class SignedGatewayTests(unittest.TestCase):
         subprocess.run(["minisign", "-G", "-W", "-p", str(publisher_pub),
                         "-s", str(publisher_priv)], capture_output=True, check=True)
         test_key=publisher_pub.read_text().splitlines()[-1].strip()
+        self.upstream_test_key = test_key
         # A test private key can never substitute for the hardcoded production
         # publisher key: override is scoped to this unit-test process only.
         fixture_patch=patch("strict_ti_gateway.UPSTREAM_PUBKEY", test_key)
@@ -185,6 +187,52 @@ class SignedGatewayTests(unittest.TestCase):
             sign(manifest,priv,stage/"strict-manifest.sig")
             with self.assertRaisesRegex(ValueError,"receipt and publisher signature"):
                 promote(stage,root/"origin",pub,NOW,False)
+
+    def test_independent_signer_reproduces_every_ti_ioc_from_frozen_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            priv,pub=self.keys(root)
+            stage=root/"stage"
+            self.stage(stage,priv)
+            source=root/"stage-upstream"
+            result=audit_rebuild(source,stage,NOW,
+                                 publisher_key=self.upstream_test_key)
+            self.assertEqual(result["status"],"REPRODUCIBLE_NOT_RELEASED")
+            self.assertEqual(len(result["replayed_derived_sha256"]),4)
+            self.assertEqual(result["publisher_proof"],"REVERIFIED_MINISIGN")
+
+    def test_signer_rebuild_detects_locally_resigned_forged_ioc(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            priv,pub=self.keys(root)
+            stage=root/"stage"
+            self.stage(stage,priv)
+            target=stage/"strict-recent-attackers-DRAFT.tsv"
+            target.write_bytes(target.read_bytes()+b"ip\t1.2.3.200\tOffSeqMirage\t95\n")
+            manifest=stage/"strict-manifest.json"
+            meta=json.loads(manifest.read_text())
+            meta["files"][target.name]=hashlib.sha256(target.read_bytes()).hexdigest()
+            meta["feed_counts"][target.name]+=1
+            manifest.write_text(json.dumps(meta,sort_keys=True,indent=2)+"\n")
+            sign(manifest,priv,stage/"strict-manifest.sig")
+            # Local release signature and genuine publisher signature are
+            # insufficient to authorize an IOC not in the original CSV.
+            with self.assertRaisesRegex(ValueError,"Rebuilt feed count differs"):
+                audit_rebuild(root/"stage-upstream",stage,NOW,
+                              publisher_key=self.upstream_test_key)
+
+    def test_signer_rebuild_rejects_modified_frozen_original_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            priv,pub=self.keys(root)
+            stage=root/"stage"
+            self.stage(stage,priv)
+            source=root/"stage-upstream"
+            attacker=source/"attackers.bin"
+            attacker.write_bytes(attacker.read_bytes()+b"forged")
+            with self.assertRaisesRegex(ValueError,"Frozen source"):
+                audit_rebuild(source,stage,NOW,
+                              publisher_key=self.upstream_test_key)
 
     def test_invalid_signature_tamper_and_unapproved_are_rejected(self):
         with tempfile.TemporaryDirectory() as base:
