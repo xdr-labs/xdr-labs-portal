@@ -1,7 +1,36 @@
 ---
 title: "AI-Assisted Attack Detection Rules"
 sidebarTitle: "AI-Assisted Attack Detection Rules"
-description: "Suricata v1.2 for Stellar Cyber 7.0: 383 unified alert-only rules including 44 agentic attack detections."
+description: "383 published Suricata rules, a 398-rule QA candidate with 15 additional detections, and a timestamped 462-IOC Custom TI QA snapshot."
+---
+
+## November 22, 2026 update — 398 signatures evaluated, unified Custom TI in QA
+
+**Current public downloadable release remains v1.2: 383 rules.** An additional **15 detection signatures (SID 9876201–9876215)** have passed isolated QA as an additive **398-rule v1.3 candidate**. This is **not** a production-certified or deployed rule release.
+
+<CardGroup cols={2}>
+  <Card title="Inspect the 398-rule QA candidate" icon="file-code" href="https://github.com/xdr-labs/xdr-labs-portal/blob/6a51bae8246f0154dd9f559a1036d7119a783740/downloads/local-web-attack-ai-v1.3-398-qa.rules">
+    Source of the complete 398-signature *QA candidate*. Review-only preview, not a new production release or approved Sensor import.
+  </Card>
+  <Card title="Unified Custom Threat Intelligence" icon="shield-check" href="/products/stellar-custom-threat-intelligence">
+    Single planned Stellar Cyber 7.0 TSV feed, 462 admitted IP/domain indicators in the November 22 QA snapshot, and precise delivery status.
+  </Card>
+</CardGroup>
+
+| Newly tested coverage | New SIDs | Detection focus |
+| --- | --- | --- |
+| ARTEX and related campaign infrastructure | `9876201`, `9876204–9876206` | Storage probes, renamed console markers, DNS callbacks and related payload host activity |
+| Unsafe JWT behavior | `9876202–9876203` | Unsigned `alg: none` JWT in HTTP URI or Authorization header |
+| Related malware loader | `9876207` | Suspicious Windows binary/driver downloads on known path patterns |
+| Cairn / skimmer activity | `9876208–9876210` | Malicious campaign DNS/SNI and obfuscated JavaScript loader |
+| CyberStrikeAI | `9876211` | Implant task polling with session token evidence |
+| Docker / Carbonato abuse | `9876212–9876215` | Privileged host mounts, container-name markers, suspicious image pulls and namespace execution |
+| **New in candidate** | **15** | **383 preserved + 15 = 398 alert signatures** |
+
+**QA evidence:** Suricata **7.0.3 and 8.0.1** successfully loaded the complete 398-rule candidate; **15/15 new signatures** alerted on isolated positive PCAPs and **4 benign controls** did not alert on the new SIDs. This is synthetic test evidence, **not** an observed production detection rate or false-positive rate. No live Modular Sensor → Stellar DP Alert/Case E2E was completed. [Exact-head QA: 3/3 passed](https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44997698618).
+
+**TI data snapshot (November 22, 2026, 16:20 KST):** 8 observed attacker IPv4 indicators from OffSeq Mirage + 454 active recent phishing domains from CERT Polska = **462 curated QA candidates**. The 14 Jacobrakai credential-only IPs remain **HUNT ONLY** and are not included. Counts change with collection and expiry; this timestamped snapshot is **not** a live public feed or a claim of zero overlap with Stellar's OEM feeds. See [Custom TI details](/products/stellar-custom-threat-intelligence).
+
 ---
 
 **Suricata v1.2 (November 21, 2026): 383 alert-only detection rules for Stellar Cyber Open XDR 7.0.** This release preserves all **339 prior v1.1 rules** and adds **44 signatures covering agentic offensive frameworks and related network activity**.
