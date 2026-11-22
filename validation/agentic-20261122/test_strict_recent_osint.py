@@ -63,7 +63,7 @@ def fixture():
     entries = []
     for n in range(1,45):
         ip = f"2.3.4.{n}"
-        tier = "credential" if n == 3 else "scanner"
+        tier = "credential" if n == 3 else ("loader" if n == 4 else "scanner")
         bans = 5 if n == 3 else 0
         attempts = 400 if n == 3 else 1400
         d = dict(ip=ip,tier=tier,bans=bans,attempts=attempts,
@@ -90,12 +90,14 @@ class StrictLivePolicy(unittest.TestCase):
             r=build(src,Path(path),NOW)
             self.assertEqual(r["schema"],"stellar-strict-live-stage.v1")
             self.assertEqual(r["feed_counts"]["strict-recent-phishing-DRAFT.tsv"],101)
-            # Shared OffSeq+Jacob IP is correlated, and one independent Jacob IP survives.
+            # Shared OffSeq+Jacob IP is corroborated; single-source loader survives, credential alone is held.
             self.assertEqual(r["feed_counts"]["strict-recent-attackers-DRAFT.tsv"],2)
             self.assertEqual(r["corroborated_ip_count"],1)
+            self.assertEqual(r["jacob_credential_held"],1)
+            self.assertIn("2.3.4.3", (Path(path)/"jacob-credential-HUNT-ONLY.csv").read_text())
             ip=(Path(path)/"strict-recent-attackers-DRAFT.tsv").read_text()
             self.assertEqual(set(ip.splitlines()),{"ip\t1.2.3.4\tCorroborated\t90",
-                                                  "ip\t2.3.4.3\tJacobHoneypot\t83"})
+                                                  "ip\t2.3.4.4\tJacobHoneypot\t90"})
             domains=(Path(path)/"strict-recent-phishing-DRAFT.tsv").read_text()
             self.assertEqual(len(domains.splitlines()),101)
             self.assertTrue(all(x.count("\t")==3 for x in domains.splitlines()))
