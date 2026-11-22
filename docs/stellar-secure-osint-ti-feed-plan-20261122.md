@@ -15,6 +15,7 @@ The publicly published 383 v1.2 Suricata rules are preserved byte-for-byte. Of t
 | ThreatDefence Agentic | Repo updated 2026-11-21; unique agentic frameworks | Repository MIT; respect underlying research attributions | Active QA source, high-specificity IOC only |
 | Cisco Talos ARTEX IP | 2546 IPv4 snapshot dated 2026-11-13, no per-IP last-seen | GitHub IOC repository CC0; snapshot is not live proof | HUNT ONLY, no block |
 | InfobloxOpen TI | Campaign-specific domain/IOC research, repo updated 2026-10-30 | CC BY 4.0 with attribution | Next candidate adapter, confirm per-record recency |
+| CERT Polska warning list | 24x7 active phishing domains, published frequently; recommend 5-minute retrieval; per-record add/remove timestamps | Explicitly permits commercial use, cannot imply CERT endorsement | Standalone **recent 24h / 5000-max QA** adapter, verify customer OEM overlap before live TIP |
 | CISA KEV | Updated on official catalog changes | CC0; CVE not a native TSV IOC | Vulnerability and detection priority context |
 | MISP warninglists | Updated policy lists of benign/shared infrastructure | CC0 with documented source exceptions | False-positive exclusion context |
 | MISP 108-feed catalog | Mix of live, offline and restricted sources | Each feed has independent terms; catalog not license | Discovery only |
@@ -37,6 +38,8 @@ References:
 - https://github.com/ThreatDefence/agentic-attack-detections
 - https://github.com/Cisco-Talos/IOCs/blob/main/2026/11/artex-and-beyond.txt
 - https://github.com/infobloxopen/threat-intelligence
+- https://cert.pl/en/warning-list/
+- https://github.com/CERT-Polska/warning-list-tools
 - https://github.com/MISP/misp-warninglists
 - https://github.com/drb-ra/C2IntelFeeds
 - https://github.com/stamparm/trails
@@ -59,12 +62,13 @@ The documentation specifies a maximum of 30 Custom feeds per organization, TSV b
 
 1. In GitHub Actions, fetch only the two explicitly allowlisted HTTPS upstream URLs with normal CA/hostname verification. Reject HTTP redirects, empty/oversized sources and bad CSV schema. The six-hour scheduled task *only creates a QA artifact*. Nothing is automatically released to customers.
 2. tools/agentic_osint_feed.py normalizes, screens out benign AI APIs, stale IPs, malformed values, favicon/logo fingerprints, and creates agentic-malicious-DRAFT.tsv, agentic-ip-HUNT-ONLY.csv, source audit CSV and SHA256/expiry manifest.
-3. Authorized promotion must review source changes, licensing, unexpected spikes and false positives, and change the manifest status to APPROVED_FOR_DEPLOYMENT. Keep signing private keys separate from the public repository, web host and collector. Sign the final manifest using Ed25519 (tools/verify_ti_release.py sign).
-4. The trusted serving origin must verify signature, every SHA256, expiration, row schema and a persistently stored monotonic sequence (tools/verify_ti_release.py verify --require-approved). Promote all signed objects atomically, retain last-known-good only until it expires, and fail closed with an alert on failed signature or expired snapshot.
-5. Serve just the approved TSV through a customer-accessible HTTPS endpoint with verified certificate/hostname, TLS 1.2/1.3, dedicated Basic Auth, restricted GET-only path, no HTTP redirect fallback and no public GitHub Raw URL as the production feed. Rotate credentials, monitor errors, staleness, feed size and TIP last-ingestion time.
-6. On a nonproduction Stellar DP, add a Custom TSV Feed with URL, Basic auth, polling and retention. Verify collected IOC count, metadata, matching events and expiry. Plan TAXII 2.1 if richer first/last-seen, valid-until and confidence semantics justify a service.
-7. Back up Sensor custom_defined.rules before importing a full file: the Import Security Rules operation replaces that file. Independently test 398-rule QA with Suricata -T, synthetic positive/negative PCAP, Sensor EVE, DP Alert/Case and operational false positives.
-8. No automated blocking without independent corroboration. Historical Talos IPs, unverified bulk data, commercial-license-restricted sources, and agent model endpoints remain hunting/context.
+3. CERT Polska is handled by a separate QA adapter (tools/cert_polska_osint.py): it filters active phishing domains first added within 24 hours, rejects more than 5000 records, and does **not** claim these are unrepresented in the customer's existing Proofpoint data. The CERT staging file is not included in the primary signed manifest, so it must not be published without a separate verified promotion path.
+4. Authorized promotion must review source changes, licensing, unexpected spikes and false positives, and change the manifest status to APPROVED_FOR_DEPLOYMENT. Keep signing private keys separate from the public repository, web host and collector. Sign the final manifest using Ed25519 (tools/verify_ti_release.py sign).
+5. The trusted serving origin must verify signature, every SHA256, expiration, row schema and a persistently stored monotonic sequence (tools/verify_ti_release.py verify --require-approved). Promote all signed objects atomically, retain last-known-good only until it expires, and fail closed with an alert on failed signature or expired snapshot.
+6. Serve just the approved TSV through a customer-accessible HTTPS endpoint with verified certificate/hostname, TLS 1.2/1.3, dedicated Basic Auth, restricted GET-only path, no HTTP redirect fallback and no public GitHub Raw URL as the production feed. Rotate credentials, monitor errors, staleness, feed size and TIP last-ingestion time.
+7. On a nonproduction Stellar DP, add a Custom TSV Feed with URL, Basic auth, polling and retention. Verify collected IOC count, metadata, matching events and expiry. Plan TAXII 2.1 if richer first/last-seen, valid-until and confidence semantics justify a service.
+8. Back up Sensor custom_defined.rules before importing a full file: the Import Security Rules operation replaces that file. Independently test 398-rule QA with Suricata -T, synthetic positive/negative PCAP, Sensor EVE, DP Alert/Case and operational false positives.
+9. No automated blocking without independent corroboration. Historical Talos IPs, unverified bulk data, commercial-license-restricted sources, and agent model endpoints remain hunting/context.
 
 ### Illustrative Nginx HTTPS gateway only (NOT deployed)
 
