@@ -96,7 +96,7 @@ def check_signed_contents(sums_blob, comment, blobs, now):
             "source_sums_sha256": hashlib.sha256(sums_blob).hexdigest(),
             "signed_paths": list(SOURCE_MAP.values())}
 
-def verify_minisign(sums, signature):
+def verify_minisign(sums, signature, public_key=PUBKEY):
     # Minisign validates BOTH message signature and trusted-comment signature.
     with tempfile.TemporaryDirectory(prefix="offseq-minisign-") as temp:
         root = Path(temp)
@@ -105,7 +105,7 @@ def verify_minisign(sums, signature):
         try:
             process = subprocess.run(
                 ["minisign", "-VQm", str(root/"SHA256SUMS"),
-                 "-x", str(root/"SHA256SUMS.minisig"), "-P", PUBKEY],
+                 "-x", str(root/"SHA256SUMS.minisig"), "-P", public_key],
                 capture_output=True, text=True, timeout=15, check=True)
         except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
             raise ValueError("OffSeq publisher signature could not be verified") from error
