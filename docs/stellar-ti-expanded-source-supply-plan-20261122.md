@@ -27,7 +27,7 @@ The Stellar Cyber built-in Proofpoint/ET, OTX, URLhaus, PhishTank and OpenPhish 
 2. OffSeq Mirage: IP last_seen under 24h, score at least 85, at least 3 sensors and 2 independent networks, high-impact exploitation/ransom/shell/SIP-fraud behavior, exclude research scans/VPN/Tor/CGNAT and validate publisher SHA256 snapshots.
 3. Jacobrakai original honeypot: 24h observed IP, malware loader or repeated credential attack, no scanner-only. Verify JSON-vs-CSV exact IP/tier/last_seen consistency. CC0.
 
-At 2026-11-22 06:11 UTC GitHub Actions sampled 9 OffSeq, 14 Jacobrakai, zero overlap, and 441 CERT Polska domains. All are QA ONLY; *no true-positive precision measurement or Proofpoint OEM-content overlap data has been measured*.
+At 2026-11-22 06:11 UTC GitHub Actions sampled 9 OffSeq and 14 Jacobrakai qualifying source records, zero overlap, and 441 CERT Polska domains. After a later precision guard, the 14 Jacob-only credential IPs are held in HUNT-ONLY instead of being promoted to Stellar TIP; newly observed loader events or corroborated IPs remain eligible. This reduces the strict attack-IP candidate feed to 9 in this snapshot, subject to exact-head CI confirmation. All are QA ONLY; *no true-positive precision measurement or Proofpoint OEM-content overlap data has been measured*.
 
 The original ThreatDefence 514 and Talos 2546 historical snapshots are maintained as research/hunting-only. They are excluded from the strictly-live customer candidate TSV.
 
