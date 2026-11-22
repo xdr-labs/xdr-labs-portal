@@ -78,6 +78,8 @@ jobs:
       - name: Download vetted public sources and stage unsigned QA snapshot
         run: python3 tools/agentic_osint_feed.py --allow-network --output /tmp/stellar-agentic-ti-staging
       - name: Check current upstream Suricata rules for changes (read-only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: python3 tools/check_agentic_rule_drift.py --output /tmp/stellar-agentic-ti-staging/upstream-rule-drift.json
       - name: Validate staged feed shape and provenance
         run: |
