@@ -14,6 +14,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from verify_offseq_origin import PUBKEY, COMMENT, SOURCE_MAP, decode_sums, verify_minisign
@@ -45,6 +46,19 @@ def check_origin(sums: bytes, signature: bytes, receipt_bytes: bytes,
     if any(not isinstance(x, (bytes, bytearray)) or not x for x in
            (sums, signature, receipt_bytes)):
         raise ValueError("Missing publisher-origin signed material")
+    # Minisign can ignore trailing text beyond the four-line signature.
+    # Refuse a noncanonical file, even when the underlying signed message
+    # cryptographically verifies. The local manifest binds these exact bytes.
+    try:
+        signature_lines = signature.decode("utf-8").strip().splitlines()
+    except UnicodeDecodeError as exc:
+        raise ValueError("Noncanonical publisher signature file") from exc
+    if (len(signature_lines) != 4 or
+        not signature_lines[0].startswith("untrusted comment: ") or
+        not signature_lines[2].startswith("trusted comment: ") or
+        not all(re.fullmatch(r"[A-Za-z0-9+/=]+", signature_lines[i])
+                for i in (1, 3))):
+        raise ValueError("Noncanonical publisher signature file")
     comment = verify_minisign(sums, signature, public_key=publisher_key)
     match = COMMENT.fullmatch(comment.strip())
     if not match:
