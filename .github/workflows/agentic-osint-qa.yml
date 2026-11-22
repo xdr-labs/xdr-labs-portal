@@ -12,6 +12,8 @@ on:
       - 'tools/jacob_honeypot_osint.py'
       - 'tools/probe_ti_candidates.py'
       - 'tools/verify_offseq_origin.py'
+      - 'tools/origin_evidence.py'
+      - 'tools/strict_ti_gateway.py'
       - '.github/workflows/agentic-osint-qa.yml'
   workflow_dispatch:
   schedule:
@@ -33,6 +35,10 @@ jobs:
           python3 validation/agentic-20261121/verify_publication.py
       - name: New 398 candidate static checks
         run: python3 validation/agentic-20261122/run_offline.py --static-only
+      - name: Install Minisign for real publisher-signature regression
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y minisign
       - name: Threat intelligence unit and signed snapshot tests
         run: python3 -m unittest discover -s validation/agentic-20261122 -p 'test_*.py' -v
       - name: Install Suricata
