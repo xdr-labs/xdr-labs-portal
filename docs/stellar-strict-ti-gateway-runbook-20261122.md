@@ -20,10 +20,11 @@ The strict stage produces the following:
 - strict-domain-evidence.csv (domain added_at and empty removed_at)
 - strict-manifest.json (SHA256 of all four signed artifacts, source SHA256, source dates, sequence, expiry)
 - jacob-credential-HUNT-ONLY.csv (not in TIP import or signed release inventory)
-- origin-verification.json (offseq source Minisign QA receipt; **not currently part of the signed customer release manifest**)
+- origin-verification.json (hash-bound upstream origin-verification receipt, **part of the locally signed release manifest**)
+- offseq-SHA256SUMS and offseq-SHA256SUMS.minisig (the exact upstream publisher signature/checksums, **part of the locally signed release**)
 - upstream-rule-drift.json and optional other source health status (research only)
 
-Only the first four artifacts are eligible for signed production release. The evidence sidecars are signed and checked but are NOT TIP protocol files.
+Only the two TSV files are presented to Stellar TIP. The two evidence CSVs **and all three source-origin proof files** are part of the protected signed release inventory, re-validated at promotion and on every gateway GET. Research/hunting outputs are never served as TIP feeds.
 
 ## No insecure direct distribution
 
@@ -35,12 +36,12 @@ Stellar Cyber **does not document client-side verification of this detached sign
 
 ## Promotion procedure (only after operator authorization and test-tenant E2E)
 
-1. Verify exact-head GitHub QA and source attestation. Download CI artifacts from a trusted workflow. Compare the source-verification receipt to manifest source SHA256. At present, independent attestation-binding at release promotion is still a deployment gate; do not treat a copied JSON receipt as an upstream signature.
+1. Verify exact-head GitHub QA and source attestation. Download CI artifacts from a trusted workflow. The staged release includes the publisher-signed OffSeq SHA256SUMS, its Minisign signature and the verification receipt, all individually SHA256-bound in the **locally Ed25519-signed manifest**. The gateway independently verifies the pinned publisher key and original upstream digests at promotion and every GET; it does **not** trust only the JSON receipt. CERT Polska and Jacobrakai remain HTTPS-only sources (not upstream publisher-signed).
 2. Independently corroborate license, source and false-positive policy. Adjudicate a customer clean-traffic sample, and check native Proofpoint/ET feed overlap via the read-only tool:
    python3 tools/audit_stellar_ti_overlap.py --current /path/strict-recent-attackers-DRAFT.tsv /path/strict-recent-phishing-DRAFT.tsv --oem-csv /path/tenant-active-iocs.csv --oem-generated-at 2026-11-22T06:00:00+00:00 --output /tmp/ti-overlap.json
 3. In an operator-controlled staging directory, copy the four signed-eligible files and strict-manifest.json. Explicitly change status to APPROVED_FOR_DEPLOYMENT only after security review; never sign an original DRAFT for production.
 4. Sign the final manifest *off the collection runner and web host*, using a protected Ed25519 key, and write strict-manifest.sig. The private key may not be committed, uploaded to GitHub Actions artifacts, installed on the HTTP gateway, or logged.
-5. Audit before mutation:
+5. Audit before mutation. Minisign must be installed at the trusted validation origin; source proof is independently re-verified with pinned public key:
    python3 tools/strict_ti_gateway.py audit --stage /secure/staged --origin /srv/stellar-ti --public-key /secure/trusted-publisher.pub
 6. In a nonproduction simulation, the --apply form atomically copies and verifies the signed files into releases/<sequence>, stores last_sequence and switches current. It rejects non-increasing sequences, missing signer approval, tampered files, out-of-window observations, uncorroborated credential-only IPs, malformed or missing evidence. Test this process before enabling any actual consumer:
    python3 tools/strict_ti_gateway.py promote --stage /secure/staged --origin /tmp/stellar-ti-test-origin --public-key /secure/trusted-publisher.pub --apply
