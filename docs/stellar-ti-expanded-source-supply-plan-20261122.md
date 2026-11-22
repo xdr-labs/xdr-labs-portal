@@ -1,5 +1,13 @@
 # Stellar Cyber OSINT TI: expanded real-source supply plan (2026-11-22)
 
+> **Superseding owner choice:** Public delivery is now **ONE**
+> `https://<approved-host>/stellar-ti.tsv` four-column Custom Feed for all
+> customers and all verified IOC types, without customer IDs or accounts.
+> The IP/domain artifacts described below are strictly **internal signing and
+> evidence components**, not two customer-facing feeds. For implementation
+> and client setup, see [single public feed guide](stellar-one-feed-delivery-20261122.md).
+
+
 ## Product decision
 
 Build a continuously updated threat-intelligence *curation service*, NOT a mirror of 40 public blocklists. The machine-readable 41-source audit is at [osint-source-catalog.json](../validation/agentic-20261122/osint-source-catalog.json). Catalogue admission is separate from source reachability, redistribution rights, individual IOC credibility and customer deployment. Today's authorized work is confined to a Draft PR and isolated GitHub Actions QA artifacts.
