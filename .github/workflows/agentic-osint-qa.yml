@@ -15,6 +15,9 @@ on:
       - 'tools/origin_evidence.py'
       - 'tools/verify_ti_build_replay.py'
       - 'tools/strict_ti_gateway.py'
+      - 'tools/ti_customer_service.py'
+      - 'tools/ti_customer_registry_cli.py'
+      - 'deploy/stellar-ti/**'
       - '.github/workflows/agentic-osint-qa.yml'
   workflow_dispatch:
   schedule:
