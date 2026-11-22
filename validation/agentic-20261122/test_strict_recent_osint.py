@@ -8,10 +8,12 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 from strict_recent_osint import build, parse_offseq, sha
+from verify_ti_release import sign, verify
 
 NOW = datetime(2026,11,22,6,0,tzinfo=timezone.utc)
 HEAD = ["ip","asn","as_org","country","first_seen","last_seen","services",
@@ -102,6 +104,27 @@ class StrictLivePolicy(unittest.TestCase):
         older["manifest"]=json.dumps(meta).encode()
         with self.assertRaisesRegex(ValueError,"volume"):
             parse_offseq(older,NOW)
+
+    def test_signed_strict_feeds_and_tamper_replay(self):
+        with tempfile.TemporaryDirectory() as path:
+            root = Path(path)
+            result = build(fixture(), root, NOW)
+            priv, pub, sig = root/"private.pem", root/"public.pem", root/"strict.sig"
+            subprocess.run(["openssl", "genpkey", "-algorithm", "ed25519",
+                            "-out", str(priv)], check=True, capture_output=True)
+            subprocess.run(["openssl", "pkey", "-in", str(priv), "-pubout",
+                            "-out", str(pub)], check=True, capture_output=True)
+            manifest = root/"strict-manifest.json"
+            sign(manifest, priv, sig)
+            verify(manifest, sig, pub, root, 0, NOW, False)
+            with self.assertRaisesRegex(ValueError, "Replay"):
+                verify(manifest, sig, pub, root, result["sequence"], NOW, False)
+            with self.assertRaisesRegex(ValueError, "not approved"):
+                verify(manifest, sig, pub, root, 0, NOW, True)
+            ipfile = root/"strict-recent-attackers-DRAFT.tsv"
+            ipfile.write_bytes(ipfile.read_bytes()+b"ip\t1.2.3.9\tOffSeqMirage\t95\n")
+            with self.assertRaisesRegex(ValueError, "Modified"):
+                verify(manifest, sig, pub, root, 0, NOW, False)
 
     def test_removed_cert_domains_do_not_enter_stellar(self):
         src=fixture()
