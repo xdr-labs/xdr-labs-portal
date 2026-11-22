@@ -275,8 +275,9 @@ def serve_local(root: Path, pubkey: Path, port: int, clock=None, run_forever: bo
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             try:
-                selected = current_file(root,pubkey,self.path,current_time())
-                body = selected.read_bytes()
+                if self.path != "/stellar-ti.tsv":
+                    raise ValueError("Only one public custom feed is allowed")
+                body = current_unified_tsv(root,pubkey,current_time())
             except (ValueError, OSError, KeyError, TypeError, json.JSONDecodeError):
                 self.send_error(503,"Signed fresh TIP snapshot not available")
                 return
