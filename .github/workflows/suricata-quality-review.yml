@@ -71,10 +71,40 @@ jobs:
             '
           python3 validation/suricata-tuning-20261122/verify_profile_eve.py \
             --logs /tmp/suricata-quality-eve | tee /tmp/suricata-quality-eve/profile-qa.txt
+      - name: Generate 14 benign/metadata WebSocket QA PCAPs (no network sends)
+        run: python3 validation/suricata-tuning-20261122/nextjs_experimental.py --generate /tmp/nextjs-qa-pcap
+      - name: Validate experimental metadata-only WebSocket rule syntax
+        run: |
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
+            jasonish/suricata:${{ matrix.suricata }} \
+            -T -c /etc/suricata/suricata.yaml \
+            -S /repo/validation/suricata-tuning-20261122/suricata-nextjs-websocket-internal-review.rules
+      - name: Replay WebSocket metadata SSRF QA positives and normal-proxy negatives
+        run: |
+          mkdir -p /tmp/nextjs-qa-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" -v /tmp/nextjs-qa-pcap:/qa/pcaps:ro \
+            -v /tmp/nextjs-qa-eve:/qa/out \
+            jasonish/suricata:${{ matrix.suricata }} -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/validation/suricata-tuning-20261122/suricata-nextjs-websocket-internal-review.rules \
+                  -l "/qa/out/$n" -k none >/dev/null
+              done
+            '
+          python3 validation/suricata-tuning-20261122/nextjs_experimental.py \
+            --verify /tmp/nextjs-qa-eve | tee /tmp/nextjs-qa-eve/qa-summary.txt
       - name: Retain QA observations
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: review-profile-${{ matrix.suricata }}
-          path: /tmp/suricata-quality-eve/profile-qa.txt
+          path: |
+            /tmp/suricata-quality-eve/profile-qa.txt
+            /tmp/nextjs-qa-eve/qa-summary.txt
           if-no-files-found: warn
