@@ -44,7 +44,7 @@ def generate():
                 assert l.count(old)==1
                 l=l.replace(old,old+r' pcre:"/^update\.pentagi\.com$/i";')
             if i in HISTORICAL:
-                l=l.replace("(ARTEX campaign)","(historical C2 IOC; ARTEX linkage unverified)").replace("confidence High,","confidence Medium,")
+                l=l.replace("(ARTEX campaign)","(historical C2 IOC, ARTEX linkage unverified)").replace("confidence High,","confidence Medium,")
                 assert "ARTEX linkage unverified" in l
             hunt.append(l)
         else:
