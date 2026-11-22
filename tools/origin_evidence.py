@@ -96,7 +96,8 @@ def check_origin(sums: bytes, signature: bytes, receipt_bytes: bytes,
         "other_sources": "HTTPS_AND_LOCAL_SIGNER_ONLY",
     }
 
-def attach_origin(source_dir: Path, stage: Path, now: datetime):
+def attach_origin(source_dir: Path, stage: Path, now: datetime,
+                  publisher_key: str = PUBKEY):
     """Bind verified raw publisher proof before downstream local signing.
 
     This function is an internal QA packaging step, not a release authorization.
@@ -116,7 +117,8 @@ def attach_origin(source_dir: Path, stage: Path, now: datetime):
     }
     check_origin(original["offseq-SHA256SUMS"],
                  original["offseq-SHA256SUMS.minisig"],
-                 original["origin-verification.json"], release, now)
+                 original["origin-verification.json"], release, now,
+                 publisher_key=publisher_key)
     if set(release["files"]) & RELEASE_MEMBERS:
         raise ValueError("Unexpected existing origin-proof inventory")
     for name, blob in original.items():
