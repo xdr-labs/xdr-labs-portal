@@ -152,3 +152,23 @@ scenarios:
   - Current Sensor offline 381/383 results preserve distinction from DP and production acceptance
   - Original 333 versus 383 result has zero per-PCAP regressions
   release_gate: true
+
+- id: SURICATA-QUALITY-PROFILE-001
+  cost: cheap
+  estimated_seconds: 3
+  timeout_seconds: 30
+  agent_default: true
+  scope: static
+  name: Deterministic conservative 365 and opt-in 12 review profiles
+  level: static
+  domains:
+  - core
+  triggers:
+  - affected
+  - pr
+  platforms:
+  - linux
+  command: python3 validation/suricata-tuning-20261122/build_profiles.py --verify
+  invariants:
+  - Immutable original source, 365/12/377 review counts and six excluded SIDs
+  release_gate: true

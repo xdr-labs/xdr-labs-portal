@@ -1,0 +1,80 @@
+name: Suricata Conservative Quality Profile QA
+on:
+  pull_request:
+    paths:
+      - 'validation/suricata-tuning-20261122/**'
+      - '.github/workflows/suricata-quality-review.yml'
+      - '.engineering/tests.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tuned-suricata:
+    name: offline-profile-${{ matrix.suricata }}
+    strategy:
+      fail-fast: false
+      matrix:
+        suricata: ['8.0.1', '8.0.8']
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify immutable source and deterministic review profiles
+        run: |
+          python3 validation/suricata-tuning-20261122/build_profiles.py --verify
+          python3 -m compileall -q validation/suricata-tuning-20261122
+      - name: Generate 49 synthetic agentic and 20 normal-risk PCAPs
+        run: |
+          python3 validation/agentic-20261121/generate_inert_pcap.py
+          python3 validation/suricata-audit-20261122/risk_witnesses.py --mode generate --root /tmp/suricata-quality-risk
+      - name: Pull isolated Suricata
+        run: docker pull jasonish/suricata:${{ matrix.suricata }}
+      - name: Suricata -T for core365, opt-in12, combined377
+        run: |
+          set -eu
+          for file in suricata-core-365-review.rules suricata-hunting-12-optin.rules suricata-core-plus-hunting-377-review.rules; do
+            docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" \
+              jasonish/suricata:${{ matrix.suricata }} \
+              -T -c /etc/suricata/suricata.yaml \
+              -S /repo/validation/suricata-tuning-20261122/"$file"
+          done
+      - name: Replay independent PCAPs on both review profiles
+        run: |
+          mkdir -p /tmp/suricata-quality-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v /tmp/agentic-383-pcap:/qa/agentic:ro \
+            -v /tmp/suricata-quality-risk/pcaps:/qa/risk:ro \
+            -v /tmp/suricata-quality-eve:/qa/out \
+            jasonish/suricata:${{ matrix.suricata }} -c '
+              set -eu
+              for profile in core combined; do
+                if [ "$profile" = core ]; then
+                  rules=/repo/validation/suricata-tuning-20261122/suricata-core-365-review.rules
+                else
+                  rules=/repo/validation/suricata-tuning-20261122/suricata-core-plus-hunting-377-review.rules
+                fi
+                for type in agentic risk; do
+                  for p in /qa/$type/*.pcap; do
+                    n="${p##*/}"
+                    n="${n%.pcap}"
+                    out="/qa/out/$profile/$type/$n"
+                    mkdir -p "$out"
+                    suricata -r "$p" --runmode=single \
+                      -c /etc/suricata/suricata.yaml \
+                      -S "$rules" -l "$out" -k none >/dev/null
+                  done
+                done
+              done
+            '
+          python3 validation/suricata-tuning-20261122/verify_profile_eve.py \
+            --logs /tmp/suricata-quality-eve | tee /tmp/suricata-quality-eve/profile-qa.txt
+      - name: Retain QA observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-profile-${{ matrix.suricata }}
+          path: /tmp/suricata-quality-eve/profile-qa.txt
+          if-no-files-found: warn
