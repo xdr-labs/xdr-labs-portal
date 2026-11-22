@@ -20,6 +20,7 @@ from test_strict_ti_gateway import SignedGatewayTests
 from strict_ti_gateway import promote, current_unified_tsv
 from ti_customer_service import (make_password_hash, registry, serve, basic_auth,
                                  verify_secret)
+from ti_customer_registry_cli import update as update_customer
 
 PASSWORD_A = "synthetic-long-only-for-testing-AAAAA"
 PASSWORD_B = "synthetic-long-only-for-testing-BBBBB"
@@ -164,6 +165,40 @@ class SingleFeedServiceTests(unittest.TestCase):
         with running_service(NOW+timedelta(days=2)) as (base,root,config,pub):
             path="/v1/tenants/corp-alpha/feeds/stellar-ti.tsv"
             self.assertEqual(fetch(base,path,basic("corp-alpha-bot",PASSWORD_A))[0],503)
+
+    def test_offline_customer_enroll_rotate_and_revoke_is_atomic(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            path=root/"tenants.json"
+            hash_a=make_password_hash(PASSWORD_A,b"\x01"*16)
+            hash_b=make_password_hash(PASSWORD_B,b"\x02"*16)
+            result=update_customer(path,"add","corp-alpha",
+                                   "corp-alpha-bot",hash_a)
+            self.assertEqual(result["subscriptions"],["unified"])
+            self.assertTrue(verify_secret(PASSWORD_A,
+                                         registry(path)["corp-alpha"]["password_hash"]))
+            self.assertNotIn(PASSWORD_A,path.read_text())
+            with self.assertRaisesRegex(ValueError,"Existing tenant"):
+                update_customer(path,"add","corp-alpha","duplicate-bot",hash_a)
+            update_customer(path,"add","corp-beta","corp-beta-bot",hash_b)
+            self.assertEqual(len(registry(path)),2)
+            update_customer(path,"rotate","corp-alpha",secret_hash=hash_b)
+            self.assertFalse(verify_secret(PASSWORD_A,
+                                          registry(path)["corp-alpha"]["password_hash"]))
+            self.assertTrue(verify_secret(PASSWORD_B,
+                                         registry(path)["corp-alpha"]["password_hash"]))
+            update_customer(path,"disable","corp-alpha")
+            self.assertFalse(registry(path)["corp-alpha"]["enabled"])
+            update_customer(path,"enable","corp-alpha")
+            self.assertTrue(registry(path)["corp-alpha"]["enabled"])
+            self.assertEqual(path.stat().st_mode & 0o777,0o600)
+            self.assertEqual(path.with_suffix(".json.lock").stat().st_mode & 0o777,0o600)
+            self.assertFalse(any(x.name.startswith(".tenant-validate-")
+                                 for x in root.iterdir()))
+            # Refuse a shared-writable credential directory.
+            os.chmod(root,0o777)
+            with self.assertRaisesRegex(ValueError,"writable"):
+                update_customer(path,"disable","corp-alpha")
 
     def test_credentials_require_restricted_file_and_strong_digest(self):
         with tempfile.TemporaryDirectory() as directory:
