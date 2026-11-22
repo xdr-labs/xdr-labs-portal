@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Customer-isolated Stellar Cyber TSV service, loopback-only behind HTTPS proxy.
+"""Customer-isolated *single combined* Stellar Cyber TSV service, loopback-only behind HTTPS proxy.
 
 This service never collects sources, creates signing keys, signs releases, or
 changes the Stellar tenant. It only authenticates tenant-scoped HTTP Basic
@@ -21,15 +21,14 @@ import secrets
 import stat
 import threading
 
-from strict_ti_gateway import current_file
+from strict_ti_gateway import current_unified_tsv
 
 SCHEMA = "stellar-ti-tenants.v1"
 ITERATIONS = 260_000
 MAX_CONFIG = 256 * 1024
 SLUG = re.compile(r"[a-z][a-z0-9-]{1,62}\Z")
-PATH = re.compile(r"/v1/tenants/([a-z][a-z0-9-]{1,62})/feeds/(attackers|phishing)\.tsv\Z")
-SOURCES = {"attackers": "/feeds/recent-attackers.tsv",
-           "phishing": "/feeds/recent-phishing.tsv"}
+PATH = re.compile(r"/v1/tenants/([a-z][a-z0-9-]{1,62})/feeds/stellar-ti\.tsv\Z")
+SOURCES = {"unified"}
 DUMMY_HASH = "pbkdf2_sha256$260000$" + "00"*16 + "$" + "00"*32
 
 
@@ -82,10 +81,14 @@ def registry(path: Path) -> dict[str,dict]:
             tid in seen or user in users or type(row["enabled"]) is not bool or
             not isinstance(row["feeds"],list)):
             raise ValueError("Duplicate/invalid customer registration")
-        if len(row["feeds"]) != len(set(row["feeds"])) or not row["feeds"] or not set(row["feeds"]) <= set(SOURCES):
+        if len(row["feeds"]) != len(set(row["feeds"])) or not row["feeds"] or not set(row["feeds"]) <= SOURCES:
             raise ValueError("Invalid tenant subscription")
-        # Validate hash shape even for a disabled tenant.
-        verify_secret("",row["password_hash"])
+        # Validate the stored digest shape without running PBKDF2 for every
+        # tenant on every request (could permit costly authentication DoS).
+        if not isinstance(row["password_hash"],str) or not re.fullmatch(
+            r"pbkdf2_sha256\$260000\$[0-9a-f]{32}\$[0-9a-f]{64}",
+            row["password_hash"]):
+            raise ValueError("Malformed stored tenant password digest")
         seen[tid]=row
         users.add(user)
     return seen
@@ -154,7 +157,7 @@ def serve(origin: Path,pubkey: Path,config: Path,port=18332,clock=None,run_forev
             if self.path == "/internal/healthz":
                 try:
                     registry(config)
-                    current_file(origin,pubkey,SOURCES["phishing"],now())
+                    current_unified_tsv(origin,pubkey,now())
                     self.reply(200,b'{"status":"ready"}\n',"application/json")
                 except (ValueError,OSError,KeyError,TypeError,json.JSONDecodeError):
                     self.reply(503,b'{"status":"unavailable"}\n',"application/json")
@@ -167,7 +170,8 @@ def serve(origin: Path,pubkey: Path,config: Path,port=18332,clock=None,run_forev
             if not matched:
                 self.reply(404,b"Not Found\n")
                 return
-            tenant,kind=matched.groups()
+            tenant=matched.group(1)
+            kind="unified"
             try:
                 rows=registry(config)
             except (ValueError,OSError,KeyError,TypeError,json.JSONDecodeError):
@@ -179,7 +183,7 @@ def serve(origin: Path,pubkey: Path,config: Path,port=18332,clock=None,run_forev
                 self.reply(401,b"Unauthorized\n",challenge=True)
                 return
             try:
-                content=current_file(origin,pubkey,SOURCES[kind],now()).read_bytes()
+                content=current_unified_tsv(origin,pubkey,now())
             except (ValueError,OSError,KeyError,TypeError,json.JSONDecodeError):
                 self.count("unavailable")
                 self.reply(503,b"Feed temporarily unavailable\n")
