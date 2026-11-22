@@ -53,8 +53,9 @@ def verify(manifest: Path, signature: Path, public_key: Path,
     })
     if not isinstance(files, dict) or not set(allowed).issubset(files):
         raise ValueError("Missing signed TSV inventory")
-    if schema == "stellar-strict-live-stage.v1" and set(files) != set(allowed):
-        raise ValueError("Unexpected strict-live feed in signed manifest")
+    strict_signed_files = set(allowed) | {"strict-ip-evidence.csv", "strict-domain-evidence.csv"}
+    if schema == "stellar-strict-live-stage.v1" and set(files) != strict_signed_files:
+        raise ValueError("Unexpected strict-live feed or missing signed evidence in manifest")
     counts = {}
     for name, expected in files.items():
         if name != Path(name).name or "/" in name or "\\" in name:
