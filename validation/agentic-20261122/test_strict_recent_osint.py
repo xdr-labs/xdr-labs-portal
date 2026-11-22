@@ -45,6 +45,7 @@ def fixture():
     }
     meta = {
         "generated": "2026-11-22T05:00:00Z",
+        "day": "2026-11-21", "build": "aabbccddeeff0011",
         "license": {"code": "MIT", "data": "CC-BY-4.0"},
         "files": [
             entry("latest/attackers-7d.csv", attackers),
