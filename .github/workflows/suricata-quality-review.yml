@@ -130,6 +130,48 @@ jobs:
           set -o pipefail
           python3 validation/suricata-tuning-20261122/verify_php_lua.py \
             --logs /tmp/suricata-php-lua-eve | tee /tmp/suricata-php-lua-eve/qa-summary.txt
+      - name: Generate 14 edge-case multipart PCAPs including fragmented TCP (QA ONLY)
+        run: python3 validation/suricata-tuning-20261122/php_lua_extended_qa.py --generate /tmp/php-lua-extended/pcaps
+      - name: Replay 14 MIME/header/body/TCP segmentation edge PCAPs through sandboxed Lua
+        run: |
+          mkdir -p /tmp/php-lua-extended/eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v /tmp/php-lua-extended/pcaps:/qa/pcaps:ro \
+            -v /tmp/php-lua-extended/eve:/qa/out \
+            jasonish/suricata:${{ matrix.suricata }} -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  --set default-rule-path=/repo/validation/suricata-tuning-20261122 \
+                  -S /repo/validation/suricata-tuning-20261122/suricata-php2shell-lua-experimental.rules \
+                  -l "/qa/out/$n" -k none >/dev/null
+              done
+            '
+          set -o pipefail
+          python3 validation/suricata-tuning-20261122/php_lua_extended_qa.py \
+            --verify /tmp/php-lua-extended/eve | tee /tmp/php-lua-extended/eve/edge-qa-summary.txt
+      - name: Bounded 100-session multipart Lua count replay (QA ONLY)
+        run: |
+          python3 validation/qa-suricata-last-two/generate_risk_fixtures.py \
+            --stress 100 --output-dir /tmp/php-lua-stress
+          mkdir -p /tmp/php-lua-stress/eve
+          timeout 60s docker run --rm --entrypoint suricata \
+            -v "$PWD:/repo:ro" -v /tmp/php-lua-stress:/qa \
+            jasonish/suricata:${{ matrix.suricata }} \
+            -r /qa/multipart-stress-generated.pcap --runmode=single \
+            -c /etc/suricata/suricata.yaml \
+            --set default-rule-path=/repo/validation/suricata-tuning-20261122 \
+            -S /repo/validation/suricata-tuning-20261122/suricata-php2shell-lua-experimental.rules \
+            -l /qa/eve -k none
+          set -o pipefail
+          python3 validation/suricata-tuning-20261122/php_lua_extended_qa.py \
+            --stress-eve /tmp/php-lua-stress/eve/eve.json \
+            | tee /tmp/php-lua-stress/stress-qa-summary.txt
       - name: Retain QA observations
         if: always()
         uses: actions/upload-artifact@v4
@@ -139,4 +181,6 @@ jobs:
             /tmp/suricata-quality-eve/profile-qa.txt
             /tmp/nextjs-qa-eve/qa-summary.txt
             /tmp/suricata-php-lua-eve/qa-summary.txt
+            /tmp/php-lua-extended/eve/edge-qa-summary.txt
+            /tmp/php-lua-stress/stress-qa-summary.txt
           if-no-files-found: warn
