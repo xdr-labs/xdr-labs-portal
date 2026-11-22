@@ -199,9 +199,11 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
             raise ValueError("Missing or oversized strict source " + key)
     ips, evidence = parse_offseq(source, now)
     jacob, jacob_evidence = select_jacob(source["jacob_csv"], source["jacob_json"], now)
-    # Merge proven sensor sources only, preserving independent provenance.
+    # A single honeypot's historical credential-ban count is not independent
+    # proof of a currently malicious IP. Keep such IPs for hunting only.
     combined = {x["value"]: {**x, "source": SOURCE_IP} for x in ips}
     corroborated = 0
+    held_credential = []
     for x in jacob:
         current = combined.get(x["value"])
         if current is not None:
@@ -210,8 +212,10 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
                 **current, "source": "Corroborated", "score": max(current["score"], x["score"]),
                 "jacob": x,
             }
-        else:
+        elif x["tier"] == "loader":
             combined[x["value"]] = x
+        else:
+            held_credential.append(x)
     all_ips = sorted(combined.values(), key=lambda x: x["value"])
     if len(all_ips) > MAX_IPS:
         raise ValueError("Combined strict IP feed volume out of policy")
@@ -246,6 +250,7 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
         "offseq": evidence,
         "jacob_honeypot": jacob_evidence,
         "corroborated_ip_count": corroborated,
+        "jacob_credential_held": len(held_credential),
         "cert_polska": cert_evidence,
         "data_rights": {
             "OffSeqMirage": "CC BY 4.0; attribution required",
@@ -255,6 +260,14 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
         "rules": "No older article-date or bulk unattributed IPs; 24h last_seen / active domain; not production certified",
     }
     (out / "strict-manifest.json").write_text(json.dumps(summary, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    # Supplemental research-only CSV is NOT in signed TIP release inventory.
+    with (out / "jacob-credential-HUNT-ONLY.csv").open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["ip", "source", "first_seen", "last_seen", "tier", "bans", "attempts", "disposition"])
+        for item in held_credential:
+            writer.writerow([item["value"], "JacobHoneypot", item["first_seen"],
+                             item["last_seen"], item["tier"], item["bans"],
+                             item["attempts"], "HUNT_ONLY_NOT_IMPORTABLE"])
     return summary
 
 def main():
