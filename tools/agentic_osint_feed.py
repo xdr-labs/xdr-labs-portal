@@ -24,6 +24,9 @@ SOURCES = {
 }
 MAX_BYTES = 8 * 1024 * 1024
 MAX_STELLAR_TSV_BYTES = 99 * 1024 * 1024
+MAX_TSV_ROWS = 20000  # below documented 25,000 IOC/day ingestion ceiling
+TALOS_SNAPSHOT_DATE = date(2026, 11, 13)
+TALOS_HUNT_TTL_DAYS = 30
 TYPES = {"domain": "domain", "url": "url", "sha256": "sha256-hash", "md5": "md5-hash"}
 LEGITIMATE = {
     "api.anthropic.com", "api.deepseek.com", "api.x.ai", "open.bigmodel.cn",
@@ -140,8 +143,11 @@ def make_outputs(td_bytes: bytes, talos_bytes: bytes, output: Path, today: date,
         status, reason = classify(r, today)
         audit.append({**r, "triage": status, "reason": reason})
     curated = [r for r in audit if r["triage"] == "curated_draft"]
-    if not curated:
-        raise ValueError("Empty curated feed; refuse to publish")
+    if not curated or len(curated) > MAX_TSV_ROWS:
+        raise ValueError("Empty or excessive curated feed; refuse to publish")
+    reported = [date.fromisoformat(r["reported"]) for r in rows if r["reported"]]
+    if not reported or (today - max(reported)).days > 45:
+        raise ValueError("ThreatDefence feed is stale; fail closed")
     tsv_lines = []
     for r in sorted(curated, key=lambda x: (x["type"], x["value"])):
         tsv_type = TYPES[r["type"]]
@@ -164,7 +170,8 @@ def make_outputs(td_bytes: bytes, talos_bytes: bytes, output: Path, today: date,
             unexpected.append(value[:120])
     if unexpected or len(talos) < 100:
         raise ValueError("Suspicious Talos source content: " + repr(unexpected[:3]))
-    ip_sources = {addr: {"CiscoTalos"} for addr in talos}
+    talos_active = (today - TALOS_SNAPSHOT_DATE).days <= TALOS_HUNT_TTL_DAYS
+    ip_sources = ({addr: {"CiscoTalos"} for addr in talos} if talos_active else {})
     for r in audit:
         if r["type"] == "ipv4" and r["triage"] == "hunt_only":
             ip_sources.setdefault(r["value"], set()).add("ThreatDefence")
@@ -196,6 +203,8 @@ def make_outputs(td_bytes: bytes, talos_bytes: bytes, output: Path, today: date,
         "threatdefence_total": len(rows),
         "curated_count": len(curated),
         "hunt_ipv4_count": len(ip_sources),
+        "talos_snapshot_date": TALOS_SNAPSHOT_DATE.isoformat(),
+        "talos_hunt_status": "HUNT_ONLY_VALID" if talos_active else "HUNT_EXPIRED_EXCLUDED",
         "excluded_or_context_count": len(rows) - len(curated),
         "policy": "No auto-block; hunt IPs do not enter the Stellar custom TIP",
     }
