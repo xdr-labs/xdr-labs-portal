@@ -1,4 +1,12 @@
 # Stellar Cyber strict TI: verified-source staging and signed HTTPS gateway runbook
+
+> **Current owner delivery decision (2026-11-22):** customer IDs, accounts,
+> passwords and split customer-facing endpoints have been removed. The only
+> authorized **design** is one common URL `/stellar-ti.tsv`, carrying all
+> admitted IOC types in a single four-column TSV. Internal type-specific
+> evidence files remain signed and are NOT public endpoints. See
+> [single-feed delivery guide](stellar-one-feed-delivery-20261122.md).
+> No actual public service has been deployed or approved.
 Date: 2026-11-22. **Draft PR #60 only; no live endpoint has been created.**
 
 ## What can and cannot be claimed
