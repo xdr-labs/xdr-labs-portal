@@ -48,7 +48,7 @@ def verify(manifest: Path, signature: Path, public_key: Path,
     allowed = ({
         "agentic-malicious-DRAFT.tsv": ("ThreatDefence", None)
     } if schema == "stellar-osint-stage.v1" else {
-        "strict-recent-attackers-DRAFT.tsv": ("OffSeqMirage", "ip"),
+        "strict-recent-attackers-DRAFT.tsv": ({"OffSeqMirage", "JacobHoneypot", "Corroborated"}, "ip"),
         "strict-recent-phishing-DRAFT.tsv": ("CERTPolska", "domain"),
     })
     if not isinstance(files, dict) or not set(allowed).issubset(files):
@@ -73,7 +73,7 @@ def verify(manifest: Path, signature: Path, public_key: Path,
             fields = line.split("\t")
             if (len(fields) != 4 or fields[0] not in {
                 "ip", "domain", "url", "md5-hash", "sha1-hash", "sha256-hash"
-            } or fields[2] != expected_source or
+            } or fields[2] not in (expected_source if isinstance(expected_source, set) else {expected_source}) or
                 (expected_type is not None and fields[0] != expected_type) or
                 not fields[3].isdigit() or not 0 <= int(fields[3]) <= 100 or
                 any("\r" in x or "\0" in x for x in fields)):
