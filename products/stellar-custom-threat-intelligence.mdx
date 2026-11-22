@@ -1,0 +1,68 @@
+---
+title: "Stellar Cyber Custom Threat Intelligence"
+sidebarTitle: "Custom Threat Intelligence"
+description: "Quality-first Stellar Cyber 7.0 single-URL Custom TSV TI: verified November 22 QA snapshot of 462 IP/domain indicators, with signing, provenance, and honest deployment status."
+---
+
+**One planned Custom TI feed for Stellar Cyber Open XDR 7.0**, covering multiple IOC types in **one four-column TSV**, not separate IP and phishing feeds. No customer ID, account registration, or per-customer URL is required.
+
+<CardGroup cols={2}>
+  <Card title="Latest verified QA evidence" icon="clipboard-check" href="https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44997698618">
+    November 22 source verification, signed publisher checks, exact original-source replay, and retained QA artifact.
+  </Card>
+  <Card title="Single feed delivery design" icon="file-text" href="https://github.com/xdr-labs/xdr-labs-portal/blob/6a51bae8246f0154dd9f559a1036d7119a783740/docs/stellar-one-feed-delivery-20261122.md">
+    Read the one-URL reader, origin signing, expiry, scope and deployment prerequisites.
+  </Card>
+</CardGroup>
+
+## Latest validated IOC snapshot
+
+**Snapshot: November 22, 2026, approximately 16:20 KST (07:20 UTC).** These numbers describe a completed GitHub Actions **QA staging run**, not a continuously updated public customer endpoint.
+
+| Indicator type | Admitted IOC candidates | Original source and validation |
+| --- | ---: | --- |
+| Observed attacker IP (IPv4) | **8** | OffSeq Mirage, recent high-impact behavior, confidence at least 85, observations from at least 3 sensors and 2 networks |
+| Active phishing/fraud domain | **454** | CERT Polska, currently present and first added within 24 hours |
+| **One combined future feed** | **462** | 8 IP + 454 domains from a single verified QA snapshot |
+| Credential-only single-honeypot IP | **14 excluded** | Jacobrakai — **HUNT ONLY**, insufficient independent evidence for malicious TI promotion |
+
+**Source inventory:** 41 external source candidates screened; three original-source adapters evaluated, and two sources contributed currently admitted IOCs in this snapshot. Excluded sources are **not** silently repackaged. This includes already-integrated OEM streams, unlicensed/noncommercial feeds, and stale historical IP lists.
+
+The displayed **462** is a **timestamped QA observation**. It will vary as sources add/remove records and entries expire; it does not represent a maintained public feed, a production deployment, or a claim of zero duplicate coverage against native Proofpoint/ET Pro and other Stellar feeds. A real tenant feed inventory is needed to measure OEM overlap.
+
+## How the single feed is designed to work
+
+The eventual external URL has the form **`https://<approved-host>/stellar-ti.tsv`**. No production hostname or customer-accessible endpoint has yet been approved or deployed; **do not register this placeholder URL** in Stellar Cyber.
+
+| TSV column | Meaning |
+| --- | --- |
+| `TYPE` | `ip`, `domain` (future verified `url`, `md5-hash`, `sha1-hash`, `sha256-hash` where supported) |
+| `VALUE` | Validated IOC itself |
+| `SOURCE` | Original source, e.g. `OffSeqMirage` or `CERTPolska` |
+| `SCORE` | Bounded 0–100 confidence/score |
+
+The sample below contains **reserved example values only**, not live malicious IOCs:
+
+```text
+ip	203.0.113.9	OffSeqMirage	90
+domain	phishing.example.invalid	CERTPolska	75
+```
+
+The internal collector preserves each source and type separately so source provenance, age, and risk can be validated. **Only the outward response is unified.** Before serving data, the gateway must independently check the publisher signature, signed source checksums, per-IOC evidence, Ed25519-approved release signature, freshness and anti-rollback sequence. Tampered, expired or unapproved releases fail closed rather than serving stale data.
+
+**Freshness policy:** OffSeq records must have high-confidence high-impact behavior observed within 24 hours; CERT Polska domains must still be active and newly added within 24 hours. Evidence for removed or old records is not treated as a permanent blocklist. The design performs periodic collector QA but no unattended public distribution is enabled.
+
+## Source rights, evidence, and limits
+
+- [CERT Polska Warning List](https://cert.pl/en/warning-list/) — active phishing-domain information; commercial use allowed under its declared policy; no endorsement implied.
+- [OffSeq Mirage original honeypot observations](https://github.com/offseq/mirage-feed) — source data are **CC BY 4.0**, requiring attribution; its signed original `SHA256SUMS` and Minisign proof are checked in QA.
+- Jacobrakai honeypot — original-sensor correlation candidate only; its 14 credential-only records do **not** enter the customer-facing candidate.
+- [Read the 41-source audit and exclusions](https://github.com/xdr-labs/xdr-labs-portal/blob/6a51bae8246f0154dd9f559a1036d7119a783740/docs/stellar-osint-strict-source-audit-20261122.md).
+
+**What is verified:** unit/regression tests, signed original source checks, byte-for-byte source-to-IOC replay, one-URL synthetic HTTP QA, Suricata 7.0.3/8.0.1 checks. [CI evidence: 3/3 PASS](https://github.com/xdr-labs/xdr-labs-portal/actions/runs/44997698618).
+
+**What is not verified or available:** public TLS origin, protected production signer, a continuously running customer feed, native Stellar Cyber 7.0 TIP polling/removal semantics, current OEM-indicator overlaps, a live Sensor→DP Alert/Case test, or operational detection/false-positive rates.
+
+## Related Suricata detection signatures
+
+See [AI-Assisted Attack Detection Rules](/products/ai-assisted-attack-detection-rules): the published **383-rule v1.2** set and the **398-rule QA candidate** containing 15 additional agentic/C2/Docker-behavior signatures. Rules and TI are **different detection inputs**, even though each may enrich Stellar Cyber incidents.
