@@ -7,6 +7,7 @@ compare API. Does NOT auto-publish changed signatures to a Sensor or main.
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -40,8 +41,13 @@ def review(payload):
     }
 
 def download():
-    req = Request(COMPARE_URL, headers={"Accept": "application/vnd.github+json",
-                                         "User-Agent": "stellar-agentic-drift/1.0"})
+    headers = {"Accept": "application/vnd.github+json",
+               "User-Agent": "stellar-agentic-drift/1.0",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    req = Request(COMPARE_URL, headers=headers)
     with urlopen(req, timeout=20) as response:
         body = response.read(1024 * 1024 + 1)
         if len(body) > 1024 * 1024:
