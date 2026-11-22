@@ -7,11 +7,14 @@ import subprocess
 import tempfile
 import unittest
 import threading
+from unittest.mock import patch
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
 from test_strict_recent_osint import fixture, NOW
 from strict_recent_osint import build
+from origin_evidence import attach_origin
+from verify_offseq_origin import SOURCE_MAP
 from verify_ti_release import sign
 from strict_ti_gateway import promote, current_file, serve_local
 
@@ -25,11 +28,63 @@ class SignedGatewayTests(unittest.TestCase):
         return priv, pub
 
     def stage(self, root, key, now=NOW):
+        """Build a real Minisign-backed *synthetic* upstream + local release."""
         root.mkdir()
-        result=build(fixture(),root,now)
+        sources=fixture()
+        result=build(sources,root,now)
+        upstream = root.parent / (root.name + "-upstream")
+        upstream.mkdir()
+        publisher_pub=upstream/"publisher.pub"
+        publisher_priv=upstream/"publisher.sec"
+        subprocess.run(["minisign", "-G", "-W", "-p", str(publisher_pub),
+                        "-s", str(publisher_priv)], capture_output=True, check=True)
+        test_key=publisher_pub.read_text().splitlines()[-1].strip()
+        # A test private key can never substitute for the hardcoded production
+        # publisher key: override is scoped to this unit-test process only.
+        fixture_patch=patch("strict_ti_gateway.UPSTREAM_PUBKEY", test_key)
+        fixture_patch.start()
+        self.addCleanup(fixture_patch.stop)
+        signed_lines=[
+            hashlib.sha256(sources[k]).hexdigest()+"  "+p
+            for k,p in SOURCE_MAP.items()
+        ]
+        signed_lines.extend(
+            hashlib.sha256(str(n).encode()).hexdigest()+
+            "  placeholder/inert-%02d.txt" % n for n in range(20))
+        sums=("\n".join(signed_lines)+"\n").encode()
+        sums_path=upstream/"SHA256SUMS"
+        sums_path.write_bytes(sums)
+        signature_path=upstream/"SHA256SUMS.minisig"
+        comment=("mirage-feed 2026-11-21 generated "
+                 "2026-11-22T05:00:00Z build aabbccddeeff0011")
+        subprocess.run([
+            "minisign", "-S", "-m", str(sums_path), "-s", str(publisher_priv),
+            "-x", str(signature_path), "-t", comment
+        ], capture_output=True, check=True)
+        receipt={
+            "status":"VERIFIED_SOURCE_SNAPSHOT_NOT_PUBLISHED",
+            "verified_at":now.isoformat(),
+            "offseq":{
+                "publisher":"OffSeq Mirage", "method":"Minisign Ed25519",
+                "trusted_comment":comment,
+                "pinned_public_key":test_key,
+                "generated_at":"2026-11-22T05:00:00Z",
+                "source_sums_sha256":hashlib.sha256(sums).hexdigest(),
+                "signed_paths":list(SOURCE_MAP.values())
+            },
+            "source_digests":{k:hashlib.sha256(v).hexdigest()
+                              for k,v in sources.items()},
+            "unverified_provider_signatures":["CERTPolska","JacobHoneypot"],
+        }
+        (upstream/"source-verification.json").write_text(
+            json.dumps(receipt,sort_keys=True,indent=2)+"\n")
+        (upstream/"offseq-SHA256SUMS").write_bytes(sums)
+        (upstream/"offseq-SHA256SUMS.minisig").write_bytes(
+            signature_path.read_bytes())
+        attach_origin(upstream,root,now,publisher_key=test_key)
         path=root/"strict-manifest.json"
         data=json.loads(path.read_text())
-        data["status"]="APPROVED_FOR_DEPLOYMENT"  # simulated authorization, local test only
+        data["status"]="APPROVED_FOR_DEPLOYMENT"  # isolated-test authorization only
         path.write_text(json.dumps(data,sort_keys=True,indent=2)+"\n")
         sign(path,key,root/"strict-manifest.sig")
         return result
@@ -88,6 +143,46 @@ class SignedGatewayTests(unittest.TestCase):
                 server.shutdown()
                 server.server_close()
                 thread.join(timeout=3)
+
+    def test_signed_release_is_bound_to_real_upstream_minisign_and_receipt(self):
+        with tempfile.TemporaryDirectory() as base:
+            root=Path(base)
+            priv,pub=self.keys(root)
+            stage=root/"stage"
+            self.stage(stage,priv)
+            origin=root/"origin"
+            self.assertEqual(promote(stage,origin,pub,NOW,False)["result"],
+                             "DRY_RUN_VALID")
+            # A re-signed malicious replacement of the *publisher* signature
+            # must still be rejected, even though local manifest checks pass.
+            sig=stage/"offseq-SHA256SUMS.minisig"
+            sig.write_bytes(sig.read_bytes()+b"garbled")
+            manifest=stage/"strict-manifest.json"
+            m=json.loads(manifest.read_text())
+            m["files"][sig.name]=hashlib.sha256(sig.read_bytes()).hexdigest()
+            manifest.write_text(json.dumps(m,sort_keys=True,indent=2)+"\n")
+            sign(manifest,priv,stage/"strict-manifest.sig")
+            with self.assertRaisesRegex(ValueError,"publisher signature"):
+                promote(stage,origin,pub,NOW,False)
+            self.assertFalse(origin.exists())
+
+    def test_forged_receipt_rejected_even_when_locally_resigned(self):
+        with tempfile.TemporaryDirectory() as base:
+            root=Path(base)
+            priv,pub=self.keys(root)
+            stage=root/"stage"
+            self.stage(stage,priv)
+            receipt=stage/"origin-verification.json"
+            data=json.loads(receipt.read_text())
+            data["offseq"]["trusted_comment"]="forged-upstream-verification"
+            receipt.write_text(json.dumps(data,sort_keys=True,indent=2)+"\n")
+            manifest=stage/"strict-manifest.json"
+            m=json.loads(manifest.read_text())
+            m["files"][receipt.name]=hashlib.sha256(receipt.read_bytes()).hexdigest()
+            manifest.write_text(json.dumps(m,sort_keys=True,indent=2)+"\n")
+            sign(manifest,priv,stage/"strict-manifest.sig")
+            with self.assertRaisesRegex(ValueError,"receipt and publisher signature"):
+                promote(stage,root/"origin",pub,NOW,False)
 
     def test_invalid_signature_tamper_and_unapproved_are_rejected(self):
         with tempfile.TemporaryDirectory() as base:
