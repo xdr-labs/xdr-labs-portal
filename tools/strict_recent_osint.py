@@ -159,6 +159,38 @@ def parse_offseq(inputs: dict[str, bytes], now: datetime) -> tuple[list[dict], d
         "source_attribution": "OffSeq Mirage (https://github.com/offseq/mirage-feed)",
     }
 
+def render_ip_evidence(all_ips: list[dict]) -> bytes:
+    """One signed evidence record per imported IP, including both sensor origins.
+
+    A Jacob-only IOC has no OffSeq sensor count; never invent a count.
+    """
+    header = ["ip", "source", "first_seen", "last_seen", "score", "confidence",
+              "sensors", "networks", "tags", "tier", "bans", "attempts",
+              "jacob_last_seen", "jacob_tier"]
+    stream = io.StringIO()
+    writer = csv.DictWriter(stream, fieldnames=header, lineterminator="\n")
+    writer.writeheader()
+    for item in all_ips:
+        jac = item.get("jacob", {})
+        writer.writerow({
+            "ip": item["value"],
+            "source": item["source"],
+            "first_seen": item["first_seen"],
+            "last_seen": item["last_seen"],
+            "score": item["score"],
+            "confidence": item.get("confidence", ""),
+            "sensors": item.get("sensors", ""),
+            "networks": item.get("networks", ""),
+            "tags": item.get("tags", ""),
+            "tier": item.get("tier", ""),
+            "bans": item.get("bans", ""),
+            "attempts": item.get("attempts", ""),
+            "jacob_last_seen": jac.get("last_seen", ""),
+            "jacob_tier": jac.get("tier", ""),
+        })
+    return stream.getvalue().encode("utf-8")
+
+
 def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
     if now.tzinfo is None:
         raise ValueError("UTC-aware clock required")
@@ -193,8 +225,7 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
             f"ip\t{x['value']}\t{x['source']}\t{x['score']}\n" for x in all_ips).encode(),
         "strict-recent-phishing-DRAFT.tsv": "".join(
             f"domain\t{d}\t{SOURCE_DOMAIN}\t75\n" for d in domains).encode(),
-        "strict-ip-evidence.csv": ("ip,first_seen,last_seen,confidence,sensors,networks,tags\n" +
-            "".join(f"{x['value']},{x['first_seen']},{x['last_seen']},{x['confidence']},{x['sensors']},{x['networks']},{x['tags']}\n" for x in ips)).encode(),
+        "strict-ip-evidence.csv": render_ip_evidence(all_ips),
         "strict-domain-evidence.csv": ("domain,added_at,removed_at\n" +
             "".join(f"{r['domain']},{r['added_at']},\n" for r in domain_records)).encode(),
     }
