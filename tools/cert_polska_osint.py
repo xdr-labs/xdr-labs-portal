@@ -52,7 +52,7 @@ def parse_time(s: str):
         timestamp = timestamp.replace(tzinfo=ZoneInfo("Europe/Warsaw"))
     return timestamp.astimezone(timezone.utc)
 
-def parse_recent(raw: bytes, now: datetime):
+def parse_recent(raw: bytes, now: datetime, with_added_at: bool = False):
     try:
         src = raw.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
@@ -97,7 +97,9 @@ def parse_recent(raw: bytes, now: datetime):
         raise ValueError("No recent domains: possible stale feed, refuse to publish")
     if len(seen) > MAX_RECENT:
         raise ValueError("CERT recent domains exceed controlled 5000-item ceiling")
-    return sorted(seen), {"source_rows": records, "recent_active": len(seen),
+    values = ([{"domain": domain, "added_at": when.isoformat()} for domain, when in sorted(seen.items())]
+              if with_added_at else sorted(seen))
+    return values, {"source_rows": records, "recent_active": len(seen),
                           "excluded_invalid_domain": rejected, "window_hours": 24}
 
 def stage(raw: bytes, output: Path, now: datetime):
