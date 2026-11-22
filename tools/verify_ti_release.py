@@ -31,7 +31,8 @@ def verify(manifest: Path, signature: Path, public_key: Path,
          "-inkey", str(public_key), "-sigfile", str(signature),
          "-in", str(manifest)])
     payload = json.loads(manifest.read_text(encoding="utf-8"))
-    if payload.get("schema") != "stellar-osint-stage.v1":
+    schema = payload.get("schema")
+    if schema not in ("stellar-osint-stage.v1", "stellar-strict-live-stage.v1"):
         raise ValueError("Unknown manifest schema")
     if require_approved and payload.get("status") != "APPROVED_FOR_DEPLOYMENT":
         raise ValueError("Staging snapshot not approved for deployment")
@@ -44,24 +45,45 @@ def verify(manifest: Path, signature: Path, public_key: Path,
     if not (generated <= now < expires) or (expires-generated).total_seconds() > 86400:
         raise ValueError("Stale, future-dated or overlong snapshot")
     files = payload.get("files")
-    if not isinstance(files, dict) or "agentic-malicious-DRAFT.tsv" not in files:
+    allowed = ({
+        "agentic-malicious-DRAFT.tsv": ("ThreatDefence", None)
+    } if schema == "stellar-osint-stage.v1" else {
+        "strict-recent-attackers-DRAFT.tsv": ("OffSeqMirage", "ip"),
+        "strict-recent-phishing-DRAFT.tsv": ("CERTPolska", "domain"),
+    })
+    if not isinstance(files, dict) or not set(allowed).issubset(files):
         raise ValueError("Missing signed TSV inventory")
+    if schema == "stellar-strict-live-stage.v1" and set(files) != set(allowed):
+        raise ValueError("Unexpected strict-live feed in signed manifest")
+    counts = {}
     for name, expected in files.items():
         if name != Path(name).name or "/" in name or "\\" in name:
             raise ValueError("Unsafe manifest filename")
         content = (feed_dir / name).read_bytes()
         if hashlib.sha256(content).hexdigest() != expected:
             raise ValueError("Modified or missing feed content: " + name)
-    lines = (feed_dir / "agentic-malicious-DRAFT.tsv").read_text(encoding="utf-8").splitlines()
-    if len(lines) != payload["curated_count"] or not lines:
-        raise ValueError("Missing, truncated or inconsistent TI feed")
-    for line in lines:
-        fields = line.split("\t")
-        if len(fields) != 4 or fields[0] not in {
-            "ip", "domain", "url", "md5-hash", "sha1-hash", "sha256-hash"
-        } or fields[2] != "ThreatDefence" or not fields[3].isdigit() or not 0 <= int(fields[3]) <= 100:
-            raise ValueError("Invalid Stellar 4-column TSV row")
-    print("SIGNED_FEED_PASS", len(lines), "indicators; replay and SHA256 verified")
+    seen = set()
+    for file, (expected_source, expected_type) in allowed.items():
+        lines = (feed_dir / file).read_text(encoding="utf-8").splitlines()
+        reference = (payload["curated_count"] if schema == "stellar-osint-stage.v1"
+                     else payload["feed_counts"][file])
+        if len(lines) != reference or not lines or len(lines) > 20000:
+            raise ValueError("Missing, truncated or excessive TI feed: " + file)
+        for line in lines:
+            fields = line.split("\t")
+            if (len(fields) != 4 or fields[0] not in {
+                "ip", "domain", "url", "md5-hash", "sha1-hash", "sha256-hash"
+            } or fields[2] != expected_source or
+                (expected_type is not None and fields[0] != expected_type) or
+                not fields[3].isdigit() or not 0 <= int(fields[3]) <= 100 or
+                any("\r" in x or "\0" in x for x in fields)):
+                raise ValueError("Invalid Stellar 4-column TSV row")
+            key = (fields[0], fields[1].lower())
+            if key in seen:
+                raise ValueError("Duplicate signed IOC")
+            seen.add(key)
+        counts[file] = len(lines)
+    print("SIGNED_FEED_PASS", sum(counts.values()), "indicators; replay and SHA256 verified")
 
 def main():
     p = argparse.ArgumentParser()
