@@ -176,8 +176,8 @@ def promote(stage: Path, root: Path, pubkey: Path, now: datetime, apply: bool = 
         target = releases/str(seq)
         if target.exists() or target.is_symlink():
             raise ValueError("Replay: release directory already present")
-        with tempfile.TemporaryDirectory(prefix=".candidate-", dir=releases) as temporary:
-            candidate = Path(temporary)
+        candidate = Path(tempfile.mkdtemp(prefix=".candidate-", dir=releases))
+        try:
             for name in SIGNED_FILES | {MANIFEST,SIGNATURE}:
                 if not (stage/name).is_file():
                     raise ValueError("Missing signed release member " + name)
@@ -188,6 +188,9 @@ def promote(stage: Path, root: Path, pubkey: Path, now: datetime, apply: bool = 
             for member in target.iterdir():
                 member.chmod(0o440)
             target.chmod(0o550)
+        finally:
+            if candidate.exists():
+                shutil.rmtree(candidate)
         temp_link = root/(".current-" + str(os.getpid()))
         try:
             os.symlink("releases/"+str(seq), temp_link)
@@ -215,7 +218,7 @@ def serve_local(root: Path, pubkey: Path, port: int):
             try:
                 selected = current_file(root,pubkey,self.path,datetime.now(timezone.utc))
                 body = selected.read_bytes()
-            except ValueError:
+            except (ValueError, OSError, KeyError, TypeError, json.JSONDecodeError):
                 self.send_error(503,"Signed fresh TIP snapshot not available")
                 return
             self.send_response(200)
