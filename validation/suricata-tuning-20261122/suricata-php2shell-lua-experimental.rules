@@ -1,3 +1,3 @@
 # QA ONLY: requires php2shell_100_empty_filename.lua in the Suricata default-rule-path.
 # Not deployable through a rules-only import; no release or live Sensor installation.
-alert http any any -> any any (msg:"XDR QA PHP2Shell 100 empty filename multipart controls Lua count (CVE-2026-109618)"; flow:established,to_server; http.method; content:"POST"; http.content_type; content:"multipart/form-data"; http.request_body; content:"filename|3d 22 22|"; fast_pattern; lua:php2shell_100_empty_filename.lua; classtype:misc-attack; sid:9005055; rev:2; metadata:confidence Medium, tag qa_only;)
+alert http1:request_complete any any -> any any (msg:"XDR QA PHP2Shell 100 empty filename multipart controls Lua count (CVE-2026-109618)"; lua:php2shell_100_empty_filename.lua; classtype:misc-attack; sid:9005055; rev:3; metadata:confidence Medium, tag qa_only;)

@@ -6,7 +6,7 @@
 local http = require("suricata.http")
 
 function init(args)
-    return {["http.request_body"] = tostring(true)}
+    return {}
 end
 
 function match(args)
@@ -15,6 +15,10 @@ function match(args)
         return 0
     end
 
+    local request_line = tx:request_line()
+    if type(request_line) ~= "string" or not string.find(request_line, "^POST%s") then
+        return 0
+    end
     local ct = tx:request_header("Content-Type")
     if type(ct) ~= "string" then
         return 0
