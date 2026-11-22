@@ -138,11 +138,27 @@ def verify(out:Path):
     assert not failures,"\n".join(failures)
     print("PHP_LUA_EXTENDED_PASS",len(CASES))
 
+def verify_stress(eve:Path):
+    assert eve.is_file(), "Stress EVE file missing"
+    counts=0
+    for line in eve.read_text().splitlines():
+        event=json.loads(line)
+        if event.get("event_type")=="alert" and int(event["alert"]["signature_id"])==SID:
+            counts+=1
+    report={"expected_sessions":100,"observed_alerts":counts,
+            "completed_without_crash":True,"synthetic_only":True,
+            "release_ready":False}
+    print("PHP_LUA_STRESS_100_REPORT",json.dumps(report,sort_keys=True))
+    assert counts==100,f"100 independent empty-file-counting sessions should alert exactly once each; got {counts}"
+    print("PHP_LUA_STRESS_100_PASS")
+
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--generate",type=Path)
     p.add_argument("--verify",type=Path)
+    p.add_argument("--stress-eve",type=Path)
     a=p.parse_args()
     if a.generate:generate(a.generate)
     if a.verify:verify(a.verify)
-    if not (a.generate or a.verify):p.error("specify --generate or --verify")
+    if a.stress_eve:verify_stress(a.stress_eve)
+    if not (a.generate or a.verify or a.stress_eve):p.error("specify --generate or --verify")
