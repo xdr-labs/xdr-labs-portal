@@ -6,11 +6,14 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+import threading
+from urllib.request import urlopen
+from urllib.error import HTTPError
 
 from test_strict_recent_osint import fixture, NOW
 from strict_recent_osint import build
 from verify_ti_release import sign
-from strict_ti_gateway import promote, current_file
+from strict_ti_gateway import promote, current_file, serve_local
 
 class SignedGatewayTests(unittest.TestCase):
     def keys(self, root):
@@ -54,6 +57,37 @@ class SignedGatewayTests(unittest.TestCase):
                 current_file(origin,pub,"/etc/passwd",NOW)
             with self.assertRaises(ValueError):
                 current_file(origin,pub,"/feeds/recent-attackers.tsv",NOW+timedelta(days=2))
+
+    def test_loopback_http_serves_only_fresh_signed_snapshot(self):
+        """Localhost HTTP simulation only: TLS and authentication belong to test Nginx."""
+        with tempfile.TemporaryDirectory() as base:
+            root = Path(base)
+            priv, pub = self.keys(root)
+            stage = root/"stage"
+            self.stage(stage, priv)
+            origin = root/"origin"
+            promoted = promote(stage, origin, pub, NOW, True)
+            server = serve_local(origin, pub, 0, clock=lambda: NOW, run_forever=False)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            url = f"http://127.0.0.1:{server.server_address[1]}/feeds/recent-phishing.tsv"
+            try:
+                with urlopen(url, timeout=4) as response:
+                    body = response.read()
+                    self.assertEqual(response.status, 200)
+                    self.assertIn(b"phish-1.example.test", body)
+                    self.assertEqual(response.headers.get("Cache-Control"), "no-store, max-age=0")
+                state = origin/"state.json"
+                metadata = json.loads(state.read_text())
+                metadata["last_sequence"] = int(promoted["sequence"]) + 1
+                state.write_text(json.dumps(metadata))
+                with self.assertRaises(HTTPError) as error:
+                    urlopen(url, timeout=4)
+                self.assertEqual(error.exception.code, 503)
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=3)
 
     def test_invalid_signature_tamper_and_unapproved_are_rejected(self):
         with tempfile.TemporaryDirectory() as base:
