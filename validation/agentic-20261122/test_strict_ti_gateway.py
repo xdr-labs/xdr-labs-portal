@@ -45,7 +45,7 @@ class SignedGatewayTests(unittest.TestCase):
             self.assertEqual(applied["result"],"TEMPORARY_RELEASE_PROMOTED")
             self.assertTrue((origin/"current").is_symlink())
             self.assertTrue(current_file(origin,pub,"/feeds/recent-attackers.tsv",NOW).is_file())
-            self.assertIn(b"OffSeqMirage",current_file(origin,pub,
+            self.assertIn(b"Corroborated",current_file(origin,pub,
                 "/feeds/recent-attackers.tsv",NOW).read_bytes())
             self.assertEqual(applied["sequence"],json.loads((origin/"state.json").read_text())["last_sequence"])
             with self.assertRaisesRegex(ValueError,"Replay"):
