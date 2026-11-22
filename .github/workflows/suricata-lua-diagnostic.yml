@@ -29,6 +29,11 @@ jobs:
             "header": 'local tx=http.get_tx(); if not tx then return 0 end; local c=tx:request_header("Content-Type"); if type(c)=="string" and string.find(string.lower(c),"multipart/form-data",1,true) then return 1 end; return 0',
             "body": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="string" and #b>0 then return 1 end; return 0',
             "filename": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="string" and string.find(b, "filename=\\\"\\\"",1,true) then return 1 end; return 0',
+            "body_nonnil": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if b ~= nil then return 1 end; return 0',
+            "body_nil": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if b == nil then return 1 end; return 0',
+            "body_table": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="table" then return 1 end; return 0',
+            "body_userdata": 'local tx=http.get_tx(); if not tx then return 0 end; local b=tx:request_body(); if type(b)=="userdata" then return 1 end; return 0',
+
           }
           rows = []
           for i,(name,code) in enumerate(cases.items()):
