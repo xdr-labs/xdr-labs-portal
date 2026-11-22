@@ -13,6 +13,7 @@ on:
       - 'tools/probe_ti_candidates.py'
       - 'tools/verify_offseq_origin.py'
       - 'tools/origin_evidence.py'
+      - 'tools/verify_ti_build_replay.py'
       - 'tools/strict_ti_gateway.py'
       - '.github/workflows/agentic-osint-qa.yml'
   workflow_dispatch:
@@ -96,6 +97,12 @@ jobs:
         run: |
           python3 tools/strict_recent_osint.py --input-dir /tmp/stellar-strict-source-verified --output /tmp/stellar-strict-ti-staging
           cp /tmp/stellar-strict-source-verified/source-verification.json /tmp/stellar-strict-ti-staging/origin-verification.json
+      - name: Independently replay original verified source bytes and compare every emitted IOC
+        run: |
+          python3 tools/verify_ti_build_replay.py \
+            --inputs /tmp/stellar-strict-source-verified \
+            --stage /tmp/stellar-strict-ti-staging \
+            --output /tmp/stellar-strict-ti-staging/source-rebuild-audit.json
       - name: Research-only additional source availability and freshness probe
         run: python3 tools/probe_ti_candidates.py --output /tmp/stellar-strict-ti-staging/candidate-source-probe.json
       - name: Monitor new upstream detection rules read-only
