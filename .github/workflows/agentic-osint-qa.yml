@@ -1,0 +1,89 @@
+name: Agentic Rules and OSINT Staging QA
+on:
+  pull_request:
+    paths:
+      - 'downloads/local-web-attack-ai-v1.3-398-qa.rules'
+      - 'validation/agentic-20261122/**'
+      - 'tools/agentic_osint_feed.py'
+      - 'tools/verify_ti_release.py'
+      - '.github/workflows/agentic-osint-qa.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-suricata7:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Existing 383 published regression
+        run: |
+          python3 validation/agentic-20261121/run_offline.py --static-only
+          python3 validation/agentic-20261121/verify_publication.py
+      - name: New 398 candidate static checks
+        run: python3 validation/agentic-20261122/run_offline.py --static-only
+      - name: Threat intelligence unit and signed snapshot tests
+        run: python3 -m unittest discover -s validation/agentic-20261122 -p 'test_*.py' -v
+      - name: Install Suricata
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
+          suricata -V
+      - name: 398-rule Suricata 7 replay with 15 positives and benign controls
+        run: python3 validation/agentic-20261122/run_offline.py
+
+  suricata8:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Suricata 8.0.1 complete candidate -T
+        run: |
+          docker pull jasonish/suricata:8.0.1
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" jasonish/suricata:8.0.1 \
+            -T -c /etc/suricata/suricata.yaml -S /repo/downloads/local-web-attack-ai-v1.3-398-qa.rules
+      - name: Generate isolated inert PCAP corpus
+        run: python3 validation/agentic-20261122/generate_inert_pcap.py
+      - name: Replay all 15 new signatures and benign controls
+        run: |
+          mkdir -p /tmp/agentic398-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" -v "/tmp/agentic-398-pcap:/qa/pcaps:ro" \
+            -v "/tmp/agentic398-eve:/qa/out" jasonish/suricata:8.0.1 -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n=$(basename "$p" .pcap)
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single -k none \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.3-398-qa.rules \
+                  -l "/qa/out/$n" >/dev/null
+              done
+            '
+          python3 validation/agentic-20261122/verify_replay.py --logs /tmp/agentic398-eve
+
+  refresh-osint-staging:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download vetted public sources and stage unsigned QA snapshot
+        run: python3 tools/agentic_osint_feed.py --allow-network --output /tmp/stellar-agentic-ti-staging
+      - name: Validate staged feed shape and provenance
+        run: |
+          test -s /tmp/stellar-agentic-ti-staging/agentic-malicious-DRAFT.tsv
+          test -s /tmp/stellar-agentic-ti-staging/manifest.json
+          python3 -m json.tool /tmp/stellar-agentic-ti-staging/manifest.json >/dev/null
+      - name: Retain staging artifact (not a live/public feed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellar-agentic-ti-qa
+          path: /tmp/stellar-agentic-ti-staging
+          retention-days: 7
