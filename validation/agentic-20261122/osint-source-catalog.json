@@ -1,0 +1,343 @@
+{
+  "schema": "stellar-osint-source-catalog.v1",
+  "as_of": "2026-11-22",
+  "scope": "Stellar Cyber custom TI commercial distribution; QA != production",
+  "fields": [
+    "id",
+    "area",
+    "status",
+    "url",
+    "license_note",
+    "evidence_note"
+  ],
+  "entries": [
+    [
+      "cert-polska",
+      "phishing",
+      "QA",
+      "https://hole.cert.pl/domains/v2/domains.csv",
+      "commercial use allowed; source is official CERT",
+      "active add and delete timestamps"
+    ],
+    [
+      "offseq-mirage",
+      "attack-ip",
+      "QA",
+      "https://raw.githubusercontent.com/offseq/mirage-feed/data/latest/attackers-7d.csv",
+      "CC BY 4.0 original sensor data",
+      "IP last_seen, sensors, confidence, concrete attack"
+    ],
+    [
+      "jacobrakai",
+      "attack-ip",
+      "QA",
+      "https://jacobrakai.org/feed/blocklist.csv",
+      "CC0 original honeypot data",
+      "IP last_seen, tier, bans, attempts"
+    ],
+    [
+      "phishdestroy-primary-content",
+      "phishing-drainer",
+      "CANDIDATE",
+      "https://raw.githubusercontent.com/phishdestroy/destroylist/main/dns/content_active.txt",
+      "CC0 claimed for original primary dataset",
+      "12h content verified; per-IOC last_seen not established"
+    ],
+    [
+      "dnsbunker",
+      "phishing-scam",
+      "CORROBORATE",
+      "https://github.com/DNSBunker/CTI",
+      "CC0",
+      "huge feed; need evidence and false positive controls"
+    ],
+    [
+      "xfeeds-clean",
+      "ip-reputation",
+      "CORROBORATE",
+      "https://github.com/neilweitzel/xfeeds",
+      "licensed commercial clean tier only",
+      "aggregated, not independent event observation"
+    ],
+    [
+      "codelake",
+      "supply-chain",
+      "PROBE",
+      "https://feeds.codelake.dev/malicious-hashes.txt",
+      "commercial reuse claimed by publisher",
+      "hourly beta, endpoint unavailable via public lookup"
+    ],
+    [
+      "ossf-malicious-packages",
+      "malicious-package",
+      "CONTEXT",
+      "https://github.com/ossf/malicious-packages",
+      "Apache-2.0 repository",
+      "package OSV, not native Stellar TIP type"
+    ],
+    [
+      "reportedip",
+      "attack-ip",
+      "CORROBORATE",
+      "https://github.com/reportedip/reportedip-blacklist",
+      "CC BY 4.0",
+      "daily but 48h lag on newly reported IP"
+    ],
+    [
+      "infoblox-open",
+      "campaign-ioc",
+      "RESEARCH",
+      "https://github.com/infobloxopen/threat-intelligence",
+      "CC BY 4.0",
+      "campaign snapshots, not guaranteed current"
+    ],
+    [
+      "threatdefence",
+      "ai-attack-ioc",
+      "HUNT",
+      "https://github.com/ThreatDefence/agentic-attack-detections",
+      "MIT repository, upstream attribution",
+      "report/review dates are not last_seen"
+    ],
+    [
+      "cisco-talos-artex",
+      "attack-infrastructure",
+      "HUNT",
+      "https://github.com/Cisco-Talos/IOCs",
+      "CC0",
+      "static IP snapshot no per-IP last_seen"
+    ],
+    [
+      "cobaltstrike-tracker",
+      "ransomware-c2",
+      "HUNT",
+      "https://github.com/cisspco/Cobalt-Strike-Tracker",
+      "data license not confirmed",
+      "campaign-attributed but no per-IP last_seen in plain list"
+    ],
+    [
+      "emth-honeypot",
+      "attack-ip-hash-url",
+      "CORROBORATE",
+      "https://github.com/emth361h/honeypot-iocs",
+      "MIT code; data rights to confirm",
+      "no session-level precise timestamps"
+    ],
+    [
+      "kisa-ctas",
+      "korean-threat",
+      "CUSTOMER_ONLY",
+      "https://ctas.krcert.or.kr/index",
+      "membership-bound",
+      "not general commercial redistribution"
+    ],
+    [
+      "shadowserver",
+      "telemetry",
+      "CUSTOMER_ONLY",
+      "https://www.shadowserver.org/",
+      "constituency reports",
+      "no global OEM dump"
+    ],
+    [
+      "cisa-kev",
+      "exploited-vuln",
+      "CONTEXT",
+      "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "public government data",
+      "CVE priority not Stellar TSV IOC"
+    ],
+    [
+      "first-epss",
+      "exploit-risk",
+      "CONTEXT",
+      "https://www.first.org/epss/",
+      "research dataset",
+      "not IOC"
+    ],
+    [
+      "misp-warninglists",
+      "false-positive-filter",
+      "GUARDRAIL",
+      "https://github.com/MISP/misp-warninglists",
+      "per sublist terms",
+      "benign/shared infrastructure"
+    ],
+    [
+      "malwarebazaar",
+      "file-hash",
+      "LICENSE_REQUIRED",
+      "https://bazaar.abuse.ch/api/",
+      "commercial API may require paid license",
+      "fresh malware sample hashes"
+    ],
+    [
+      "threatfox",
+      "c2-ioc",
+      "LICENSE_REQUIRED",
+      "https://threatfox.abuse.ch/api/",
+      "commercial API may require paid license",
+      "fresh IOC and age field"
+    ],
+    [
+      "urlhaus",
+      "malware-url",
+      "BUILTIN",
+      "https://urlhaus.abuse.ch/",
+      "supplier terms",
+      "Stellar default feed"
+    ],
+    [
+      "phish-tank",
+      "phishing",
+      "BUILTIN",
+      "https://phishtank.org/",
+      "supplier terms",
+      "Stellar default feed"
+    ],
+    [
+      "openphish",
+      "phishing",
+      "BUILTIN",
+      "https://openphish.com/",
+      "community no resale",
+      "Stellar default feed"
+    ],
+    [
+      "alienvault-otx",
+      "multi-ioc",
+      "BUILTIN",
+      "https://otx.alienvault.com/",
+      "vendor terms",
+      "Stellar default feed"
+    ],
+    [
+      "proofpoint-etpro",
+      "multi-ioc-rules",
+      "BUILTIN",
+      "https://www.proofpoint.com/",
+      "Stellar OEM",
+      "not redistributed externally"
+    ],
+    [
+      "spamhaus-drop",
+      "bad-netblock",
+      "LICENSE_REQUIRED",
+      "https://www.spamhaus.org/",
+      "commercial license",
+      "no OEM free redistribution"
+    ],
+    [
+      "c2intelfeeds",
+      "c2-domain-ip",
+      "NONCOMMERCIAL",
+      "https://github.com/drb-ra/C2IntelFeeds",
+      "CC BY-NC-SA",
+      "not suitable for OEM"
+    ],
+    [
+      "maltrail",
+      "malicious-trails",
+      "LICENSE_REQUIRED",
+      "https://github.com/stamparm/maltrail",
+      "newer trail corpus rights restrictions",
+      "need explicit permission"
+    ],
+    [
+      "ipsum",
+      "aggregated-ip",
+      "RESEARCH",
+      "https://github.com/stamparm/ipsum",
+      "Unlicense",
+      "same upstream repeated as independent votes"
+    ],
+    [
+      "firehol",
+      "aggregated-ip",
+      "RESEARCH",
+      "https://firehol.org/",
+      "mixed upstream",
+      "duplicate/no individual last_seen"
+    ],
+    [
+      "dshield",
+      "sensor-ip",
+      "NONCOMMERCIAL",
+      "https://isc.sans.edu/",
+      "noncommercial terms",
+      "not OEM"
+    ],
+    [
+      "blocklistde",
+      "attack-ip",
+      "LICENSE_REQUIRED",
+      "https://www.blocklist.de/",
+      "redistribution not established",
+      "generic scanning/bruteforce"
+    ],
+    [
+      "abuseipdb",
+      "attack-ip",
+      "LICENSE_REQUIRED",
+      "https://www.abuseipdb.com/",
+      "commercial API terms",
+      "fresh lastReportedAt; customer entitlement"
+    ],
+    [
+      "greynoise",
+      "scanner-filter",
+      "LICENSE_REQUIRED",
+      "https://www.greynoise.io/",
+      "OEM terms",
+      "valuable independent false-positive classification"
+    ],
+    [
+      "urlscanio",
+      "observed-urls",
+      "RESEARCH",
+      "https://urlscan.io/",
+      "API terms",
+      "scan not maliciousness"
+    ],
+    [
+      "phishunt",
+      "phishing",
+      "UPSTREAM_RIGHTS",
+      "https://github.com/0xDanielLopez/phishunt-feed",
+      "CC0 wrapper but upstream OpenPhish",
+      "cannot assume downstream OEM rights"
+    ],
+    [
+      "threatcluster",
+      "multi-ioc",
+      "LICENSE_REQUIRED",
+      "https://threatcluster.io/iocs",
+      "commercial redistribution requires license",
+      "report date not last malicious observation"
+    ],
+    [
+      "threatview",
+      "multi-ioc",
+      "LICENSE_REQUIRED",
+      "https://threatview.io/",
+      "OEM rights not established",
+      "hourly claim requires verification"
+    ],
+    [
+      "threatmon",
+      "c2",
+      "STALE",
+      "https://github.com/ThreatMon/ThreatMon-Daily-C2-Feeds",
+      "unknown",
+      "last push 2023"
+    ],
+    [
+      "ffraud",
+      "ip-fraud",
+      "STALE",
+      "https://github.com/FFraud-com/ip-fraud-database",
+      "MIT repository",
+      "30min advertised, Nov 3 last push as of Nov 22"
+    ]
+  ]
+}
