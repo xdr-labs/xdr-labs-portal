@@ -34,6 +34,8 @@ class SignedGatewayTests(unittest.TestCase):
         result=build(sources,root,now)
         upstream = root.parent / (root.name + "-upstream")
         upstream.mkdir()
+        for source_name, original_blob in sources.items():
+            (upstream/(source_name+".bin")).write_bytes(original_blob)
         publisher_pub=upstream/"publisher.pub"
         publisher_priv=upstream/"publisher.sec"
         subprocess.run(["minisign", "-G", "-W", "-p", str(publisher_pub),
