@@ -280,7 +280,13 @@ def main():
         p.error("Use exactly one of --allow-network and --input-dir")
     blobs = {key: download(key) if args.allow_network else (args.input_dir / (key + ".bin")).read_bytes()
              for key in FILES}
-    print(json.dumps(build(blobs, args.output, datetime.now(timezone.utc)), indent=2))
+    staged = build(blobs, args.output, datetime.now(timezone.utc))
+    if args.input_dir:
+        # This path is used by the publisher-signed acquisition workflow.
+        # Bind the original Minisign proof before ANY local release signing.
+        from origin_evidence import attach_origin
+        staged = attach_origin(args.input_dir, args.output, datetime.now(timezone.utc))
+    print(json.dumps(staged, indent=2))
 
 if __name__ == "__main__":
     main()
