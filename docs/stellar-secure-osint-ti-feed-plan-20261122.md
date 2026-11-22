@@ -1,5 +1,10 @@
 # Secure Stellar Cyber 7.0 custom TI + Suricata QA plan (2026-11-22)
 
+> **Current policy supersession (2026-11-22, later strict audit):**
+> See [strict freshness-first OSINT source audit](stellar-osint-strict-source-audit-20261122.md).
+> The scheduled pipeline now stages **only CERT Polska active domains added within 24h** and **OffSeq Mirage >=85-confidence recent high-impact attacker IPs** on an hourly QA schedule. Its two separated strict TSVs are not published.
+> The original ThreatDefence 54-candidate TSV, Cisco Talos historical IPs, and prior broad CERT snapshot remain *research-only/offline* artifacts. A GitHub commit/report date is not a last-seen observation. Source rights and proofpoint overlap must be measured before customer delivery.
+
 This is a QA-only engineering implementation. It is not a live customer TIP feed, Sensor installation, or public release.
 
 ## Existing vs custom coverage
