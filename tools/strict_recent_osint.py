@@ -91,7 +91,7 @@ def parse_offseq(inputs: dict[str, bytes], now: datetime) -> tuple[list[dict], d
     if now.tzinfo is None:
         raise ValueError("UTC-aware clock required")
     meta = json.loads(inputs["manifest"].decode("utf-8"))
-    if meta.get("license") not in ("CC-BY-4.0", "CC BY 4.0"):
+    if not isinstance(meta.get("license"), dict) or meta["license"].get("data") != "CC-BY-4.0":
         raise ValueError("Unexpected or missing OffSeq data license")
     generated = utc(meta["generated"])
     if not (now - timedelta(hours=48) <= generated <= now + timedelta(minutes=5)):
