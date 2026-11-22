@@ -62,6 +62,10 @@ jobs:
             x=json.loads(line)
             if x.get('event_type')=='alert': alerts.append(x['alert']['signature_id'])
           print('LUA_HOOK_PROBES_OBSERVED',sorted(alerts))
+          expected={9899901,9899902,9899903,9899904,9899907,9899909,
+                    9899911,9899912,9899913,9899914,9899917,9899919}
+          assert set(alerts)==expected, 'HTTP1 Lua hook/transaction/chunk-type drift: '+repr(sorted(alerts))
+          print('LUA_HOOK_DIAGNOSTIC_PASS',len(expected))
           log=Path('/tmp/suricata-lua-probe/output/suricata.log')
           if log.exists():
             print('SURICATA_DIAGNOSTIC_WARNINGS', [x.strip() for x in log.read_text().splitlines() if 'lua' in x.lower() or 'error' in x.lower()][-20:])
