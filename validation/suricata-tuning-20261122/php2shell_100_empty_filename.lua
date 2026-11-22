@@ -9,6 +9,25 @@ function init(args)
     return {}
 end
 
+-- Require actual MIME boundary framing rather than a marker inside form data.
+local function next_mime_boundary(body, marker, from)
+    local position = from
+    while position <= #body do
+        local start_at = string.find(body, marker, position, true)
+        if not start_at then
+            return nil
+        end
+        local prefix_ok = start_at == 1 or
+            (start_at > 2 and string.sub(body, start_at - 2, start_at - 1) == "\r\n")
+        local after = string.sub(body, start_at + #marker, start_at + #marker + 1)
+        if prefix_ok and (after == "\r\n" or after == "--") then
+            return start_at
+        end
+        position = start_at + #marker
+    end
+    return nil
+end
+
 function match(args)
     local tx = http.get_tx()
     if not tx then
@@ -62,11 +81,11 @@ function match(args)
     local empty_controls = 0
     local marker_len = #marker
     while scanned < 1100 do
-        local begin_at = string.find(body, marker, position, true)
+        local begin_at = next_mime_boundary(body, marker, position)
         if not begin_at then
             return 0
         end
-        local next_at = string.find(body, marker, begin_at + marker_len, true)
+        local next_at = next_mime_boundary(body, marker, begin_at + marker_len)
         if not next_at then
             return 0
         end
@@ -75,8 +94,12 @@ function match(args)
         local header_end = string.find(part, "\r\n\r\n", 1, true)
         if header_end and header_end <= 4096 then
             local headers = string.lower(string.sub(part, 1, header_end - 1))
-            if string.find(headers, "content-disposition: form-data", 1, true)
-                and string.find(headers, 'filename=""', 1, true) then
+            -- Count only an empty filename parameter on the actual
+            -- Content-Disposition header, never on unrelated X-* headers.
+            local disposition = string.match(headers, "content%-disposition:%s*([^\r\n]+)")
+            if disposition
+                and string.find(disposition, "^form%-data[;%s]")
+                and string.find(disposition, '[;%s]filename%s*=%s*""') then
                 empty_controls = empty_controls + 1
                 if empty_controls >= 100 then
                     return 1
