@@ -1,0 +1,16 @@
+new_sid,upstream_sid,source_path,policy,confidence
+9876201,9726021,frameworks/artex/suricata/artex.rules,candidate-alert,High
+9876202,9726023,frameworks/artex/suricata/artex.rules,candidate-alert,Medium
+9876203,9726024,frameworks/artex/suricata/artex.rules,candidate-alert,Medium
+9876204,9726041,frameworks/artex/suricata/artex.rules,candidate-alert,Medium
+9876205,9726063,frameworks/artex/suricata/artex.rules,candidate-alert,Medium
+9876206,9726066,frameworks/artex/suricata/artex.rules,candidate-alert,High
+9876207,9726067,frameworks/artex/suricata/artex.rules,candidate-alert,Medium
+9876208,9727030,frameworks/cairn/suricata/cairn.rules,candidate-alert,High
+9876209,9727031,frameworks/cairn/suricata/cairn.rules,candidate-alert,High
+9876210,9727032,frameworks/cairn/suricata/cairn.rules,candidate-alert,Medium
+9876211,9730012,frameworks/cyberstrikeai/suricata/cyberstrikeai.rules,candidate-alert,High
+9876212,9732001,frameworks/hermes/suricata/hermes.rules,candidate-alert,High
+9876213,9732002,frameworks/hermes/suricata/hermes.rules,candidate-alert,High
+9876214,9732003,frameworks/hermes/suricata/hermes.rules,candidate-alert,High
+9876215,9732004,frameworks/hermes/suricata/hermes.rules,candidate-alert,Medium

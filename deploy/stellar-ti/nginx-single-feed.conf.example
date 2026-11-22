@@ -1,0 +1,38 @@
+# ONE anonymous public Stellar Cyber Custom TI feed URL.
+# Nonproduction configuration TEMPLATE. Do not deploy without release approval.
+# Requires external trusted TLS certificate and authorized server.
+limit_req_zone $binary_remote_addr zone=stellar_public_ti:5m rate=30r/m;
+
+server {
+    listen 443 ssl;
+    server_name ti.example.invalid;
+    server_tokens off;
+
+    ssl_certificate /etc/stellar-ti/tls/fullchain.pem;
+    ssl_certificate_key /etc/stellar-ti/tls/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_tickets off;
+
+    # The loopback reader ONLY serves data from verified, unexpired,
+    # publisher-origin-checked and locally Ed25519-approved releases.
+    # There are NO customer IDs, credentials, query tokens or separate feeds.
+    location = /stellar-ti.tsv {
+        limit_req zone=stellar_public_ti burst=10 nodelay;
+        limit_except GET { deny all; }
+        proxy_pass http://127.0.0.1:18332;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Connection "";
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 15s;
+        proxy_send_timeout 5s;
+        proxy_buffering off;
+        proxy_cache off;
+        add_header Cache-Control "no-store, max-age=0" always;
+        add_header X-Content-Type-Options "nosniff" always;
+    }
+
+    # Never publish management endpoints or origin release internals.
+    location ^~ /internal/ { return 404; }
+    location / { return 404; }
+}

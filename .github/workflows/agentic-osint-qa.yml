@@ -1,0 +1,133 @@
+name: Agentic Rules and OSINT Staging QA
+on:
+  pull_request:
+    paths:
+      - 'downloads/local-web-attack-ai-v1.3-398-qa.rules'
+      - 'validation/agentic-20261122/**'
+      - 'tools/agentic_osint_feed.py'
+      - 'tools/verify_ti_release.py'
+      - 'tools/check_agentic_rule_drift.py'
+      - 'tools/cert_polska_osint.py'
+      - 'tools/strict_recent_osint.py'
+      - 'tools/jacob_honeypot_osint.py'
+      - 'tools/probe_ti_candidates.py'
+      - 'tools/verify_offseq_origin.py'
+      - 'tools/origin_evidence.py'
+      - 'tools/verify_ti_build_replay.py'
+      - 'tools/strict_ti_gateway.py'
+      - 'tools/ti_public_service.py'
+      - 'deploy/stellar-ti/**'
+      - '.github/workflows/agentic-osint-qa.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-suricata7:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Existing 383 published regression
+        run: |
+          python3 validation/agentic-20261121/run_offline.py --static-only
+          python3 validation/agentic-20261121/verify_publication.py
+      - name: New 398 candidate static checks
+        run: python3 validation/agentic-20261122/run_offline.py --static-only
+      - name: Install Minisign for real publisher-signature regression
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y minisign
+      - name: Threat intelligence unit and signed snapshot tests
+        run: python3 -m unittest discover -s validation/agentic-20261122 -p 'test_*.py' -v
+      - name: Install Suricata
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y suricata
+          suricata -V
+      - name: 398-rule Suricata 7 replay with 15 positives and benign controls
+        run: python3 validation/agentic-20261122/run_offline.py
+
+  suricata8:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Suricata 8.0.1 complete candidate -T
+        run: |
+          docker pull jasonish/suricata:8.0.1
+          docker run --rm --entrypoint suricata -v "$PWD:/repo:ro" jasonish/suricata:8.0.1 \
+            -T -c /etc/suricata/suricata.yaml -S /repo/downloads/local-web-attack-ai-v1.3-398-qa.rules
+      - name: Generate isolated inert PCAP corpus
+        run: python3 validation/agentic-20261122/generate_inert_pcap.py
+      - name: Replay all 15 new signatures and benign controls
+        run: |
+          mkdir -p /tmp/agentic398-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" -v "/tmp/agentic-398-pcap:/qa/pcaps:ro" \
+            -v "/tmp/agentic398-eve:/qa/out" jasonish/suricata:8.0.1 -c '
+              set -eu
+              for p in /qa/pcaps/*.pcap; do
+                n=$(basename "$p" .pcap)
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single -k none \
+                  -c /etc/suricata/suricata.yaml \
+                  -S /repo/downloads/local-web-attack-ai-v1.3-398-qa.rules \
+                  -l "/qa/out/$n" >/dev/null
+              done
+            '
+          python3 validation/agentic-20261122/verify_replay.py --logs /tmp/agentic398-eve
+
+  refresh-osint-staging:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install upstream signature verifier
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y minisign
+      - name: Download and validate publisher-signed OffSeq source snapshot
+        run: python3 tools/verify_offseq_origin.py --output /tmp/stellar-strict-source-verified
+      - name: Stage recent high-quality CERT and sensor-driven indicators from verified inputs
+        run: |
+          python3 tools/strict_recent_osint.py --input-dir /tmp/stellar-strict-source-verified --output /tmp/stellar-strict-ti-staging
+          cp /tmp/stellar-strict-source-verified/source-verification.json /tmp/stellar-strict-ti-staging/origin-verification.json
+      - name: Independently replay original verified source bytes and compare every emitted IOC
+        run: |
+          python3 tools/verify_ti_build_replay.py \
+            --inputs /tmp/stellar-strict-source-verified \
+            --stage /tmp/stellar-strict-ti-staging \
+            --output /tmp/stellar-strict-ti-staging/source-rebuild-audit.json
+      - name: Research-only additional source availability and freshness probe
+        run: python3 tools/probe_ti_candidates.py --output /tmp/stellar-strict-ti-staging/candidate-source-probe.json
+      - name: Monitor new upstream detection rules read-only
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/check_agentic_rule_drift.py --output /tmp/stellar-strict-ti-staging/upstream-rule-drift.json
+      - name: Verify strict staging inventory, freshness, provenance and type separation
+        run: |
+          test -s /tmp/stellar-strict-ti-staging/strict-recent-attackers-DRAFT.tsv
+          test -s /tmp/stellar-strict-ti-staging/strict-recent-phishing-DRAFT.tsv
+          python3 -m json.tool /tmp/stellar-strict-ti-staging/strict-manifest.json >/dev/null
+          python3 - <<'PY'
+          import csv,json,pathlib
+          root=pathlib.Path('/tmp/stellar-strict-ti-staging')
+          m=json.loads((root/'strict-manifest.json').read_text())
+          assert m['status']=='QA_ONLY_NOT_PUBLISHED'
+          assert set(m['feed_counts'])=={'strict-recent-attackers-DRAFT.tsv','strict-recent-phishing-DRAFT.tsv'}
+          assert all(0<x<=750 for x in m['feed_counts'].values())
+          print('STRICT_STAGING_PASS',m['feed_counts'])
+          PY
+      - name: Retain QA artifact ONLY (no customer feed or publication)
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellar-strict-live-ti-qa
+          path: /tmp/stellar-strict-ti-staging
+          retention-days: 7
