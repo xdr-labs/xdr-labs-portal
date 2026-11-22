@@ -69,7 +69,7 @@ jobs:
           python3 validation/agentic-20261122/verify_replay.py --logs /tmp/agentic398-eve
 
   refresh-osint-staging:
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
