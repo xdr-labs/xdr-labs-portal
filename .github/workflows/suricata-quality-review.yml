@@ -99,6 +99,34 @@ jobs:
             '
           python3 validation/suricata-tuning-20261122/nextjs_experimental.py \
             --verify /tmp/nextjs-qa-eve | tee /tmp/nextjs-qa-eve/qa-summary.txt
+      - name: Experimental Lua PHP multipart candidate syntax (external script; QA ONLY)
+        run: |
+          docker run --rm --entrypoint suricata \
+            -v "$PWD:/repo:ro" jasonish/suricata:${{ matrix.suricata }} \
+            -T -c /etc/suricata/suricata.yaml \
+            --set default-rule-path=/repo/validation/suricata-tuning-20261122 \
+            -S /repo/validation/suricata-tuning-20261122/suricata-php2shell-lua-experimental.rules
+      - name: Replay 13 multipart and benign controls with sandboxed Lua (QA ONLY)
+        run: |
+          mkdir -p /tmp/suricata-php-lua-eve
+          docker run --rm --entrypoint /bin/sh \
+            -v "$PWD:/repo:ro" \
+            -v /tmp/suricata-php-lua-eve:/qa/out \
+            jasonish/suricata:${{ matrix.suricata }} -c '
+              set -eu
+              for p in /repo/validation/qa-suricata-last-two/*.pcap; do
+                n="${p##*/}"
+                n="${n%.pcap}"
+                mkdir -p "/qa/out/$n"
+                suricata -r "$p" --runmode=single \
+                  -c /etc/suricata/suricata.yaml \
+                  --set default-rule-path=/repo/validation/suricata-tuning-20261122 \
+                  -S /repo/validation/suricata-tuning-20261122/suricata-php2shell-lua-experimental.rules \
+                  -l "/qa/out/$n" -k none >/dev/null
+              done
+            '
+          python3 validation/suricata-tuning-20261122/verify_php_lua.py \
+            --logs /tmp/suricata-php-lua-eve | tee /tmp/suricata-php-lua-eve/qa-summary.txt
       - name: Retain QA observations
         if: always()
         uses: actions/upload-artifact@v4
@@ -107,4 +135,5 @@ jobs:
           path: |
             /tmp/suricata-quality-eve/profile-qa.txt
             /tmp/nextjs-qa-eve/qa-summary.txt
+            /tmp/suricata-php-lua-eve/qa-summary.txt
           if-no-files-found: warn
