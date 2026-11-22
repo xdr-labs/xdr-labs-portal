@@ -152,19 +152,59 @@ def _existing_seq(root: Path):
         raise ValueError("Current release is not an atomic symlink")
     return value
 
-def current_file(root: Path, pubkey: Path, request_path: str, now: datetime) -> Path:
-    if request_path not in TSV_FILES:
-        raise ValueError("Unrecognized TIP endpoint")
+def current_stage(root: Path, pubkey: Path, now: datetime) -> Path:
+    """Resolve exactly one immutable approved snapshot, or fail closed."""
     current = root/"current"
     if not current.is_symlink():
         raise ValueError("No approved strict TI release")
-    # Read path is determined only by the checked current symlink, never by URL.
     seq = _existing_seq(root)
     stage = root/current.readlink()
     meta = validate(stage, pubkey, 0, now)
     if int(meta["sequence"]) != seq:
         raise ValueError("Release-state rollback or pointer mismatch")
-    return stage/TSV_FILES[request_path]
+    return stage
+
+
+def current_file(root: Path, pubkey: Path, request_path: str, now: datetime) -> Path:
+    # Internal evidence-specific access only; customer service exposes ONE feed.
+    if request_path not in TSV_FILES:
+        raise ValueError("Unrecognized TIP endpoint")
+    return current_stage(root, pubkey, now)/TSV_FILES[request_path]
+
+
+def current_unified_tsv(root: Path, pubkey: Path, now: datetime) -> bytes:
+    """Build one Stellar TSV from ONE signed release (no mixed releases).
+
+    Type provenance is preserved in the four Stellar columns. Each component
+    file was signed and validated with its own per-IOC evidence beforehand.
+    No unsigned intermediary is persisted or published.
+    """
+    stage = current_stage(root, pubkey, now)
+    output = bytearray()
+    observed_iocs = set()
+    total = 0
+    for internal_route, kind in (
+        ("/feeds/recent-attackers.tsv", "ip"),
+        ("/feeds/recent-phishing.tsv", "domain"),
+    ):
+        data = (stage/TSV_FILES[internal_route]).read_bytes()
+        if not data or not data.endswith(b"\n"):
+            raise ValueError("Missing final newline in signed component")
+        # Signed bytes are re-checked in validate() before being read.
+        # Release snapshots are immutable and reader-only.
+        for raw in data.splitlines():
+            columns = raw.decode("utf-8").split("\t")
+            if len(columns) != 4 or columns[0] != kind:
+                raise ValueError("Unexpected component IOC schema")
+            key = (columns[0], columns[1].lower())
+            if key in observed_iocs:
+                raise ValueError("Duplicate IOC across sources")
+            observed_iocs.add(key)
+            total += 1
+        output.extend(data)
+    if total == 0 or total > 25000 or len(output) >= 100_000_000:
+        raise ValueError("Unified TI exceeds Stellar feed constraints")
+    return bytes(output)
 
 def promote(stage: Path, root: Path, pubkey: Path, now: datetime, apply: bool = False):
     # Dry-run does not create release paths or touch persistent state.
