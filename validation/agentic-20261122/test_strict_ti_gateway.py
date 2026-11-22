@@ -129,12 +129,13 @@ class SignedGatewayTests(unittest.TestCase):
             server = serve_local(origin, pub, 0, clock=lambda: NOW, run_forever=False)
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()
-            url = f"http://127.0.0.1:{server.server_address[1]}/feeds/recent-phishing.tsv"
+            url = f"http://127.0.0.1:{server.server_address[1]}/stellar-ti.tsv"
             try:
                 with urlopen(url, timeout=4) as response:
                     body = response.read()
                     self.assertEqual(response.status, 200)
                     self.assertIn(b"phish-1.example.test", body)
+                    self.assertIn(b"ip\t1.2.3.4\tCorroborated\t90", body)
                     self.assertEqual(response.headers.get("Cache-Control"), "no-store, max-age=0")
                 state = origin/"state.json"
                 metadata = json.loads(state.read_text())
