@@ -87,10 +87,8 @@ def strict_observation_gate(stage: Path, manifest: dict, now: datetime):
                 if not STRONG_TAGS.intersection(row["tags"].split(";")):
                     raise ValueError("Only scanning/weak behavior in high-confidence IP")
             else:
-                if row["tier"] not in ("credential", "loader") or (
-                    row["tier"] == "credential" and
-                    (int(row["bans"]) < 3 or int(row["attempts"]) < 100)):
-                    raise ValueError("Uncorroborated Jacob IP below tier and event threshold")
+                if row["tier"] != "loader":
+                    raise ValueError("Uncorroborated single-sensor credential IPs are hunting-only")
             if src == "Corroborated":
                 other = observed(row["jacob_last_seen"])
                 if not now - timedelta(hours=24) <= other <= generated:
