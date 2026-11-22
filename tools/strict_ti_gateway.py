@@ -21,13 +21,14 @@ import shutil
 import tempfile
 
 from verify_ti_release import verify
+from origin_evidence import check_origin, RELEASE_MEMBERS, PUBKEY as UPSTREAM_PUBKEY
 
 TSV_FILES = {
     "/feeds/recent-attackers.tsv": "strict-recent-attackers-DRAFT.tsv",
     "/feeds/recent-phishing.tsv": "strict-recent-phishing-DRAFT.tsv",
 }
 EVIDENCE = {"strict-ip-evidence.csv", "strict-domain-evidence.csv"}
-SIGNED_FILES = set(TSV_FILES.values()) | EVIDENCE
+SIGNED_FILES = set(TSV_FILES.values()) | EVIDENCE | RELEASE_MEMBERS
 STRONG_TAGS = {"shell-commands", "db-ransom", "mirai-like", "sip-fraud"}
 SOURCES = {"OffSeqMirage", "JacobHoneypot", "Corroborated"}
 MANIFEST = "strict-manifest.json"
@@ -123,6 +124,15 @@ def validate(stage: Path, pubkey: Path, min_sequence: int, now: datetime) -> dic
     if meta.get("schema") != "stellar-strict-live-stage.v1" or set(meta.get("files",{})) != SIGNED_FILES:
         raise ValueError("Unexpected strict-only signed inventory")
     verify(stage/MANIFEST, stage/SIGNATURE, pubkey, stage, min_sequence, now, True)
+    # Reverify the upstream producer's real Minisign signature from copies
+    # protected by our own Ed25519 release manifest. The collector's JSON
+    # "verified" status is not accepted as cryptographic evidence by itself.
+    check_origin(
+        (stage / "offseq-SHA256SUMS").read_bytes(),
+        (stage / "offseq-SHA256SUMS.minisig").read_bytes(),
+        (stage / "origin-verification.json").read_bytes(),
+        meta, now, publisher_key=UPSTREAM_PUBKEY,
+    )
     strict_observation_gate(stage, meta, now)
     return meta
 
