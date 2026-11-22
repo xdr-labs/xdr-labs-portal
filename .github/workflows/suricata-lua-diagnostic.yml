@@ -34,6 +34,7 @@ jobs:
           for i,(name,code) in enumerate(cases.items()):
             (d/(name+'.lua')).write_text('local http=require("suricata.http")\nfunction init(args) return {} end\nfunction match(args) '+code+' end\n')
             rows.append('alert http1:request_complete any any -> any any (msg:"Synthetic Lua '+name+' probe"; lua:'+name+'.lua; sid:'+str(9899901+i)+'; rev:1;)')
+            rows.append('alert http1:request_body any any -> any any (msg:"Synthetic Lua bodyhook '+name+' probe"; lua:'+name+'.lua; sid:'+str(9899911+i)+'; rev:1;)')
           (d/'qa.rules').write_text('\n'.join(rows)+'\n')
           print('LUA_HOOK_DIAGNOSTIC_PREPARED',len(rows))
           PY
