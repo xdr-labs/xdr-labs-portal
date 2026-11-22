@@ -57,8 +57,31 @@ def fixture():
         "".join(f"{i}\tphish-{i}.example.test\t2026-11-22T03:00:00Z\t\n"
                 for i in range(1,102))
     ).encode()
+    jac = io.StringIO()
+    jwriter = csv.writer(jac)
+    jwriter.writerow(["ip","tier","bans","attempts","first_seen","last_seen","first_banned","asn"])
+    entries = []
+    for n in range(1,45):
+        ip = f"2.3.4.{n}"
+        tier = "credential" if n == 3 else "scanner"
+        bans = 5 if n == 3 else 0
+        attempts = 400 if n == 3 else 1400
+        d = dict(ip=ip,tier=tier,bans=bans,attempts=attempts,
+                 first_seen="2026-11-21T02:00:00Z",last_seen="2026-11-22T04:00:00Z",
+                 first_banned="",asn="AS100")
+        entries.append(d)
+        jwriter.writerow(list(d.values()))
+    shared = dict(ip="1.2.3.4",tier="credential",bans=10,attempts=200,
+                  first_seen="2026-11-20T02:00:00Z",last_seen="2026-11-22T04:00:00Z",
+                  first_banned="",asn="AS100")
+    entries.append(shared)
+    jwriter.writerow(list(shared.values()))
+    jmeta={"meta":{"license":"CC0-1.0","update_frequency":"hourly",
+                   "updated":"2026-11-22T05:00:00Z","count":len(entries)},
+           "ips":entries}
     return {"manifest":json.dumps(meta).encode(), "attackers":attackers,
-            "scanners":scanners, "anonymizers":anonymizers, "cert":cert}
+            "scanners":scanners, "anonymizers":anonymizers, "cert":cert,
+            "jacob_json":json.dumps(jmeta).encode(),"jacob_csv":jac.getvalue().encode()}
 
 class StrictLivePolicy(unittest.TestCase):
     def test_two_evidence_driven_feeds(self):
@@ -67,10 +90,12 @@ class StrictLivePolicy(unittest.TestCase):
             r=build(src,Path(path),NOW)
             self.assertEqual(r["schema"],"stellar-strict-live-stage.v1")
             self.assertEqual(r["feed_counts"]["strict-recent-phishing-DRAFT.tsv"],101)
-            # Only 1.2.3.4 survives; 1.2.3.5 is an anonymizer, 1.2.3.6 scanner.
-            self.assertEqual(r["feed_counts"]["strict-recent-attackers-DRAFT.tsv"],1)
+            # Shared OffSeq+Jacob IP is correlated, and one independent Jacob IP survives.
+            self.assertEqual(r["feed_counts"]["strict-recent-attackers-DRAFT.tsv"],2)
+            self.assertEqual(r["corroborated_ip_count"],1)
             ip=(Path(path)/"strict-recent-attackers-DRAFT.tsv").read_text()
-            self.assertEqual(ip.splitlines(),["ip\t1.2.3.4\tOffSeqMirage\t90"])
+            self.assertEqual(set(ip.splitlines()),{"ip\t1.2.3.4\tCorroborated\t90",
+                                                  "ip\t2.3.4.3\tJacobHoneypot\t83"})
             domains=(Path(path)/"strict-recent-phishing-DRAFT.tsv").read_text()
             self.assertEqual(len(domains.splitlines()),101)
             self.assertTrue(all(x.count("\t")==3 for x in domains.splitlines()))
