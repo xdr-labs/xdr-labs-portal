@@ -183,8 +183,9 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
     all_ips = sorted(combined.values(), key=lambda x: x["value"])
     if len(all_ips) > MAX_IPS:
         raise ValueError("Combined strict IP feed volume out of policy")
-    domains, cert_evidence = parse_recent(source["cert"], now)
-    domains = [d for d in domains if d.lower() not in EXACT_GOOD_DOMAINS]
+    domain_records, cert_evidence = parse_recent(source["cert"], now, with_added_at=True)
+    domain_records = [r for r in domain_records if r["domain"].lower() not in EXACT_GOOD_DOMAINS]
+    domains = [r["domain"] for r in domain_records]
     if not domains or len(domains) > MAX_DOMAINS:
         raise ValueError("CERT Polska recent domains outside strict volume ceiling")
     outputs = {
@@ -192,6 +193,10 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
             f"ip\t{x['value']}\t{x['source']}\t{x['score']}\n" for x in all_ips).encode(),
         "strict-recent-phishing-DRAFT.tsv": "".join(
             f"domain\t{d}\t{SOURCE_DOMAIN}\t75\n" for d in domains).encode(),
+        "strict-ip-evidence.csv": ("ip,first_seen,last_seen,confidence,sensors,networks,tags\n" +
+            "".join(f"{x['value']},{x['first_seen']},{x['last_seen']},{x['confidence']},{x['sensors']},{x['networks']},{x['tags']}\n" for x in ips)).encode(),
+        "strict-domain-evidence.csv": ("domain,added_at,removed_at\n" +
+            "".join(f"{r['domain']},{r['added_at']},\n" for r in domain_records)).encode(),
     }
     out.mkdir(parents=True, exist_ok=True)
     for name, payload in outputs.items():
@@ -219,10 +224,6 @@ def build(source: dict[str, bytes], out: Path, now: datetime) -> dict:
         "rules": "No older article-date or bulk unattributed IPs; 24h last_seen / active domain; not production certified",
     }
     (out / "strict-manifest.json").write_text(json.dumps(summary, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    (out / "strict-ip-evidence.csv").write_text(
-        "ip,source,first_seen,last_seen,score,context\n" +
-        "".join(f"{x['value']},{x['source']},{x['first_seen']},{x['last_seen']},{x['score']},{x.get('tags',x.get('tier',''))}\n" for x in all_ips),
-        encoding="utf-8")
     return summary
 
 def main():
