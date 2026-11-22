@@ -32,8 +32,27 @@ function match(args)
         return 0
     end
 
-    local body = tx:request_body()
-    if type(body) ~= "string" or #body < 1000 or #body > 2097152 then
+    -- Suricata 8 exposes request_body() as a 1-based table of byte chunks,
+    -- followed by optional offsets, NOT as a single string.
+    local chunks = tx:request_body()
+    if type(chunks) ~= "table" then
+        return 0
+    end
+    local total = 0
+    for _, chunk in ipairs(chunks) do
+        if type(chunk) ~= "string" then
+            return 0
+        end
+        total = total + #chunk
+        if total > 2097152 then
+            return 0
+        end
+    end
+    if total < 1000 then
+        return 0
+    end
+    local body = table.concat(chunks)
+    if #body ~= total then
         return 0
     end
 
