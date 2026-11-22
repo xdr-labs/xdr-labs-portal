@@ -69,6 +69,7 @@ jobs:
                 done
               done
             '
+          set -o pipefail
           python3 validation/suricata-tuning-20261122/verify_profile_eve.py \
             --logs /tmp/suricata-quality-eve | tee /tmp/suricata-quality-eve/profile-qa.txt
       - name: Generate 14 benign/metadata WebSocket QA PCAPs (no network sends)
@@ -97,6 +98,7 @@ jobs:
                   -l "/qa/out/$n" -k none >/dev/null
               done
             '
+          set -o pipefail
           python3 validation/suricata-tuning-20261122/nextjs_experimental.py \
             --verify /tmp/nextjs-qa-eve | tee /tmp/nextjs-qa-eve/qa-summary.txt
       - name: Experimental Lua PHP multipart candidate syntax (external script; QA ONLY)
@@ -125,6 +127,7 @@ jobs:
                   -l "/qa/out/$n" -k none >/dev/null
               done
             '
+          set -o pipefail
           python3 validation/suricata-tuning-20261122/verify_php_lua.py \
             --logs /tmp/suricata-php-lua-eve | tee /tmp/suricata-php-lua-eve/qa-summary.txt
       - name: Retain QA observations
