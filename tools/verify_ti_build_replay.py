@@ -12,7 +12,7 @@ approving/signing a snapshot. The audit does NOT publish or authorize release.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -76,7 +76,7 @@ def audit_rebuild(source_dir: Path, stage: Path, now: datetime,
         if sha(content) != stored["files"][name]:
             raise ValueError("Origin-proof file modified in unsigned release")
     generated = parse_time(stored["generated_at"])
-    if not now - generated <= __import__("datetime").timedelta(hours=24) or generated > now:
+    if not now - generated <= timedelta(hours=24) or generated > now:
         raise ValueError("Unsigned feed not freshly generated")
     with tempfile.TemporaryDirectory(prefix="strict-rebuild-") as tmp:
         rebuilt = build(inputs, Path(tmp), generated)
