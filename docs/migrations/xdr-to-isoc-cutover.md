@@ -2,12 +2,12 @@
 
 **Status:** PREPARATION ONLY. **Owner approval required before any production DNS, deployment, GitHub repository transfer, repository deletion, release or auth/permission changes.**
 
-**Tracked by:** [xdr-labs/xdr-labs-portal#62](https://github.com/xdr-labs/xdr-labs-portal/issues/62)  
-**Baseline:** 2026-11-23 (Asia/Seoul)  
-**Source organization:** https://github.com/xdr-labs  
-**Target organization:** https://github.com/isoc-labs (not created publicly or not yet accessible as of baseline)  
-**Current portal:** https://xdr.ooo (HTTP 200)  
-**Target portal:** https://isoc.ooo (Cloudflare nameservers present; apex has no A/AAAA/CNAME and does not resolve)  
+**Tracked by:** [xdr-labs/xdr-labs-portal#62](https://github.com/xdr-labs/xdr-labs-portal/issues/62)
+**Baseline:** 2026-11-23 (Asia/Seoul)
+**Source organization:** https://github.com/xdr-labs
+**Target organization:** https://github.com/isoc-labs (not created publicly or not yet accessible as of baseline)
+**Current portal:** https://xdr.ooo (HTTP 200)
+**Target portal:** https://isoc.ooo (Cloudflare nameservers present; apex has no A/AAAA/CNAME and does not resolve)
 **Existing separately migrated service:** https://rfp.isoc.ooo (HTTP 200)
 
 ## Decision: copy for preview, Transfer for final ownership
