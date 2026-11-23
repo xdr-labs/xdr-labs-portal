@@ -14,8 +14,8 @@
 
 Preserve existing customer-facing installations and sites until the destination is independently validated.
 
-1. Create target GitHub organization \`isoc-labs\`, enable appropriate repository-create/transfer authorization, and connect the GitHub app.
-2. Use a **temporary name** such as \`isoc-labs/xdr-labs-portal-migration-preview\` for a mirrored preview checkout. Never mirror into the final repository name if a **GitHub Transfer** will later be used; the target name conflict blocks transfer.
+1. Create target GitHub organization `isoc-labs`, enable appropriate repository-create/transfer authorization, and connect the GitHub app.
+2. Use a **temporary name** such as `isoc-labs/xdr-labs-portal-migration-preview` for a mirrored preview checkout. Never mirror into the final repository name if a **GitHub Transfer** will later be used; the target name conflict blocks transfer.
 3. Keep the source repositories and current Mintlify/Nginx/other deployments active.
 4. Migrate the portal to a separate destination Mintlify project and verify DNS/TLS and full site behavior on the target.
 5. Perform service-by-service app/docs migration with dual-run functional and E2E testing; update origins/callback URLs and deployment configuration where relevant.
@@ -48,9 +48,9 @@ The read-only strict scanner found **859 matching source lines** across 15 defau
 
 For a deterministic local recheck after cloning the public source repositories into a single directory:
 
-\`\`\`sh
+```sh
 python3 tools/audit_xdr_isoc_refs.py --root /path/to/source-repo-checkouts --output /tmp/xdr-isoc-audit.json
-\`\`\`
+```
 
 The tool is read-only with respect to source checkouts; it writes only the explicitly requested JSON report.
 
@@ -67,20 +67,20 @@ The tool is read-only with respect to source checkouts; it writes only the expli
 | parser.xdr.ooo | parser.isoc.ooo | Existing HTTP 200; target not validated |
 | app.parser.xdr.ooo | app.parser.isoc.ooo | Existing HTTP 200; target not validated |
 
-The \`datarelay-labs\` organization and \`*.datarelay.run\` are **out of scope**. Prefer keeping the existing repository names on transfer (including names with an xdr prefix) initially; separate rename decisions are higher risk and can be made after the domain/owner cutover.
+The `datarelay-labs` organization and `*.datarelay.run` are **out of scope**. Prefer keeping the existing repository names on transfer (including names with an xdr prefix) initially; separate rename decisions are higher risk and can be made after the domain/owner cutover.
 
 ## Required cutover checks, in order
 
 ### Gate A — owner-only setup
-- [ ] Create \`isoc-labs\` GitHub Organization and verify direct membership/ownership.
-- [ ] Install the GitHub ChatGPT App to \`isoc-labs\` with the necessary repository access (not credentials pasted in chat).
-- [ ] Prepare separate Mintlify project GitHub integration and destination domain configuration, with the exact DNS record values produced by Mintlify. Do **not** guess an IP or point \`isoc.ooo\` to the old origin.
+- [ ] Create `isoc-labs` GitHub Organization and verify direct membership/ownership.
+- [ ] Install the GitHub ChatGPT App to `isoc-labs` with the necessary repository access (not credentials pasted in chat).
+- [ ] Prepare separate Mintlify project GitHub integration and destination domain configuration, with the exact DNS record values produced by Mintlify. Do **not** guess an IP or point `isoc.ooo` to the old origin.
 - [ ] Confirm hosting providers and Cloudflare account have the expected domain permissions. Do not share tokens.
 
 ### Gate B — portal pilot (no production change)
 - [ ] Mirror portal into a **temporary preview name**. Pin and compare source HEAD, branches and tags. Review workflows before enabling any Actions in preview.
-- [ ] Reconnect Mintlify to preview source; validate EN/KR, navigation, favicon/logo, 404 behavior, canonical/SEO, \`/downloads\` and release assets, links and external apps.
-- [ ] Validate TLS and DNS, then bind \`isoc.ooo\` only to the new deployment. Keep \`xdr.ooo\` serving the original site.
+- [ ] Reconnect Mintlify to preview source; validate EN/KR, navigation, favicon/logo, 404 behavior, canonical/SEO, `/downloads` and release assets, links and external apps.
+- [ ] Validate TLS and DNS, then bind `isoc.ooo` only to the new deployment. Keep `xdr.ooo` serving the original site.
 - [ ] Verify that source updates and preview updates do not silently diverge; determine final authoritative repo before accepting contributions.
 
 ### Gate C — documentation and CLI tooling
@@ -89,8 +89,8 @@ The \`datarelay-labs\` organization and \`*.datarelay.run\` are **out of scope**
 - [ ] Check relative and absolute links, GHCR/package references, repo tags, raw GitHub content, permissions, issues, existing PRs, Webhooks and CI on the new org.
 
 ### Gate D — application and GitHub ownership
-- [ ] Set up \`app.parser.isoc.ooo\` with its own valid certificate, Nginx config and app origin policies; keep old application live; run full browser user E2E on the deployment candidate.
-- [ ] Settle/rebase open PRs before final owner transfer. As of baseline \`xdr-labs/parser-studio#316\` and \`xdr-labs/xdr-labs-portal#60\` are open.
+- [ ] Set up `app.parser.isoc.ooo` with its own valid certificate, Nginx config and app origin policies; keep old application live; run full browser user E2E on the deployment candidate.
+- [ ] Settle/rebase open PRs before final owner transfer. As of baseline `xdr-labs/parser-studio#316` and `xdr-labs/xdr-labs-portal#60` are open.
 - [ ] Transfer one final repository at a time, do not replace it with a Git clone that loses Issue/PR history.
 - [ ] After transfer, update local Git remotes, Mintlify integration, CODEOWNERS, GitHub App installation, Actions secrets/variables, branch rules and deploy identity. Verify CI, artifacts, signatures and downloads.
 - [ ] Validate old repository redirects without recreating old names.
